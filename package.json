@@ -4,6 +4,7 @@
   "description": "This is a graphical interface to the CFD software OpenFOAM",
   "main": "main.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -14,5 +15,11 @@
     "OpenFOAMUI"
   ],
   "author": "CrankierDev",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^21.3.0"
+  },
+  "dependencies": {
+    "python-shell": "^3.0.1"
+  }
 }
