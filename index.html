@@ -8,9 +8,69 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Aqui empieza la magia</h1>
-    <button onclick="execute()">Ejecutar</button>
-    <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2>
+    <section id="firstContent">
+        <h1>Seleccione el tipo de simulación que desea ejecutar</h1>
+        <article class="data-container">
+            <div class="input-data">
+                <label id="workspace">Ruta de la simulacion</label>
+                <input for="workspace" type="file"/>
+            </div>
+            <br>
+            
+            <div class="input-data">
+                <label id="model">Modelo de turbulencias</label>
+                <select for="model" >
+                    <option>Sin modelo</option>
+                    <option>Spalart-Allmaras</option>
+                    <option>KOmega-SST</option>
+                </select>
+            </div>
+            <br>
+            
+            <div class="input-data">
+                <label id="mesh">Ruta de la malla</label>
+                <input for="mesh" type="file"/>
+            </div>
+        </article>
+    </section>
+    <section id="secondContent">
+        <h1>Rellene los datos de los parámetros de simulación</h1>
+
+        <article class="balls-section">
+            <div id="zero-ball" class="ball"><p>1</p></div>
+            <div class="ball-separator"><hr></div>
+            <div id="constant-ball" class="ball"><p>2</p></div>            
+            <div class="ball-separator"><hr></div>
+            <div id="system-ball" class="ball"><p>3</p></div>
+            <div class="ball-separator"><hr></div>
+            <div id="generator-ball" class="ball"><p>4</p></div>
+        </article>
+
+        <article id="zero-inputs" class="data-container">
+            zero
+        </article>
+
+        <article id="constant-inputs" class="data-container">
+            constant
+        </article>
+
+        <article id="system-inputs" class="data-container">
+            system
+        </article>
+
+        <article id="generator-inputs" class="data-container">
+            generator
+        </article>
+        
+    </section>
+
+    <div class="buttons-container">
+        <button id="back-button" class="left-button buttons-style" onclick="pagination(false)">Atrás</button>
+        <button id="next-button" class="center-buttons buttons-style" onclick="pagination(true)">Siguiente</button>
+        <button id="generator-button" class="right-button buttons-style" onclick="pagination(true)">Generar ficheros</button>
+    </div> 
+    <!-- <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2> -->
+    <script src="linkers/interlinking.js"></script>
     <script src="linkers/linker.js"></script>
 </body>
 </html>

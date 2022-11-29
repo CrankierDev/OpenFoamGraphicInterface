@@ -1,12 +1,11 @@
 var { app, BrowserWindow } = require('electron');
-var { PythonShell } = require('python-shell');
 var path = require('path');
 
 var dirname = __dirname;
 
 function createWindow() {
     const window = new BrowserWindow({
-        width: 1200,
+        width: 800,
         height: 600,
         webPreferences: {
           preload: path.join(__dirname, 'preload.js'),
@@ -17,7 +16,10 @@ function createWindow() {
     });
 
     window.loadFile('index.html');
-    window.webContents.openDevTools();
+    // window.webContents.openDevTools();
+    require('electron-reload')(__dirname, {
+        electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
+      });
 }
 
 app.whenReady().then( () => {

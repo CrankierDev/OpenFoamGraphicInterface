@@ -1,3 +1,136 @@
+:root{
+    --ball-color: cyan;
+}
+
+h1 {
+    text-align: center;
+}
+
+#firstContent, #zero-inputs, #next-button {
+    display: block;
+}
+
+#secondContent, #constant-inputs, #system-inputs, #generator-inputs, #generator-button, #back-button {
+    display: none;
+}
+
 #resultsReady {
     display: none;
+}
+
+/*--------------------------------- BALLS STYLES ---------------------------------------------*/
+.balls-section {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.ball {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    border: solid;
+    border-width: 1px;
+    border-color: var(--ball-color);
+    text-align: center;
+    background-color: white;
+}
+
+.ball>p {
+    margin-top: 11px;
+}
+
+.active-ball {
+    background-color: var(--ball-color);
+}
+
+.ball-separator {
+    display: inline-block;
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    margin-left: -4px;
+    margin-right: -4px;
+}
+
+.ball-separator>hr {
+    width: 100%;
+    border: 0.5px solid var(--ball-color);
+    margin-bottom: 4px;
+}
+
+
+/*--------------------------------- INPUTS STYLES ---------------------------------------------*/
+.data-container {
+    border: solid;
+    border-radius: 20px;
+    border-width: 2px;
+    padding-top: 0;
+    padding-bottom: 25px;
+}
+
+.input-data {
+    display: inline-flex;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.input-data>label, .input-data>input, .input-data>select {
+    margin-top: 25px;
+    margin-bottom: 0;
+}
+
+.input-data>label {
+    width: 200px;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.input-data>input, .input-data>select {
+    width: 300px;
+    margin-left: 5px;
+    margin-right: auto;
+}
+
+/* .input-data>select {
+    width: 300px;
+    margin-left: 5px;
+    margin-right: auto;
+} */
+
+
+/*--------------------------------- BUTTONS STYLES ---------------------------------------------*/
+.buttons-container {
+    display: inline-flex;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+.center-buttons {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.right-button {
+    margin-left: 5px;
+    margin-right: auto;
+}
+
+.left-button {
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.buttons-style {
+    width: 14em;
+    background-color: white;
+    border-radius: 20px;
+    border-width: 2px;
+    cursor: pointer;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 0;
+    margin-bottom: 0;
 }
