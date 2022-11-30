@@ -46,8 +46,30 @@
             <div id="generator-ball" class="ball"><p>4</p></div>
         </article>
 
-        <article id="zero-inputs" class="data-container">
-            zero
+        <article id="zero-inputs">
+            <div class="main-zero">
+                <p class="input-label">Datos de velocidad</p>
+                <div class="data-container">
+                    <div class="input-data">
+                        <label id="flux-type">Tipo de flujo</label>
+                        <select for="flux-type" >
+                            <option>Uniforme</option>
+                            <option>Otro</option>
+                            <option>Otro mas</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label id="flux-velocity">Velocidad de flujo</label>
+                        <input for="flux-velocity" />
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label id="flux-aoa">Ángulo de ataque</label>
+                        <input for="flux-aoa" type="number"/>
+                    </div>
+                </div>
+            </div>
         </article>
 
         <article id="constant-inputs" class="data-container">
@@ -70,7 +92,8 @@
         <button id="generator-button" class="right-button buttons-style" onclick="pagination(true)">Generar ficheros</button>
     </div> 
     <!-- <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2> -->
-    <script src="linkers/interlinking.js"></script>
-    <script src="linkers/linker.js"></script>
+    <script src="frontend/interlinking.js"></script>
+    <script src="frontend/linker.js"></script>
+    <script src="frontend/common.js"></script>
 </body>
 </html>

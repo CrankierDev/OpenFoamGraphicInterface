@@ -87,17 +87,17 @@ h1 {
     margin-right: 5px;
 }
 
-.input-data>input, .input-data>select {
+.input-data>input {
     width: 300px;
     margin-left: 5px;
     margin-right: auto;
 }
 
-/* .input-data>select {
-    width: 300px;
-    margin-left: 5px;
+.input-data>select {
+    width: 308px;
+    margin-left: 4px;
     margin-right: auto;
-} */
+}
 
 
 /*--------------------------------- BUTTONS STYLES ---------------------------------------------*/

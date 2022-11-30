@@ -18,6 +18,9 @@ function secondPage() {
     document.getElementById("next-button").classList.remove('center-buttons');
     document.getElementById("next-button").classList.add('right-button');
     document.getElementById('back-button').style.display = "block";
+
+    //Linker function
+    fillZeroData();
 }
 
 function changeSection(actualContent, nextContent){
