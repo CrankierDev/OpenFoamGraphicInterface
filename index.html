@@ -18,11 +18,12 @@
             <br>
             
             <div class="input-data">
-                <label id="model">Modelo de turbulencias</label>
+                <label id="model">Solver</label>
                 <select for="model" >
-                    <option>Sin modelo</option>
-                    <option>Spalart-Allmaras</option>
-                    <option>KOmega-SST</option>
+                    <option>icoFoam</option>
+                    <option>simpleFoam</option>
+                    <option>pimpleFoam</option>
+                    <option>pisoFoam</option>
                 </select>
             </div>
             <br>
@@ -48,7 +49,7 @@
 
         <article id="zero-inputs">
             <div class="main-zero">
-                <p class="input-label">Datos de velocidad</p>
+                <p class="input-label">Datos del flujo</p>
                 <div class="data-container">
                     <div class="input-data">
                         <label id="flux-type">Tipo de flujo</label>
@@ -65,15 +66,54 @@
                     </div>
                     <br>
                     <div class="input-data">
-                        <label id="flux-aoa">Ángulo de ataque</label>
+                        <label id="flux-aoa">Ángulo de incidencia</label>
                         <input for="flux-aoa" type="number"/>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label id="flux-pressure">Presión del flujo</label>
+                        <input for="flux-pressure" type="number"/>
                     </div>
                 </div>
             </div>
+            <div id="boundary-conditions">
+                <p class="input-label">Condiciones de contorno</p>
+            </div>
         </article>
 
-        <article id="constant-inputs" class="data-container">
-            constant
+        <article id="constant-inputs">
+            <p class="input-label">Condiciones de simulación</p>
+            <div id="simulation-conditions" class="data-container">
+                <div class="input-data">
+                    <label id="turbulence-model">Tipo de flujo</label>
+                    <select for="turbulence-model" >
+                        <option>Spalart-Allmaras</option>
+                        <option>kOmega</option>
+                        <option>kOmegaSST</option>
+                        <option>kEpsilon</option>
+                    </select>
+                </div>
+            </div>
+            <p class="input-label">Condiciones de transporte</p>
+            <div id="transport-conditions" class="data-container">
+                <div class="input-data">
+                    <label id="turbulence-model">Tipo de flujo</label>
+                    <select for="turbulence-model" >
+                        <option>Newtoniano</option>
+                        <option>No newtoniano</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label id="flux-density">Densidad de flujo</label>
+                    <input for="flux-density" />
+                </div>
+                <br>
+                <div class="input-data">
+                    <label id="flux-viscosity">Viscosidad de flujo</label>
+                    <input for="flux-viscosity" />
+                </div>
+            </div>
         </article>
 
         <article id="system-inputs" class="data-container">

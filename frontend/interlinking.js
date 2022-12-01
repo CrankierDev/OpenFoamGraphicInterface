@@ -20,7 +20,7 @@ function secondPage() {
     document.getElementById('back-button').style.display = "block";
 
     //Linker function
-    fillZeroData();
+    fillFormsData();
 }
 
 function changeSection(actualContent, nextContent){

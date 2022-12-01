@@ -56,7 +56,7 @@ function execute(){
     console.log('script endded')
 }
 
-function fillZeroData() {
+function fillFormsData() {
     const boundaries = [
         {
             name: 'inlet',
@@ -86,33 +86,28 @@ function fillZeroData() {
         // First looks for the existence of the element to add
         if(!document.getElementById(`${boundary.name}-data`)){
             if( boundary.type === 'patch' ){
-                document.getElementById('zero-inputs').innerHTML += 
+                document.getElementById('boundary-conditions').innerHTML += 
                     `<div id="${boundary.name}-data" class="walls-zero">
                         <p class="input-title">${capitalize(boundary.name)}</p>
                         <div class="data-container">
                             <div class="input-data">
-                                <label id="inlet-type">Tipo</label>
+                                <label id="inlet-type">Condición</label>
                                 <select for="inlet-type" >
                                     <option>Valor fijo</option>
                                     <option>Gradiente nulo</option>
                                     <option>No-deslizamiento</option>
                                     <option>Vacío</option>
                                 </select>
-                            </div>
-                            <br>
-                            <div class="input-data">
-                                <label id="flux-velocity">Valor</label>
-                                <input for="flux-velocity" type="number"/>
                             </div>
                         </div>
                     </div>`;
             } else if( boundary.type === 'wall' ){
-                document.getElementById('zero-inputs').innerHTML += 
+                document.getElementById('boundary-conditions').innerHTML += 
                     `<div id="${boundary.name}-data" class="walls-zero">
                         <p class="input-title">${capitalize(boundary.name)}</p>
                         <div class="data-container">
                             <div class="input-data">
-                                <label id="inlet-type">Tipo</label>
+                                <label id="inlet-type">Condición</label>
                                 <select for="inlet-type" >
                                     <option>Valor fijo</option>
                                     <option>Gradiente nulo</option>
@@ -122,32 +117,30 @@ function fillZeroData() {
                             </div>
                             <br>
                             <div class="input-data">
-                                <label id="flux-velocity">Valor</label>
-                                <input for="flux-velocity" type="number"/>
+                                <label id="inlet-type">Funciones de pared</label>
+                                <select for="inlet-type" >
+                                    <option>Valor fijo</option>
+                                    <option>Gradiente nulo</option>
+                                </select>
                             </div>
                         </div>
                     </div>`;
             } else if( boundary.type === 'empty' ){
-                document.getElementById('zero-inputs').innerHTML += 
-                    `<div id="${boundary.name}-data" class="walls-zero">
-                        <p class="input-title">${capitalize(boundary.name)}</p>
-                        <div class="data-container">
-                            <div class="input-data">
-                                <label id="inlet-type">Tipo</label>
-                                <select for="inlet-type" >
-                                    <option>Valor fijo</option>
-                                    <option>Gradiente nulo</option>
-                                    <option>No-deslizamiento</option>
-                                    <option>Vacío</option>
-                                </select>
-                            </div>
-                            <br>
-                            <div class="input-data">
-                                <label id="flux-velocity">Valor</label>
-                                <input for="flux-velocity" type="number"/>
-                            </div>
-                        </div>
-                    </div>`;
+                // document.getElementById('boundary-conditions').innerHTML += 
+                //     `<div id="${boundary.name}-data" class="walls-zero">
+                //         <p class="input-title">${capitalize(boundary.name)}</p>
+                //         <div class="data-container">
+                //             <div class="input-data">
+                //                 <label id="inlet-type">Tipo</label>
+                //                 <select for="inlet-type" >
+                //                     <option>Valor fijo</option>
+                //                     <option>Gradiente nulo</option>
+                //                     <option>No-deslizamiento</option>
+                //                     <option>Vacío</option>
+                //                 </select>
+                //             </div>
+                //         </div>
+                //     </div>`;
             }
         }
     }
