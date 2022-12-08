@@ -18,17 +18,6 @@
             <br>
             
             <div class="input-data">
-                <label for="model">Solver</label>
-                <select id="model" >
-                    <option>icoFoam</option>
-                    <option>simpleFoam</option>
-                    <option>pimpleFoam</option>
-                    <option>pisoFoam</option>
-                </select>
-            </div>
-            <br>
-            
-            <div class="input-data">
                 <label for="mesh">Ruta de la malla</label>
                 <input id="mesh" type="file"/>
             </div>
@@ -42,9 +31,13 @@
             <div class="ball-separator"><hr></div>
             <div id="constant-ball" class="ball"><p>2</p></div>            
             <div class="ball-separator"><hr></div>
-            <div id="system-ball" class="ball"><p>3</p></div>
+            <div id="controlDict-ball" class="ball"><p>3</p></div>           
             <div class="ball-separator"><hr></div>
-            <div id="generator-ball" class="ball"><p>4</p></div>
+            <div id="fvSchemes-ball" class="ball"><p>4</p></div>           
+            <div class="ball-separator"><hr></div>
+            <div id="fvSolution-ball" class="ball"><p>5</p></div>
+            <div class="ball-separator"><hr></div>
+            <div id="generator-ball" class="ball"><p>6</p></div>
         </article>
 
         <article id="zero-inputs">
@@ -86,11 +79,12 @@
             <div id="flux-conditions" class="data-container">
                 <div class="input-data">
                     <label for="turbulence-model">Modelo de turbulencia</label>
-                    <select id="turbulence-model" >
-                        <option>Spalart-Allmaras</option>
-                        <option>kOmega</option>
-                        <option>kOmegaSST</option>
-                        <option>kEpsilon</option>
+                    <select id="turbulence-model" onchange="variablesSchemes(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="Spalart-Allmaras">Spalart-Allmaras</option>
+                        <option value="kOmega">kOmega</option>
+                        <option value="kOmegaSST">kOmegaSST</option>
+                        <option value="kEpsilon">kEpsilon</option>
                     </select>
                 </div>
             </div>
@@ -116,7 +110,7 @@
             </div>
         </article>
 
-        <article id="system-inputs">
+        <article id="controlDict-inputs">
             <p class="input-label">Condiciones de simulación</p>
             <div id="simulation-conditions" class="data-container">
                 <div class="input-data">
@@ -171,8 +165,103 @@
             <div id="forces-inputs"></div>
         </article>
 
-        <article id="generator-inputs" class="data-container">
-            generator
+        <article id="fvSchemes-inputs">
+            <p class="input-label">Esquemas predeterminados de la simulación</p>
+            <div class="data-container">
+                <div class="input-data">
+                    <label for="temporal-schema">Esquema temporal</label>
+                    <select id="temporal-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="steadyState">Estacionario</option>
+                        <option value="transitory">Transitorio</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="grad-schema">Esquema para los gradientes</label>
+                    <select id="grad-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="Linear">Lineal</option>
+                        <option value="gaussLinear">Gauss Lineal</option>
+                        <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
+                        <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="divergency-schema">Esquema para las divergencias</label>
+                    <select id="divergency-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="Linear">Lineal</option>
+                        <option value="gaussLinear">Gauss Lineal</option>
+                        <option value="gaussLinearBounded">Gauss Lineal limitado</option>
+                        <option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="laplacian-schema">Esquema para los laplacianos</label>
+                    <select id="laplacian-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="Linear">Lineal</option>
+                        <option value="gaussLinear">Gauss Lineal</option>
+                        <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
+                        <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="interpolacion-schema">Esquema de interpolación</label>
+                    <select id="interpolacion-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="linear">Lineal</option>
+                        <option value="gaussLinear">Gauss Lineal</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="secondGrad-schema">Gradientes de segundo orden</label>
+                    <select id="secondGrad-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="corrected">Corregido</option>
+                        <option value="orthogonal">Ortogonal</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="wall-schema">Distribución de pared</label>
+                    <select id="wall-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="meshWave">MeshWave</option>
+                        <option value="cubic">Cubic</option>
+                    </select>
+                </div>
+            </div>
+            <div id="fvSchemes-variables-inputs"></div>
+        </article>
+
+        <article id="fvSolution-inputs">
+            <p class="input-label">Parámetros de solución</p>
+            <div class="data-container">
+                <div class="input-data">
+                    <label for="solver">Solver</label>
+                    <select id="solver" onchange="solverVariables(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="icoFoam">icoFoam</option>
+                        <option value="simpleFoam">simpleFoam</option>
+                        <option value="pimpleFoam">pimpleFoam</option>
+                        <option value="pisoFoam">pisoFoam</option>
+                    </select>
+                </div>
+            </div>
+            <div id="fvSolution-variables-inputs"></div>
+        </article>
+
+        <article id="generator-inputs">
+            <p class="input-label">Generador</p>
+            <div class="data-container">
+                fill here
+            </div>
         </article>
         
     </section>

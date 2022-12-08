@@ -10,7 +10,7 @@ h1 {
     display: block;
 }
 
-#secondContent, #constant-inputs, #system-inputs, #generator-inputs, #generator-button, #back-button {
+#secondContent, #constant-inputs, #controlDict-inputs, #fvSchemes-inputs, #fvSolution-inputs, #generator-inputs, #generator-button, #back-button {
     display: none;
 }
 

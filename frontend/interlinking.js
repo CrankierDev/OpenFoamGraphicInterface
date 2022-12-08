@@ -47,25 +47,37 @@ function pagination(direction) {
         }
     } else if( activeId == 'constant-ball' ) {
         if (direction){
-            changeSection('constant', 'system');
+            changeSection('constant', 'controlDict');
         } else {
             changeSection('constant', 'zero');
         }
-    } else if( activeId == 'system-ball' ) {
+    } else if( activeId == 'controlDict-ball' ) {
         if (direction){
-            changeSection('system', 'generator');
+            changeSection('controlDict', 'fvSchemes');
+        } else {
+            changeSection('controlDict', 'constant');
+        }
+    } else if( activeId == 'fvSchemes-ball' ) {
+        if (direction){
+            changeSection('fvSchemes', 'fvSolution');
+        } else {
+            changeSection('fvSchemes', 'controlDict');
+        }
+    } else if( activeId == 'fvSolution-ball' ) {
+        if (direction){
+            changeSection('fvSolution', 'generator');
 
             document.getElementById('generator-button').style.display = "block";
             document.getElementById('next-button').style.display = "none";
         } else {
-            changeSection('system', 'constant');
+            changeSection('fvSolution', 'fvSchemes');
         }
     } else if( activeId == 'generator-ball' ) {
         if (direction){
             document.getElementById('generator-inputs').style.display = "none";
             firstPage();
         } else {
-            changeSection('generator', 'system');
+            changeSection('generator', 'fvSolution');
 
             document.getElementById('generator-button').style.display = "none";
             document.getElementById('next-button').style.display = "block";
