@@ -12,14 +12,14 @@
         <h1>Seleccione el tipo de simulación que desea ejecutar</h1>
         <article class="data-container">
             <div class="input-data">
-                <label id="workspace">Ruta de la simulacion</label>
-                <input for="workspace" type="file"/>
+                <label for="workspace">Ruta de la simulacion</label>
+                <input id="workspace" type="file"/>
             </div>
             <br>
             
             <div class="input-data">
-                <label id="model">Solver</label>
-                <select for="model" >
+                <label for="model">Solver</label>
+                <select id="model" >
                     <option>icoFoam</option>
                     <option>simpleFoam</option>
                     <option>pimpleFoam</option>
@@ -29,8 +29,8 @@
             <br>
             
             <div class="input-data">
-                <label id="mesh">Ruta de la malla</label>
-                <input for="mesh" type="file"/>
+                <label for="mesh">Ruta de la malla</label>
+                <input id="mesh" type="file"/>
             </div>
         </article>
     </section>
@@ -52,8 +52,8 @@
                 <p class="input-label">Datos del flujo</p>
                 <div class="data-container">
                     <div class="input-data">
-                        <label id="flux-type">Tipo de flujo</label>
-                        <select for="flux-type" >
+                        <label for="flux-type">Tipo de flujo</label>
+                        <select id="flux-type" >
                             <option>Uniforme</option>
                             <option>Otro</option>
                             <option>Otro mas</option>
@@ -61,18 +61,18 @@
                     </div>
                     <br>
                     <div class="input-data">
-                        <label id="flux-velocity">Velocidad de flujo</label>
-                        <input for="flux-velocity" />
+                        <label for="flux-velocity">Velocidad de flujo</label>
+                        <input id="flux-velocity" />
                     </div>
                     <br>
                     <div class="input-data">
-                        <label id="flux-aoa">Ángulo de incidencia</label>
-                        <input for="flux-aoa" type="number"/>
+                        <label for="flux-aoa">Ángulo de incidencia</label>
+                        <input id="flux-aoa" type="number"/>
                     </div>
                     <br>
                     <div class="input-data">
-                        <label id="flux-pressure">Presión del flujo</label>
-                        <input for="flux-pressure" type="number"/>
+                        <label for="flux-pressure">Presión del flujo</label>
+                        <input id="flux-pressure" type="number"/>
                     </div>
                 </div>
             </div>
@@ -82,11 +82,11 @@
         </article>
 
         <article id="constant-inputs">
-            <p class="input-label">Condiciones de simulación</p>
-            <div id="simulation-conditions" class="data-container">
+            <p class="input-label">Condiciones del flujo</p>
+            <div id="flux-conditions" class="data-container">
                 <div class="input-data">
-                    <label id="turbulence-model">Tipo de flujo</label>
-                    <select for="turbulence-model" >
+                    <label for="turbulence-model">Modelo de turbulencia</label>
+                    <select id="turbulence-model" >
                         <option>Spalart-Allmaras</option>
                         <option>kOmega</option>
                         <option>kOmegaSST</option>
@@ -97,27 +97,78 @@
             <p class="input-label">Condiciones de transporte</p>
             <div id="transport-conditions" class="data-container">
                 <div class="input-data">
-                    <label id="turbulence-model">Tipo de flujo</label>
-                    <select for="turbulence-model" >
+                    <label for="newtonian-type">Tipo de flujo</label>
+                    <select id="newtonian-type" >
                         <option>Newtoniano</option>
                         <option>No newtoniano</option>
                     </select>
                 </div>
                 <br>
                 <div class="input-data">
-                    <label id="flux-density">Densidad de flujo</label>
-                    <input for="flux-density" />
+                    <label for="flux-density">Densidad de flujo</label>
+                    <input id="flux-density" />
                 </div>
                 <br>
                 <div class="input-data">
-                    <label id="flux-viscosity">Viscosidad de flujo</label>
-                    <input for="flux-viscosity" />
+                    <label for="flux-viscosity">Viscosidad de flujo</label>
+                    <input id="flux-viscosity" />
                 </div>
             </div>
         </article>
 
-        <article id="system-inputs" class="data-container">
-            system
+        <article id="system-inputs">
+            <p class="input-label">Condiciones de simulación</p>
+            <div id="simulation-conditions" class="data-container">
+                <div class="input-data">
+                    <label for="simulation-begin">Inicio de la simulación</label>
+                    <select id="simulation-begin" onchange="startTime(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="startTime">Primera iteración</option>
+                        <option value="iterTime">Seleccionar una iteración</option>
+                        <option value="lastTime">Última iteración</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="simulation-end">Fin de la simulación</label>
+                    <select id="simulation-end" onchange="endTime(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="endTime">Seleccionar una iteración</option>
+                        <option value="lastTime">Fin de la simulación</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="simulation-deltat">Diferencial de tiempo</label>
+                    <input id="simulation-deltat" />
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="deltat-adjust">Ajustar el diferencial de tiempo</label>
+                    <input type="checkbox" id="deltat-adjust" />
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="save-data">Guardar datos de las iteraciones</label>
+                    <input type="checkbox" id="save-data" />
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="run-time-modifiable">Modificable en tiempo de ejecución</label>
+                    <input type="checkbox" id="run-time-modifiable" />
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="forces-data">Generar fuerzas</label>
+                    <input type="checkbox" id="forces-data" onchange="forces()"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="forcesCoeffs-data">Generar coeficientes de fuerzas</label>
+                    <input type="checkbox" id="forcesCoeffs-data" onchange="forces()"/>
+                </div>
+            </div>
+            <div id="forces-inputs"></div>
         </article>
 
         <article id="generator-inputs" class="data-container">
@@ -132,8 +183,11 @@
         <button id="generator-button" class="right-button buttons-style" onclick="pagination(true)">Generar ficheros</button>
     </div> 
     <!-- <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2> -->
+    
+    <!-- FrontEnd scripts-->
     <script src="frontend/interlinking.js"></script>
     <script src="frontend/linker.js"></script>
+    <script src="frontend/formatter.js"></script>
     <script src="frontend/common.js"></script>
 </body>
 </html>
