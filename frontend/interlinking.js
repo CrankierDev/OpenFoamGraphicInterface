@@ -68,6 +68,8 @@ function pagination(direction) {
             changeSection('fvSolution', 'generator');
 
             document.getElementById('generator-button').style.display = "block";
+            document.getElementById('generator2-button').style.display = "block";
+            document.getElementById('generator3-button').style.display = "block";
             document.getElementById('next-button').style.display = "none";
         } else {
             changeSection('fvSolution', 'fvSchemes');

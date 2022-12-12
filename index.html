@@ -13,13 +13,13 @@
         <article class="data-container">
             <div class="input-data">
                 <label for="workspace">Ruta de la simulacion</label>
-                <input id="workspace" type="file"/>
+                <input class="long-input" id="workspace" type="file"/>
             </div>
             <br>
             
             <div class="input-data">
                 <label for="mesh">Ruta de la malla</label>
-                <input id="mesh" type="file"/>
+                <input class="long-input" id="mesh" type="file"/>
             </div>
         </article>
     </section>
@@ -42,7 +42,7 @@
 
         <article id="zero-inputs">
             <div class="main-zero">
-                <p class="input-label">Datos del flujo</p>
+                <h2 class="input-label">Datos del flujo</h2>
                 <div class="data-container">
                     <div class="input-data">
                         <label for="flux-type">Tipo de flujo</label>
@@ -55,27 +55,27 @@
                     <br>
                     <div class="input-data">
                         <label for="flux-velocity">Velocidad de flujo</label>
-                        <input id="flux-velocity" />
+                        <input class="long-input" id="flux-velocity" />
                     </div>
                     <br>
                     <div class="input-data">
                         <label for="flux-aoa">Ángulo de incidencia</label>
-                        <input id="flux-aoa" type="number"/>
+                        <input class="long-input" id="flux-aoa" type="number"/>
                     </div>
                     <br>
                     <div class="input-data">
                         <label for="flux-pressure">Presión del flujo</label>
-                        <input id="flux-pressure" type="number"/>
+                        <input class="long-input" id="flux-pressure" type="number"/>
                     </div>
                 </div>
             </div>
             <div id="boundary-conditions">
-                <p class="input-label">Condiciones de contorno</p>
+                <h2 class="input-label">Condiciones de contorno</h2>
             </div>
         </article>
 
         <article id="constant-inputs">
-            <p class="input-label">Condiciones del flujo</p>
+            <h2 class="input-label">Condiciones del flujo</h2>
             <div id="flux-conditions" class="data-container">
                 <div class="input-data">
                     <label for="turbulence-model">Modelo de turbulencia</label>
@@ -88,7 +88,7 @@
                     </select>
                 </div>
             </div>
-            <p class="input-label">Condiciones de transporte</p>
+            <h2 class="input-label">Condiciones de transporte</h2>
             <div id="transport-conditions" class="data-container">
                 <div class="input-data">
                     <label for="newtonian-type">Tipo de flujo</label>
@@ -100,18 +100,18 @@
                 <br>
                 <div class="input-data">
                     <label for="flux-density">Densidad de flujo</label>
-                    <input id="flux-density" />
+                    <input class="long-input" id="flux-density" />
                 </div>
                 <br>
                 <div class="input-data">
                     <label for="flux-viscosity">Viscosidad de flujo</label>
-                    <input id="flux-viscosity" />
+                    <input class="long-input" id="flux-viscosity" />
                 </div>
             </div>
         </article>
 
         <article id="controlDict-inputs">
-            <p class="input-label">Condiciones de simulación</p>
+            <h2 class="input-label">Condiciones de simulación</h2>
             <div id="simulation-conditions" class="data-container">
                 <div class="input-data">
                     <label for="simulation-begin">Inicio de la simulación</label>
@@ -134,39 +134,41 @@
                 <br>
                 <div class="input-data">
                     <label for="simulation-deltat">Diferencial de tiempo</label>
-                    <input id="simulation-deltat" />
+                    <input class="long-input" id="simulation-deltat" />
                 </div>
                 <br>
                 <div class="input-data">
-                    <label for="deltat-adjust">Ajustar el diferencial de tiempo</label>
-                    <input type="checkbox" id="deltat-adjust" />
+                    <label for="deltat-adjust" class="checkbox-label">Ajustar el diferencial de tiempo</label>
+                    <input type="checkbox" id="deltat-adjust" class="checkbox"/>
                 </div>
                 <br>
                 <div class="input-data">
-                    <label for="save-data">Guardar datos de las iteraciones</label>
-                    <input type="checkbox" id="save-data" />
+                    <label for="save-data" class="checkbox-label">Guardar datos de las iteraciones</label>
+                    <input type="checkbox" id="save-data" class="checkbox"/>
                 </div>
                 <br>
                 <div class="input-data">
-                    <label for="run-time-modifiable">Modificable en tiempo de ejecución</label>
-                    <input type="checkbox" id="run-time-modifiable" />
+                    <label for="run-time-modifiable" class="checkbox-label">Modificable en tiempo de ejecución</label>
+                    <input type="checkbox" id="run-time-modifiable" class="checkbox"/>
                 </div>
                 <br>
                 <div class="input-data">
-                    <label for="forces-data">Generar fuerzas</label>
-                    <input type="checkbox" id="forces-data" onchange="forces()"/>
+                    <label for="forces-data" class="checkbox-label">Generar fuerzas</label>
+                    <input type="checkbox" id="forces-data"
+                        class="checkbox" onchange="forces()"/>
                 </div>
                 <br>
                 <div class="input-data">
-                    <label for="forcesCoeffs-data">Generar coeficientes de fuerzas</label>
-                    <input type="checkbox" id="forcesCoeffs-data" onchange="forces()"/>
+                    <label for="forcesCoeffs-data" class="checkbox-label">Generar coeficientes de fuerzas</label>
+                    <input type="checkbox" id="forcesCoeffs-data"
+                        class="checkbox" onchange="forces()"/>
                 </div>
             </div>
             <div id="forces-inputs"></div>
         </article>
 
         <article id="fvSchemes-inputs">
-            <p class="input-label">Esquemas predeterminados de la simulación</p>
+            <h2 class="input-label">Esquemas predeterminados de la simulación</h2>
             <div class="data-container">
                 <div class="input-data">
                     <label for="temporal-schema">Esquema temporal</label>
@@ -241,7 +243,7 @@
         </article>
 
         <article id="fvSolution-inputs">
-            <p class="input-label">Parámetros de solución</p>
+            <p class="input-label">Parámetros de solución</h2>
             <div class="data-container">
                 <div class="input-data">
                     <label for="solver">Solver</label>
@@ -255,25 +257,37 @@
                 </div>
             </div>
             <div id="fvSolution-variables-inputs"></div>
+            <div id="fvSolution-solver-inputs"></div>
+            <div id="fvSolution-relaxationFactors-inputs"></div>
         </article>
 
         <article id="generator-inputs">
-            <p class="input-label">Generador</p>
-            <div class="data-container">
-                fill here
+            <!-- <p class="input-label">Generador</p> -->
+            <div class="data-container generator-container">
+                <div class="generator">
+                    <p>¿Desea generar los ficheros en la ruta indicada?</p>
+                    <button id="generator2-button" class="buttons-style center-buttons generator-button" onclick="pagination(true)">Generar ficheros</button>
+                </div>
+                <div id="executioner" class="executioner">
+                    <p>
+                        Su sistema operativo permite realizar la ejecución de la simulación desde esta aplicación
+                        ¿Desea ejecutar la simulación?
+                    </p>
+                    <button id="generator3-button" class="buttons-style center-buttons generator-button" onclick="pagination(true)">Ejecutar simulación</button>
+                </div>
             </div>
         </article>
         
     </section>
 
     <div class="buttons-container">
-        <button id="back-button" class="left-button buttons-style" onclick="pagination(false)">Atrás</button>
-        <button id="next-button" class="center-buttons buttons-style" onclick="pagination(true)">Siguiente</button>
-        <button id="generator-button" class="right-button buttons-style" onclick="pagination(true)">Generar ficheros</button>
+        <button id="back-button" class="left-button buttons-style back-button" onclick="pagination(false)">Atrás</button>
+        <button id="next-button" class="center-buttons buttons-style next-button" onclick="pagination(true)">Siguiente</button>
+        <button id="generator-button" class="right-button buttons-style generator-button" onclick="pagination(true)">Generar ficheros</button>
     </div> 
     <!-- <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2> -->
     
-    <!-- FrontEnd scripts-->
+    <!-- FrontEnd scripts -->
     <script src="frontend/interlinking.js"></script>
     <script src="frontend/linker.js"></script>
     <script src="frontend/formatter.js"></script>

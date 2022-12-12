@@ -30,7 +30,7 @@ function fillFormsData() {
             if( boundary.type === 'patch' ) {
                 document.getElementById('boundary-conditions').innerHTML += 
                     `<div id="${boundary.name}-data" class="walls-zero">
-                        <p class="input-title">${capitalize(boundary.name)}</p>
+                        <h3 class="input-title">${capitalize(boundary.name)}</h3>
                         <div class="data-container">
                             <div class="input-data">
                                 <label for="inlet-type">Condición</label>
@@ -46,7 +46,7 @@ function fillFormsData() {
             } else if( boundary.type === 'wall' ) {
                 document.getElementById('boundary-conditions').innerHTML += 
                     `<div id="${boundary.name}-data" class="walls-zero">
-                        <p class="input-title">${capitalize(boundary.name)}</p>
+                        <h3 class="input-title">${capitalize(boundary.name)}</h3>
                         <div class="data-container">
                             <div class="input-data">
                                 <label for="inlet-type">Condición</label>
@@ -70,7 +70,7 @@ function fillFormsData() {
             } else if( boundary.type === 'empty' ) {
                 // document.getElementById('boundary-conditions').innerHTML += 
                 //     `<div id="${boundary.name}-data" class="walls-zero">
-                //         <p class="input-title">${capitalize(boundary.name)}</p>
+                //         <h3 class="input-title">${capitalize(boundary.name)}</h3>
                 //         <div class="data-container">
                 //             <div class="input-data">
                 //                 <label for="inlet-type">Tipo</label>
@@ -103,21 +103,27 @@ function forces() {
 
     if ((forces || coeffs) && inputsOn.innerHTML == '') {
         inputsOn.innerHTML += 
-            `<p class="input-title">Datos para el cálculo de fuerzas</p>
+            `<h3 class="input-title">Datos para el cálculo de fuerzas</h3>
             <div class="data-container">
                 <div class="input-data">
                     <label for="rhoInf-data">Densidad aguas arriba</label>
-                    <input type="text" id="rhoInf-data"/>
+                    <input class="short-input" type="text" id="rhoInf-data"/>
                 </div>
                 <br>
-                <p>Centro de rotación (m)</p>
-                <div class="input-data">
-                    <label for="CofRX-data">Eje X</label>
-                    <input type="text" id="CofRX-data"/>
-                    <label for="CofRY-data">Eje Y</label>
-                    <input type="text" id="CofRY-data"/>
-                    <label for="CofRZ-data">Eje Z</label>
-                    <input type="text" id="CofRZ-data"/>
+                <label>Centro de rotación (m)</label>
+                <div class="axis-data">
+                    <div>
+                        <label for="CofRX-data" class="axis-label">Eje X</label>
+                        <input class="axis-input" type="text" id="CofRX-data"/>
+                    </div>
+                    <div>
+                        <label for="CofRY-data" class="axis-label">Eje Y</label>
+                        <input class="axis-input" type="text" id="CofRY-data"/>
+                    </div>
+                    <div>
+                        <label for="CofRZ-data" class="axis-label">Eje Z</label>
+                        <input class="axis-input" type="text" id="CofRZ-data"/>
+                    </div>
                 </div>
                 <div id="forces-extra-inputs"></div>
             </div>`;
@@ -134,7 +140,7 @@ function forces() {
                 <option value="Z">Eje Z</option>
                 <option value="unitVector">Definir vector</option>
             </select>
-            <div id="lift-vector" class="input-data"></div>
+            <div id="lift-vector" class="axis-data"></div>
             <br>
             <label>Direccion vector unitario de resistencia aerodinámica</label>
             <select id="drag-option" onchange="vectorDirections('drag', value)">
@@ -143,7 +149,7 @@ function forces() {
                 <option value="Z">Eje Z</option>
                 <option value="unitVector">Definir vector</option>
             </select>
-            <div id="drag-vector" class="input-data"></div>
+            <div id="drag-vector" class="axis-data"></div>
             <br>
             <label>Direccion vector unitario de eje de cabeceo</label>
             <select id="pitch-option" onchange="vectorDirections('pitch', value)">
@@ -152,21 +158,21 @@ function forces() {
                 <option value="Z">Eje Z</option>
                 <option value="unitVector">Definir vector</option>
             </select>
-            <div id="pitch-vector" class="input-data"></div>
+            <div id="pitch-vector" class="axis-data"></div>
             <br>
             <div class="input-data">
                 <label for="rhoInf-data">Velocidad de flujo sin perturbar</label>
-                <input type="text" id="rhoInf-data"/>
+                <input class="short-input" type="text" id="rhoInf-data"/>
             </div>
             <br>
             <div class="input-data">
                 <label for="rhoInf-data">Longitud de referencia</label>
-                <input type="text" id="rhoInf-data"/>
+                <input class="short-input" type="text" id="rhoInf-data"/>
             </div>
             <br>
             <div class="input-data">
                 <label for="rhoInf-data">Área de referencia</label>
-                <input type="text" id="rhoInf-data"/>
+                <input class="short-input" type="text" id="rhoInf-data"/>
             </div>
             `;
     } else if (!coeffs){
@@ -183,12 +189,18 @@ function vectorDirections(vectorName, value) {
 
     if (value === 'unitVector') {
         vector.innerHTML = `
-            <label for="${vectorName}X-data">Eje X</label>
-            <input type="text" id="${vectorName}X-data"/>
-            <label for="${vectorName}Y-data">Eje Y</label>
-            <input type="text" id="${vectorName}Y-data"/>
-            <label for="${vectorName}Z-data">Eje Z</label>
-            <input type="text" id="${vectorName}Z-data"/>`;
+            <div>
+                <label for="${vectorName}X-data">Eje X</label>
+                <input class="axis-input" type="text" id="${vectorName}X-data"/>
+            </div>
+            <div>
+                <label for="${vectorName}Y-data">Eje Y</label>
+                <input class="axis-input" type="text" id="${vectorName}Y-data"/>
+            </div>
+            <div>
+                <label for="${vectorName}Z-data">Eje Z</label>
+                <input class="axis-input" type="text" id="${vectorName}Z-data"/>
+            </div>`;
     } else {
         vector.innerHTML = '';
     }
@@ -250,7 +262,7 @@ function variablesSchemes(turbulenceModel) {
                             </select>
                         </div>
                         <br>`;
-                    }
+                }
                     
                 if ( variable.schemes.indexOf('div') != -1 ) {
                     newHTML += `
@@ -331,11 +343,15 @@ function variablesSchemes(turbulenceModel) {
 function solverVariables(solver){
     // TODO: We have to look for turbulenceModel needs at python. 
     let variables = [];
-    let solverInputs = document.getElementById("fvSolution-variables-inputs");
-    const variablesInputs = document.getElementById("turbulence-model");
-    console.log('variablesInputs', variablesInputs);
+    let variablesInputs = document.getElementById("fvSolution-variables-inputs");
+    let solverInputs = document.getElementById("fvSolution-solver-inputs");
+    let relaxationInputs = document.getElementById("fvSolution-relaxationFactors-inputs");
+    const turbulenceModel = document.getElementById("turbulence-model");
+    console.log('turbulenceModel', turbulenceModel);
 
+    if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
     if (solverInputs.innerHTML != '') solverInputs.innerHTML = '';
+    if (relaxationInputs.innerHTML != '') relaxationInputs.innerHTML = '';
 
     if (solver !== 'default') {
         variables = [
@@ -364,95 +380,171 @@ function solverVariables(solver){
                 schemes: ['grad', 'div']
             }
         ]
-    } 
+    }
 
     if(variables.length > 0) {
-        for ( let variable of variables ) {
-            let newHTML = `
-                <p class="input-label">Parámetros para el solver de ${variable.name.toLowerCase()}</p>
-                <div class="data-container">`;
-            
-            if ( variable.type === 'symmetric' ) {
-                newHTML += `
-                    <div class="input-data">
-                        <label for="${variable.variable}-solver-schema">Solver</label>
-                        <select id="${variable.variable}-solver-schema"> <!-- onchange="startTime(value)" -->
-                            <option value="default">Seleccione...</option>
-                            <option value="PCG">PCG</option>
-                            <option value="PBiCG">PBiCG</option>
-                            <option value="PBiCGStab">PBiCGStab</option>
-                            <option value="GAMG">GAMG</option>
-                        </select>
-                    </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
-                        <select id="${variable.variable}-preconditioner-schema"> <!-- onchange="startTime(value)" -->
-                            <option value="default">Seleccione...</option>
-                            <option value="DIC">DIC</option>
-                        </select>
-                    </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-tolerance-data">Tolerancia</label>
-                        <input type="text" id="${variable.variable}-tolerance-data"/>
-                    </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
-                        <input type="text" id="${variable.variable}-relTol-data"/>
-                    </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-smoother-data">Tolerancia</label>
-                        <input type="text" id="${variable.variable}-smoother-data"/>
-                    </div>
-                    <br>`;
-            } else if ( variable.type === 'asymmetric' ) {
-                newHTML += `
-                    <div class="input-data">
-                        <label for="${variable.variable}-solver-schema">Solver</label>
-                        <select id="${variable.variable}-solver-schema"> <!-- onchange="startTime(value)" -->
-                            <option value="default">Seleccione...</option>
-                            <option value="PCG">PCG</option>
-                            <option value="PBiCGStab">PBiCGStab</option>
-                            <option value="GAMG">GAMG</option>
-                        </select>
-                    </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
-                        <select id="${variable.variable}-preconditioner-schema"> <!-- onchange="startTime(value)" -->
-                            <option value="default">Seleccione...</option>
-                            <option value="DILU">DILU</option>
-                        </select>
-                    </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-sweeps-data">nSweeps</label>
-                        <input type="text" id="${variable.variable}-sweeps-data"/>
-                    </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-tolerance-data">Tolerancia</label>
-                        <input type="text" id="${variable.variable}-tolerance-data"/>
-                    </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
-                        <input type="text" id="${variable.variable}-relTol-data"/>
-                    </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-smoother-data">Tolerancia</label>
-                        <input type="text" id="${variable.variable}-smoother-data"/>
-                    </div>
-                    <br>`;
-            }
-                
-            newHTML += '</div>';
-
-            solverInputs.innerHTML += newHTML;
-        }
+        solverVariablesData(variablesInputs, variables);
+        solverData(solver, solverInputs, variables);
+        residualControl(solverInputs, variables);
+        relaxationData(relaxationInputs, variables);
     }
 }
+
+function solverVariablesData(variablesInputs, variables) {
+    let newHTML = '';
+    for ( let variable of variables ) {
+        newHTML = `
+            <p class="input-label">Parámetros para el solver de ${variable.name.toLowerCase()}</p>
+            <div class="data-container">`;
+        
+        if ( variable.type === 'symmetric' ) {
+            newHTML += `
+                <div class="input-data">
+                    <label for="${variable.variable}-solver-schema">Solver</label>
+                    <select id="${variable.variable}-solver-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="PCG">PCG</option>
+                        <option value="PBiCG">PBiCG</option>
+                        <option value="PBiCGStab">PBiCGStab</option>
+                        <option value="GAMG">GAMG</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
+                    <select id="${variable.variable}-preconditioner-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="DIC">DIC</option>
+                        <option value="symGaussSeidel">Gauss-Seidel</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="${variable.variable}-tolerance-data">Tolerancia</label>
+                    <input class="long-input" type="text" id="${variable.variable}-tolerance-data"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
+                    <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="${variable.variable}-smoother-data">Tolerancia</label>
+                    <input class="long-input" type="text" id="${variable.variable}-smoother-data"/>
+                </div>
+                <br>`;
+        } else if ( variable.type === 'asymmetric' ) {
+            newHTML += `
+                <div class="input-data">
+                    <label for="${variable.variable}-solver-schema">Solver</label>
+                    <select id="${variable.variable}-solver-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="smoothSolver">smoothSolver</option>
+                        <option value="PCG">PCG</option>
+                        <option value="PBiCGStab">PBiCGStab</option>
+                        <option value="GAMG">GAMG</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
+                    <select id="${variable.variable}-preconditioner-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="DILU">DILU</option>
+                        <option value="GaussSeidel">Gauss-Seidel</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="${variable.variable}-sweeps-data">nSweeps</label>
+                    <input class="long-input" type="text" id="${variable.variable}-sweeps-data"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="${variable.variable}-tolerance-data">Tolerancia</label>
+                    <input class="long-input" type="text" id="${variable.variable}-tolerance-data"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
+                    <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="${variable.variable}-smoother-data">Tolerancia</label>
+                    <input class="long-input" type="text" id="${variable.variable}-smoother-data"/>
+                </div>
+                <br>`;
+        }
+            
+        newHTML += '</div>';
+        variablesInputs.innerHTML += newHTML;
+    }
+}
+
+function solverData(solver, solverInputs, variables){
+    let newHTML = '';
+    if(solver === 'simpleFoam') {
+        newHTML = `
+            <p class="input-label">SIMPLE</p>
+            <div class="data-container">
+                <div class="input-data">
+                    <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
+                    <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="consistent">Consistencia</label>
+                    <select id="consistent">
+                        <option value="yes">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>`;
+    }
+    
+    solverInputs.innerHTML += newHTML;
+}
+
+function residualControl(solverInputs, variables) {
+    let newHTML = `
+        <p class="input-label">Control residual</p>
+        <div class="data-container">`;
+
+    for( let variable of variables ){
+        newHTML += `
+            <div class="input-data">
+                <label for="${variable.variable}-residual-control">${variable.name}</label>
+                <input class="long-input" id="${variable.variable}-residual-control"/>
+            </div>
+            <br>`;
+    }
+
+    newHTML += '</div>';
+    solverInputs.innerHTML += newHTML;
+}
+
+function relaxationData(relaxationInputs, variables) {
+    let newHTML = `
+        <p class="input-label">Factores de relajación</p>
+        <div class="data-container">
+            <div class="input-data">
+                <label for="general-relaxation">General</label>
+                <input class="long-input" id="general-relaxation"/>
+            </div>
+            <br>`;
+    
+    for ( let variable of variables ) {
+        newHTML += `
+            <div class="input-data">
+                <label for="${variable.variable}-relaxation">${variable.name}</label>
+                <input class="long-input" id="${variable.variable}-relaxation"/>
+            </div>
+            <br>`;    
+    }
+
+    newHTML += '</div>';
+    relaxationInputs.innerHTML += newHTML;
+}
+

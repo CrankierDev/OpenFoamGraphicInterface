@@ -1,9 +1,18 @@
 :root{
     --ball-color: cyan;
+    --bg-section-color: rgb(221, 221, 221);
+    --bg-next-button: rgb(0, 102, 255);
+    --bg-back-button: rgb(255, 115, 0);
+    --secondary-text-color: white;
 }
 
 h1 {
     text-align: center;
+}
+
+h2 {
+    padding-left: 4rem;
+    padding-bottom: 1rem;
 }
 
 #firstContent, #zero-inputs, #next-button {
@@ -22,7 +31,7 @@ h1 {
 .balls-section {
     width: 100%;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 0;
 }
 
 .ball {
@@ -32,7 +41,7 @@ h1 {
     border-radius: 40px;
     border: solid;
     border-width: 1px;
-    border-color: var(--ball-color);
+    border-color: var(--bg-back-button);
     text-align: center;
     background-color: white;
 }
@@ -42,7 +51,12 @@ h1 {
 }
 
 .active-ball {
-    background-color: var(--ball-color);
+    background-color: var(--bg-next-button);
+    border-color: var(--bg-next-button);
+}
+
+.active-ball>p {
+    color: var(--secondary-text-color);
 }
 
 .ball-separator {
@@ -56,18 +70,27 @@ h1 {
 
 .ball-separator>hr {
     width: 100%;
-    border: 0.5px solid var(--ball-color);
+    border: 0.5px solid var(--bg-back-button);
     margin-bottom: 4px;
 }
 
 
 /*--------------------------------- INPUTS STYLES ---------------------------------------------*/
 .data-container {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 0.5em;
+    background-color: var(--bg-section-color);
     border: solid;
     border-radius: 20px;
-    border-width: 2px;
+    border-width: 0;
     padding-top: 0;
     padding-bottom: 25px;
+}
+
+.input-label, .input-title {
+    width: 80%;
+    margin: 0 auto;
 }
 
 .input-data {
@@ -76,7 +99,7 @@ h1 {
     margin-bottom: 0;
 }
 
-.input-data>label, .input-data>input, .input-data>select {
+.input-data>label, .input-data>select, .input-data>input {
     margin-top: 25px;
     margin-bottom: 0;
 }
@@ -87,11 +110,24 @@ h1 {
     margin-right: 5px;
 }
 
-.input-data>input {
+.input-data>.checkbox-label {
+    width: 480px;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.input-data>.long-input {
     width: 300px;
     margin-left: 5px;
     margin-right: auto;
 }
+
+.input-data>.short-input {
+    width: 200px;
+    margin-left: 5px;
+    margin-right: auto;
+}
+
 
 .input-data>select {
     width: 308px;
@@ -99,6 +135,33 @@ h1 {
     margin-right: auto;
 }
 
+.input-data>.checkbox {
+    width: 30px;
+    margin-left: px;
+    margin-right: auto;
+}
+
+.axis-data {
+    display: inline-flex;
+    width: 100%;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0 0em;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.axis-data>div>.axis-label {
+    width: 100px;
+    margin-left: 5px;
+    margin-right: 0;
+}
+
+.axis-data>div>.axis-input {
+    width: 100px;
+    margin-left: 0;
+    margin-right: 5px;
+}
 
 /*--------------------------------- BUTTONS STYLES ---------------------------------------------*/
 .buttons-container {
@@ -125,12 +188,38 @@ h1 {
 
 .buttons-style {
     width: 14em;
-    background-color: white;
     border-radius: 20px;
-    border-width: 2px;
+    border-width: 0;
     cursor: pointer;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-top: 0;
     margin-bottom: 0;
+    font-weight: bold;
+}
+
+.next-button {
+    background-color: var(--bg-next-button);
+    color: var(--secondary-text-color);
+}
+
+.generator-button {
+    background-color: var(--bg-next-button);
+    color: var(--secondary-text-color);
+}
+
+.back-button {
+    background-color: var(--bg-back-button);
+}
+
+/*--------------------------------- BUTTONS STYLES ---------------------------------------------*/
+.generator-container {
+    display: grid;
+    width: 100%;
+    justify-content: center;
+}
+
+.generator, .executioner {
+    width: 100%;
+    margin: 0 auto;
 }
