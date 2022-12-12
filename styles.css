@@ -19,7 +19,11 @@ h2 {
     display: block;
 }
 
-#secondContent, #constant-inputs, #controlDict-inputs, #fvSchemes-inputs, #fvSolution-inputs, #generator-inputs, #generator-button, #back-button {
+#secondContent, #constant-inputs, #controlDict-inputs, #fvSchemes-inputs, #fvSolution-inputs {
+    display: none;
+}
+
+#generator-inputs, #generator-button, #back-button, #lift-vector, #drag-vector, #pitch-vector {
     display: none;
 }
 
@@ -99,13 +103,25 @@ h2 {
     margin-bottom: 0;
 }
 
-.input-data>label, .input-data>select, .input-data>input {
-    margin-top: 25px;
+.input-data>label, .input-data>select, .input-data>input , .input-data>p {
+    margin-top: 20px;
     margin-bottom: 0;
 }
 
 .input-data>label {
     width: 200px;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.input-data>p {
+    width: 200px;
+    margin-left: 50px;
+    margin-right: auto;
+}
+
+.input-data>.long-label {
+    width: 350px;
     margin-left: auto;
     margin-right: 5px;
 }
@@ -123,11 +139,10 @@ h2 {
 }
 
 .input-data>.short-input {
-    width: 200px;
+    width: 100px;
     margin-left: 5px;
     margin-right: auto;
 }
-
 
 .input-data>select {
     width: 308px;
@@ -135,9 +150,15 @@ h2 {
     margin-right: auto;
 }
 
+.input-data>.short-selector {
+    width: 108px;
+    margin-left: 4px;
+    margin-right: auto;
+}
+
 .input-data>.checkbox {
     width: 30px;
-    margin-left: px;
+    margin-left: 0;
     margin-right: auto;
 }
 

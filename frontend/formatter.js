@@ -106,11 +106,8 @@ function forces() {
             `<h3 class="input-title">Datos para el cálculo de fuerzas</h3>
             <div class="data-container">
                 <div class="input-data">
-                    <label for="rhoInf-data">Densidad aguas arriba</label>
-                    <input class="short-input" type="text" id="rhoInf-data"/>
+                    <p>Centro de rotación (m)</p>
                 </div>
-                <br>
-                <label>Centro de rotación (m)</label>
                 <div class="axis-data">
                     <div>
                         <label for="CofRX-data" class="axis-label">Eje X</label>
@@ -125,6 +122,10 @@ function forces() {
                         <input class="axis-input" type="text" id="CofRZ-data"/>
                     </div>
                 </div>
+                <div class="input-data">
+                    <label for="rhoInf-data" class="long-label">Densidad aguas arriba</label>
+                    <input class="short-input" type="text" id="rhoInf-data"/>
+                </div>
                 <div id="forces-extra-inputs"></div>
             </div>`;
     } 
@@ -133,45 +134,46 @@ function forces() {
 
     if(coeffs && extraInputs.innerHTML == ''){ 
         extraInputs.innerHTML +=
-            `<label>Direccion vector unitario de sustentación</label>
-            <select id="lift-option" onchange="vectorDirections('lift', value)">
-                <option value="X">Eje X</option>
-                <option value="Y">Eje Y</option>
-                <option value="Z">Eje Z</option>
-                <option value="unitVector">Definir vector</option>
-            </select>
+            `<div class="input-data">
+                <label class="long-label">Direccion vector unitario de sustentación</label>
+                <select id="lift-option" class="short-selector" onchange="vectorDirections('lift', value)">
+                    <option value="X">Eje X</option>
+                    <option value="Y">Eje Y</option>
+                    <option value="Z">Eje Z</option>
+                    <option value="unitVector">Definir vector</option>
+                </select>
+            </div>
             <div id="lift-vector" class="axis-data"></div>
-            <br>
-            <label>Direccion vector unitario de resistencia aerodinámica</label>
-            <select id="drag-option" onchange="vectorDirections('drag', value)">
-                <option value="X">Eje X</option>
-                <option value="Y">Eje Y</option>
-                <option value="Z">Eje Z</option>
-                <option value="unitVector">Definir vector</option>
-            </select>
+            <div class="input-data">
+                <label class="long-label">Direccion vector unitario de resistencia aerodinámica</label>
+                <select id="drag-option" class="short-selector" onchange="vectorDirections('drag', value)">
+                    <option value="X">Eje X</option>
+                    <option value="Y">Eje Y</option>
+                    <option value="Z">Eje Z</option>
+                    <option value="unitVector">Definir vector</option>
+                </select>
+            </div>
             <div id="drag-vector" class="axis-data"></div>
-            <br>
-            <label>Direccion vector unitario de eje de cabeceo</label>
-            <select id="pitch-option" onchange="vectorDirections('pitch', value)">
-                <option value="X">Eje X</option>
-                <option value="Y">Eje Y</option>
-                <option value="Z">Eje Z</option>
-                <option value="unitVector">Definir vector</option>
-            </select>
+            <div class="input-data">
+                <label class="long-label">Direccion vector unitario de eje de cabeceo</label>
+                <select id="pitch-option" class="short-selector" onchange="vectorDirections('pitch', value)">
+                    <option value="X">Eje X</option>
+                    <option value="Y">Eje Y</option>
+                    <option value="Z">Eje Z</option>
+                    <option value="unitVector">Definir vector</option>
+                </select>
+            </div>
             <div id="pitch-vector" class="axis-data"></div>
-            <br>
             <div class="input-data">
-                <label for="rhoInf-data">Velocidad de flujo sin perturbar</label>
+                <label for="rhoInf-data" class="long-label">Velocidad de flujo sin perturbar</label>
                 <input class="short-input" type="text" id="rhoInf-data"/>
             </div>
-            <br>
             <div class="input-data">
-                <label for="rhoInf-data">Longitud de referencia</label>
+                <label for="rhoInf-data" class="long-label">Longitud de referencia</label>
                 <input class="short-input" type="text" id="rhoInf-data"/>
             </div>
-            <br>
             <div class="input-data">
-                <label for="rhoInf-data">Área de referencia</label>
+                <label for="rhoInf-data" class="long-label">Área de referencia</label>
                 <input class="short-input" type="text" id="rhoInf-data"/>
             </div>
             `;
@@ -188,6 +190,7 @@ function vectorDirections(vectorName, value) {
     let vector = document.getElementById(`${vectorName}-vector`);
 
     if (value === 'unitVector') {
+        vector.style.display = "inline-flex";
         vector.innerHTML = `
             <div>
                 <label for="${vectorName}X-data">Eje X</label>
@@ -202,6 +205,7 @@ function vectorDirections(vectorName, value) {
                 <input class="axis-input" type="text" id="${vectorName}Z-data"/>
             </div>`;
     } else {
+        vector.style.display = "none";
         vector.innerHTML = '';
     }
 }
@@ -254,7 +258,7 @@ function variablesSchemes(turbulenceModel) {
                         <div class="input-data">
                             <label for="grad-schema">Esquema para los gradientes</label>
                             <select id="grad-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Seleccione...</option>
+                                <option value="default">Predeterminado</option>
                                 <option value="Linear">Lineal</option>
                                 <option value="gaussLinear">Gauss Lineal</option>
                                 <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
@@ -269,7 +273,7 @@ function variablesSchemes(turbulenceModel) {
                         <div class="input-data">
                             <label for="divergency-schema">Esquema para las divergencias</label>
                             <select id="divergency-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Seleccione...</option>
+                                <option value="default">Predeterminado</option>
                                 <option value="Linear">Lineal</option>
                                 <option value="gaussLinear">Gauss Lineal</option>
                                 <option value="gaussLinearBounded">Gauss Lineal limitado</option>
@@ -284,7 +288,7 @@ function variablesSchemes(turbulenceModel) {
                         <div class="input-data">
                             <label for="laplacian-schema">Esquema para los laplacianos</label>
                             <select id="laplacian-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Seleccione...</option>
+                                <option value="default">Predeterminado</option>
                                 <option value="Linear">Lineal</option>
                                 <option value="gaussLinear">Gauss Lineal</option>
                                 <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
@@ -299,7 +303,7 @@ function variablesSchemes(turbulenceModel) {
                         <div class="input-data">
                             <label for="interpolation-schema">Esquema de interpolación</label>
                             <select id="interpolation-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Seleccione...</option>
+                                <option value="default">Predeterminado</option>
                                 <option value="linear">Lineal</option>
                                 <option value="gaussLinear">Gauss Lineal</option>
                             </select>
@@ -312,7 +316,7 @@ function variablesSchemes(turbulenceModel) {
                         <div class="input-data">
                             <label for="secondGrad-schema">Gradientes de segundo orden</label>
                             <select id="secondGrad-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Seleccione...</option>
+                                <option value="default">Predeterminado</option>
                                 <option value="corrected">Corregido</option>
                                 <option value="orthogonal">Ortogonal</option>
                             </select>
@@ -325,7 +329,7 @@ function variablesSchemes(turbulenceModel) {
                         <div class="input-data">
                             <label for="wall-schema">Distribución de pared</label>
                             <select id="wall-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Seleccione...</option>
+                                <option value="default">Predeterminado</option>
                                 <option value="meshWave">MeshWave</option>
                                 <option value="cubic">Cubic</option>
                             </select>
