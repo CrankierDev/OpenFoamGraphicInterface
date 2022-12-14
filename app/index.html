@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfaz gráfica para OpenFOAM</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <section id="firstContent">
+        <h1>Seleccione el tipo de simulación que desea ejecutar</h1>
+        <article class="data-container">
+            <div class="input-data">
+                <label class="long-label" for="workspace">Ruta donde guardar los archivos</label>
+                <button class="right-button buttons-style folder-button" id="workspace"
+                    type="button" onclick="selectFolder(id)">Seleccionar la carpeta</button>
+            </div>
+            <br>
+            
+            <div class="input-data">
+                <label class="long-label" for="mesh">Ruta de la malla</label>
+                <button class="right-button buttons-style folder-button" id="mesh"
+                    type="button" onclick="selectFolder(id)">Seleccionar la carpeta</button>
+            </div>
+        </article>
+    </section>
+    <section id="secondContent">
+        <h1>Rellene los datos de los parámetros de simulación</h1>
+
+        <article class="balls-section">
+            <div id="zero-ball" class="ball"><p>1</p></div>
+            <div class="ball-separator"><hr></div>
+            <div id="constant-ball" class="ball"><p>2</p></div>            
+            <div class="ball-separator"><hr></div>
+            <div id="controlDict-ball" class="ball"><p>3</p></div>           
+            <div class="ball-separator"><hr></div>
+            <div id="fvSchemes-ball" class="ball"><p>4</p></div>           
+            <div class="ball-separator"><hr></div>
+            <div id="fvSolution-ball" class="ball"><p>5</p></div>
+            <div class="ball-separator"><hr></div>
+            <div id="generator-ball" class="ball"><p>6</p></div>
+        </article>
+
+        <article id="zero-inputs">
+            <div class="main-zero">
+                <h2 class="input-label">Datos del flujo</h2>
+                <div class="data-container">
+                    <div class="input-data">
+                        <label for="flux-type">Tipo de flujo</label>
+                        <select id="flux-type" >
+                            <option>Uniforme</option>
+                            <option>Otro</option>
+                            <option>Otro mas</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="flux-velocity">Velocidad de flujo</label>
+                        <input class="long-input" id="flux-velocity" />
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="flux-aoa">Ángulo de incidencia</label>
+                        <input class="long-input" id="flux-aoa" type="number"/>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="flux-pressure">Presión del flujo</label>
+                        <input class="long-input" id="flux-pressure" type="number"/>
+                    </div>
+                </div>
+            </div>
+            <div id="boundary-conditions">
+                <h2 class="input-label">Condiciones de contorno</h2>
+            </div>
+        </article>
+
+        <article id="constant-inputs">
+            <h2 class="input-label">Condiciones del flujo</h2>
+            <div id="flux-conditions" class="data-container">
+                <div class="input-data">
+                    <label for="turbulence-model">Modelo de turbulencia</label>
+                    <select id="turbulence-model" onchange="variablesSchemes(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="Spalart-Allmaras">Spalart-Allmaras</option>
+                        <option value="kOmega">kOmega</option>
+                        <option value="kOmegaSST">kOmegaSST</option>
+                        <option value="kEpsilon">kEpsilon</option>
+                    </select>
+                </div>
+            </div>
+            <h2 class="input-label">Condiciones de transporte</h2>
+            <div id="transport-conditions" class="data-container">
+                <div class="input-data">
+                    <label for="newtonian-type">Tipo de flujo</label>
+                    <select id="newtonian-type" >
+                        <option>Newtoniano</option>
+                        <option>No newtoniano</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="flux-density">Densidad de flujo</label>
+                    <input class="long-input" id="flux-density" />
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="flux-viscosity">Viscosidad de flujo</label>
+                    <input class="long-input" id="flux-viscosity" />
+                </div>
+            </div>
+        </article>
+
+        <article id="controlDict-inputs">
+            <h2 class="input-label">Condiciones de simulación</h2>
+            <div id="simulation-conditions" class="data-container">
+                <div class="input-data">
+                    <label for="simulation-begin">Inicio de la simulación</label>
+                    <select id="simulation-begin" onchange="startTime(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="startTime">Primera iteración</option>
+                        <option value="iterTime">Seleccionar una iteración</option>
+                        <option value="lastTime">Última iteración</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="simulation-end">Fin de la simulación</label>
+                    <select id="simulation-end" onchange="endTime(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="endTime">Seleccionar una iteración</option>
+                        <option value="lastTime">Fin de la simulación</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="simulation-deltat">Diferencial de tiempo</label>
+                    <input class="long-input" id="simulation-deltat" />
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="deltat-adjust" class="checkbox-label">Ajustar el diferencial de tiempo</label>
+                    <input type="checkbox" id="deltat-adjust" class="checkbox"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="save-data" class="checkbox-label">Guardar datos de las iteraciones</label>
+                    <input type="checkbox" id="save-data" class="checkbox"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="run-time-modifiable" class="checkbox-label">Modificable en tiempo de ejecución</label>
+                    <input type="checkbox" id="run-time-modifiable" class="checkbox"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="forces-data" class="checkbox-label">Generar fuerzas</label>
+                    <input type="checkbox" id="forces-data"
+                        class="checkbox" onchange="forces()"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="forcesCoeffs-data" class="checkbox-label">Generar coeficientes de fuerzas</label>
+                    <input type="checkbox" id="forcesCoeffs-data"
+                        class="checkbox" onchange="forces()"/>
+                </div>
+            </div>
+            <div id="forces-inputs"></div>
+        </article>
+
+        <article id="fvSchemes-inputs">
+            <h2 class="input-label">Esquemas predeterminados de la simulación</h2>
+            <div class="data-container">
+                <div class="input-data">
+                    <label for="temporal-schema">Esquema temporal</label>
+                    <select id="temporal-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="steadyState">Estacionario</option>
+                        <option value="transitory">Transitorio</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="grad-schema">Esquema para los gradientes</label>
+                    <select id="grad-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="Linear">Lineal</option>
+                        <option value="gaussLinear">Gauss Lineal</option>
+                        <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
+                        <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="divergency-schema">Esquema para las divergencias</label>
+                    <select id="divergency-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="Linear">Lineal</option>
+                        <option value="gaussLinear">Gauss Lineal</option>
+                        <option value="gaussLinearBounded">Gauss Lineal limitado</option>
+                        <option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="laplacian-schema">Esquema para los laplacianos</label>
+                    <select id="laplacian-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="Linear">Lineal</option>
+                        <option value="gaussLinear">Gauss Lineal</option>
+                        <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
+                        <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="interpolacion-schema">Esquema de interpolación</label>
+                    <select id="interpolacion-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="linear">Lineal</option>
+                        <option value="gaussLinear">Gauss Lineal</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="secondGrad-schema">Gradientes de segundo orden</label>
+                    <select id="secondGrad-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="corrected">Corregido</option>
+                        <option value="orthogonal">Ortogonal</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="wall-schema">Distribución de pared</label>
+                    <select id="wall-schema"> <!-- onchange="startTime(value)" -->
+                        <option value="default">Seleccione...</option>
+                        <option value="meshWave">MeshWave</option>
+                        <option value="cubic">Cubic</option>
+                    </select>
+                </div>
+            </div>
+            <div id="fvSchemes-variables-inputs"></div>
+        </article>
+
+        <article id="fvSolution-inputs">
+            <p class="input-label">Parámetros de solución</h2>
+            <div class="data-container">
+                <div class="input-data">
+                    <label for="solver">Solver</label>
+                    <select id="solver" onchange="solverVariables(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="icoFoam">icoFoam</option>
+                        <option value="simpleFoam">simpleFoam</option>
+                        <option value="pimpleFoam">pimpleFoam</option>
+                        <option value="pisoFoam">pisoFoam</option>
+                    </select>
+                </div>
+            </div>
+            <div id="fvSolution-variables-inputs"></div>
+            <div id="fvSolution-solver-inputs"></div>
+            <div id="fvSolution-relaxationFactors-inputs"></div>
+        </article>
+
+        <article id="generator-inputs">
+            <!-- <p class="input-label">Generador</p> -->
+            <div class="data-container">
+                <div class="generator-container">
+                    <div class="generator">
+                        <p>¿Desea generar los ficheros en la ruta indicada?</p>
+                        <button id="generator2-button" class="buttons-style center-buttons generator-button" onclick="pagination(true)">Generar ficheros</button>
+                    </div>
+                    <div id="executioner" class="executioner">
+                        <p>
+                            Su sistema operativo permite realizar la ejecución de la simulación desde esta aplicación
+                            ¿Desea ejecutar la simulación?
+                        </p>
+                        <button id="generator3-button" class="buttons-style center-buttons generator-button" onclick="pagination(true)">Ejecutar simulación</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+        
+    </section>
+
+    <div class="buttons-container">
+        <button id="back-button" class="left-button buttons-style back-button" onclick="pagination(false)">Atrás</button>
+        <button id="next-button" class="center-buttons buttons-style next-button" onclick="pagination(true)">Siguiente</button>
+        <button id="generator-button" class="right-button buttons-style generator-button" onclick="pagination(true)">Generar ficheros</button>
+    </div> 
+    <!-- <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2> -->
+    
+    <!-- FrontEnd scripts -->
+    <script src="frontend/interlinking.js"></script>
+    <script src="frontend/linker.js"></script>
+    <script src="frontend/formatter.js"></script>
+    <script src="frontend/common.js"></script>
+</body>
+</html>
