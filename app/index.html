@@ -12,6 +12,12 @@
         <h1>Seleccione el tipo de simulación que desea ejecutar</h1>
         <article class="data-container">
             <div class="input-data">
+                <label class="short-label" for="simulation-name">Nombre para la simulación</label>
+                <input class="long-input" id="simulation-name"/>
+            </div>
+            <br>
+
+            <div class="input-data">
                 <label class="long-label" for="workspace">Ruta donde guardar los archivos</label>
                 <button class="right-button buttons-style folder-button" id="workspace"
                     type="button" onclick="selectFolder(id)">Seleccionar la carpeta</button>
@@ -292,9 +298,9 @@
     <!-- <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2> -->
     
     <!-- FrontEnd scripts -->
-    <script src="frontend/interlinking.js"></script>
-    <script src="frontend/linker.js"></script>
-    <script src="frontend/formatter.js"></script>
-    <script src="frontend/common.js"></script>
+    <script type="text/javascript" src="frontend/common.js"></script>
+    <script type="text/javascript" src="frontend/linker.js"></script>
+    <script type="text/javascript" src="frontend/interlinking.js"></script>
+    <script type="text/javascript" src="frontend/formatter.js"></script>
 </body>
 </html>

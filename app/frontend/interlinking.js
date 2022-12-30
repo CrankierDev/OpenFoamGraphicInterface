@@ -11,7 +11,7 @@ function firstPage() {
     document.getElementById("next-button").classList.remove('right-button');
 }
 
-function secondPage() {
+async function secondPage() {
     document.getElementById("firstContent").style.display = "none";
     document.getElementById("secondContent").style.display = "block";
 
@@ -19,8 +19,11 @@ function secondPage() {
     document.getElementById("next-button").classList.add('right-button');
     document.getElementById('back-button').style.display = "block";
 
-    //Linker function
-    fillFormsData();
+    //linker function
+    let boundariesData = await pathsData();
+    
+    //formatter function
+    fillFormsData(boundariesData);
 }
 
 function changeSection(actualContent, nextContent){

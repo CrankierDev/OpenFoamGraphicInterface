@@ -19,22 +19,25 @@ function createWindow() {
         webPreferences: {
           preload: path.join(__dirname, 'app/preload.js'),
           nodeIntegration: true,
-          contextIsolation: true
+          contextIsolation: true,
+          enableRemoteModule: true,
         }
     });
 
     ipcMain.handle('dialog:openDirectory', handleFileOpen);
 
     mainWindow.loadFile('app/index.html');
-    // window.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
+    mainWindow.maximize();
     require('electron-reload')(__dirname, {
         electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
     });
 }
 
 app.whenReady().then( () => {
+    startBackend();
     createWindow();
-
+    
     app.on('activate', () => {
         if( BrowserWindow.getAllWindows().length === 0){
             createWindow();
@@ -47,3 +50,23 @@ app.on('window-all-closed', () => {
         app.quit();
     }
 });
+
+
+function startBackend() {
+    const backEndApp = require('child_process')
+        .spawn('node',[path.join(__dirname, './app/backend/expressMain.js')])
+
+    console.log('Executing Express backend');
+
+    backEndApp.stdout.on('data', (msg) => {
+        console.log('Express response: ', msg.toString('utf8'));
+    });
+
+    backEndApp.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`);
+    });
+
+    backEndApp.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+    });
+}

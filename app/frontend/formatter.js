@@ -1,30 +1,5 @@
-function fillFormsData() {
-    const boundaries = [
-        {
-            name: 'inlet',
-            type:'patch'
-        },
-        {
-            name: 'outlet',
-            type:'patch'
-        },
-        {
-            name: 'upperWall',
-            type:'wall'
-        },
-        {
-            name: 'lowerWall',
-            type:'wall'
-        },
-        {
-            name: 'frontAndBack',
-            type:'empty'
-        }
-    ]
-
-    console.log(boundaries);
-
-    for (boundary of boundaries) {
+function fillFormsData(boundariesData) {
+    for (boundary of boundariesData) {
         // First looks for the existence of the element to add
         if(!document.getElementById(`${boundary.name}-data`)){
             if( boundary.type === 'patch' ) {
