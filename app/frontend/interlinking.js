@@ -26,7 +26,7 @@ async function secondPage() {
     fillFormsData(boundariesData);
 }
 
-function changeSection(actualContent, nextContent){
+function changeSection(actualContent, nextContent) {
     document.getElementById(`${actualContent}-inputs`).style.display = "none";
     document.getElementById(`${nextContent}-ball`).classList.add('active-ball');
     document.getElementById(`${nextContent}-inputs`).style.display = "block";
@@ -34,7 +34,7 @@ function changeSection(actualContent, nextContent){
 
 function pagination(direction) {
     let activeId = null;
-    
+    document.getElementById('next-button').disabled = !direction;
     try{
         activeId = document.getElementsByClassName('active-ball')[0].id;
         document.getElementById(activeId).classList.remove('active-ball');
@@ -90,5 +90,24 @@ function pagination(direction) {
     } else {
         secondPage();
         document.getElementById('zero-ball').classList.add('active-ball');
+    }
+}
+
+function isSecondContentAvailable() {
+    const name = document.getElementById('simulation-name').value ? true : false;
+    const mesh = document.getElementById('mesh').value !== 'false' ? true : false;
+    const workspace = document.getElementById('workspace').value !== 'false' ? true : false;
+
+    const meshValue = document.getElementById('mesh').value ;
+    const workspaceValue = document.getElementById('workspace').value;
+
+    let button = document.getElementById('next-button');
+
+    console.log('valors', meshValue, workspaceValue);
+
+    if(name && mesh && workspace){
+        button.disabled = false;
+    } else {
+        button.disabled = true;
     }
 }

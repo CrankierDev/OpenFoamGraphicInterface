@@ -13,10 +13,10 @@
         <article class="data-container">
             <div class="input-data">
                 <label class="short-label" for="simulation-name">Nombre para la simulación</label>
-                <input class="long-input" id="simulation-name"/>
+                <input class="long-input" id="simulation-name" onchange="isSecondContentAvailable()"/>
             </div>
             <br>
-
+            
             <div class="input-data">
                 <label class="long-label" for="workspace">Ruta donde guardar los archivos</label>
                 <button class="right-button buttons-style folder-button" id="workspace"
@@ -52,15 +52,15 @@
             <div class="main-zero">
                 <h2 class="input-label">Datos del flujo</h2>
                 <div class="data-container">
-                    <div class="input-data">
-                        <label for="flux-type">Tipo de flujo</label>
-                        <select id="flux-type" >
-                            <option>Uniforme</option>
-                            <option>Otro</option>
-                            <option>Otro mas</option>
-                        </select>
-                    </div>
-                    <br>
+                        <!-- <div class="input-data">
+                            <label for="flux-type">Tipo de flujo</label>
+                            <select id="flux-type" >
+                                <option>Uniforme</option>
+                                <option>Otro</option>
+                                <option>Otro mas</option>
+                            </select>
+                        </div>
+                        <br> -->
                     <div class="input-data">
                         <label for="flux-velocity">Velocidad de flujo</label>
                         <input class="long-input" id="flux-velocity" />
@@ -292,7 +292,7 @@
 
     <div class="buttons-container">
         <button id="back-button" class="left-button buttons-style back-button" onclick="pagination(false)">Atrás</button>
-        <button id="next-button" class="center-buttons buttons-style next-button" onclick="pagination(true)">Siguiente</button>
+        <button id="next-button" class="center-buttons buttons-style next-button" onclick="pagination(true)" disabled="true">Siguiente</button>
         <button id="generator-button" class="right-button buttons-style generator-button" onclick="pagination(true)">Generar ficheros</button>
     </div> 
     <!-- <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2> -->

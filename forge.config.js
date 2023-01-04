@@ -1,10 +1,16 @@
+const path = require('path');
+
 module.exports = {
-  packagerConfig: {},
+  packagerConfig: {
+    icon: path.join(__dirname, "assets", "icons", "win", "icon")//'assets/icons/win/icon' // no file extension required
+  },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        "setupIcon": path.join(__dirname, "assets", "icons", "win", "icon.ico"),
+      },
     },
     {
       name: '@electron-forge/maker-zip',

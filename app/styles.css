@@ -1,9 +1,11 @@
 :root{
     --ball-color: cyan;
     --bg-section-color: rgb(221, 221, 221);
+    --bg-button-disabled-color: rgb(121, 121, 121);
     --bg-next-button: rgb(0, 102, 255);
     --bg-back-button: rgb(255, 115, 0);
     --secondary-text-color: white;
+    --disabled-text-color: white;
 }
 
 h1 {
@@ -248,4 +250,10 @@ h2 {
 .back-button {
     margin-top: 0;
     background-color: var(--bg-back-button);
+}
+
+button:disabled,
+button[disabled] {
+    background-color: var(--bg-button-disabled-color);
+    color: var(--disabled-text-color)
 }

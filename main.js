@@ -6,9 +6,9 @@ async function handleFileOpen() {
         properties: ['openDirectory']
     });
     if (canceled) {
-        return ;
+        return null;
     } else {
-        return filePaths[0];
+        return filePaths[0] != null ? filePaths[0] : null;
     }
 }
 
