@@ -186,7 +186,7 @@ function vectorDirections(vectorName, value) {
 }
 
 function variablesSchemes(turbulenceModel) {
-    // TODO: We have to look for turbulenceModel needs at python. 
+    // TODO: We have to look for turbulenceModel needs at node. 
     let variables = [];
     let variablesInputs = document.getElementById("fvSchemes-variables-inputs");
 

@@ -35,9 +35,9 @@
         <h1>Rellene los datos de los parámetros de simulación</h1>
 
         <article class="balls-section">
-            <div id="zero-ball" class="ball"><p>1</p></div>
+            <div id="constant-ball" class="ball"><p>1</p></div>            
             <div class="ball-separator"><hr></div>
-            <div id="constant-ball" class="ball"><p>2</p></div>            
+            <div id="zero-ball" class="ball"><p>2</p></div>
             <div class="ball-separator"><hr></div>
             <div id="controlDict-ball" class="ball"><p>3</p></div>           
             <div class="ball-separator"><hr></div>
@@ -46,6 +46,41 @@
             <div id="fvSolution-ball" class="ball"><p>5</p></div>
             <div class="ball-separator"><hr></div>
             <div id="generator-ball" class="ball"><p>6</p></div>
+        </article>
+        
+        <article id="constant-inputs">
+            <h2 class="input-label">Condiciones del flujo</h2>
+            <div id="flux-conditions" class="data-container">
+                <div class="input-data">
+                    <label for="turbulence-model">Modelo de turbulencia</label>
+                    <select id="turbulence-model" onchange="variablesSchemes(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="Spalart-Allmaras">Spalart-Allmaras</option>
+                        <option value="kOmegaSST">kOmegaSST</option>
+                        <option value="kEpsilon">kEpsilon</option>
+                    </select>
+                </div>
+            </div>
+            <h2 class="input-label">Condiciones de transporte</h2>
+            <div id="transport-conditions" class="data-container">
+                <div class="input-data">
+                    <label for="newtonian-type">Tipo de flujo</label>
+                    <select id="newtonian-type" >
+                        <option>Newtoniano</option>
+                        <option>No newtoniano</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="flux-density">Densidad de flujo</label>
+                    <input class="long-input" id="flux-density" />
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="flux-viscosity">Viscosidad de flujo</label>
+                    <input class="long-input" id="flux-viscosity" />
+                </div>
+            </div>
         </article>
 
         <article id="zero-inputs">
@@ -79,42 +114,6 @@
             </div>
             <div id="boundary-conditions">
                 <h2 class="input-label">Condiciones de contorno</h2>
-            </div>
-        </article>
-
-        <article id="constant-inputs">
-            <h2 class="input-label">Condiciones del flujo</h2>
-            <div id="flux-conditions" class="data-container">
-                <div class="input-data">
-                    <label for="turbulence-model">Modelo de turbulencia</label>
-                    <select id="turbulence-model" onchange="variablesSchemes(value)">
-                        <option value="default">Seleccione...</option>
-                        <option value="Spalart-Allmaras">Spalart-Allmaras</option>
-                        <option value="kOmega">kOmega</option>
-                        <option value="kOmegaSST">kOmegaSST</option>
-                        <option value="kEpsilon">kEpsilon</option>
-                    </select>
-                </div>
-            </div>
-            <h2 class="input-label">Condiciones de transporte</h2>
-            <div id="transport-conditions" class="data-container">
-                <div class="input-data">
-                    <label for="newtonian-type">Tipo de flujo</label>
-                    <select id="newtonian-type" >
-                        <option>Newtoniano</option>
-                        <option>No newtoniano</option>
-                    </select>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="flux-density">Densidad de flujo</label>
-                    <input class="long-input" id="flux-density" />
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="flux-viscosity">Viscosidad de flujo</label>
-                    <input class="long-input" id="flux-viscosity" />
-                </div>
             </div>
         </article>
 
@@ -292,7 +291,7 @@
 
     <div class="buttons-container">
         <button id="back-button" class="left-button buttons-style back-button" onclick="pagination(false)">Atrás</button>
-        <button id="next-button" class="center-buttons buttons-style next-button" onclick="pagination(true)" disabled="true">Siguiente</button>
+        <button id="next-button" class="center-buttons buttons-style next-button" onclick="pagination(true)">Siguiente</button>
         <button id="generator-button" class="right-button buttons-style generator-button" onclick="pagination(true)">Generar ficheros</button>
     </div> 
     <!-- <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2> -->

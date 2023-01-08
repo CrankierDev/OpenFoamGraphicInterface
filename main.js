@@ -1,5 +1,6 @@
-var { app, BrowserWindow, dialog, ipcMain} = require('electron');
-var path = require('path');
+const { app, BrowserWindow, dialog, ipcMain} = require('electron');
+const path = require('path');
+const backEndApp = require('./app/backend/expressMain');
 
 async function handleFileOpen() {
     const { canceled, filePaths } = await dialog.showOpenDialog({
@@ -17,10 +18,10 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-          preload: path.join(__dirname, 'app/preload.js'),
-          nodeIntegration: true,
-          contextIsolation: true,
-          enableRemoteModule: true,
+            preload: path.join(__dirname, 'app/preload.js'),
+            nodeIntegration: true,
+            contextIsolation: true,
+            enableRemoteModule: true,
         }
     });
 
@@ -35,7 +36,8 @@ function createWindow() {
 }
 
 app.whenReady().then( () => {
-    startBackend();
+    // Start the express back end app
+    backEndApp.start();
     createWindow();
     
     app.on('activate', () => {
@@ -50,23 +52,3 @@ app.on('window-all-closed', () => {
         app.quit();
     }
 });
-
-
-function startBackend() {
-    const backEndApp = require('child_process')
-        .spawn('node',[path.join(__dirname, './app/backend/expressMain.js')])
-
-    console.log('Executing Express backend');
-
-    backEndApp.stdout.on('data', (msg) => {
-        console.log('Express response: ', msg.toString('utf8'));
-    });
-
-    backEndApp.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`);
-    });
-
-    backEndApp.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
-    });
-}

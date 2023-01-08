@@ -2,7 +2,7 @@ function firstPage() {
     document.getElementById("firstContent").style.display = "block";
     document.getElementById("secondContent").style.display = "none";
 
-    document.getElementById('zero-inputs').style.display = "block";
+    document.getElementById('constant-inputs').style.display = "block";
 
     document.getElementById('back-button').style.display = "none";
     document.getElementById('generator-button').style.display = "none";
@@ -34,31 +34,32 @@ function changeSection(actualContent, nextContent) {
 
 function pagination(direction) {
     let activeId = null;
-    document.getElementById('next-button').disabled = !direction;
+    // Clean
+    // document.getElementById('next-button').disabled = !direction;
     try{
         activeId = document.getElementsByClassName('active-ball')[0].id;
         document.getElementById(activeId).classList.remove('active-ball');
     } catch {
         console.log('Where are at the first page');
     }
-
-    if( activeId == 'zero-ball' ) {
+    
+    if( activeId == 'constant-ball' ) {
         if (direction){
-            changeSection('zero', 'constant');
+            changeSection('constant', 'zero');
         } else {
             firstPage();
         }
-    } else if( activeId == 'constant-ball' ) {
+    } else if( activeId == 'zero-ball' ) {
         if (direction){
-            changeSection('constant', 'controlDict');
+            changeSection('zero', 'controlDict');
         } else {
-            changeSection('constant', 'zero');
+            changeSection('zero', 'constant');
         }
     } else if( activeId == 'controlDict-ball' ) {
         if (direction){
             changeSection('controlDict', 'fvSchemes');
         } else {
-            changeSection('controlDict', 'constant');
+            changeSection('controlDict', 'zero');
         }
     } else if( activeId == 'fvSchemes-ball' ) {
         if (direction){
@@ -89,7 +90,8 @@ function pagination(direction) {
         }
     } else {
         secondPage();
-        document.getElementById('zero-ball').classList.add('active-ball');
+        document.getElementById('constant-ball').classList.add('active-ball');
+        document.getElementById('constant-inputs').style.display = 'block';
     }
 }
 
@@ -105,9 +107,12 @@ function isSecondContentAvailable() {
 
     console.log('valors', meshValue, workspaceValue);
 
-    if(name && mesh && workspace){
+    if(name && mesh && workspace) {
         button.disabled = false;
     } else {
         button.disabled = true;
     }
+    
+    // Clean
+    button.disabled = false;
 }

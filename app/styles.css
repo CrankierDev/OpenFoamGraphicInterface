@@ -17,11 +17,11 @@ h2 {
     padding-bottom: 1rem;
 }
 
-#firstContent, #zero-inputs, #next-button {
+#firstContent, #next-button {
     display: block;
 }
 
-#secondContent, #constant-inputs, #controlDict-inputs, #fvSchemes-inputs, #fvSolution-inputs {
+#secondContent, #zero-inputs, #constant-inputs, #controlDict-inputs, #fvSchemes-inputs, #fvSolution-inputs {
     display: none;
 }
 
