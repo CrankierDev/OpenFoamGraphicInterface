@@ -1,64 +1,79 @@
-function fillFormsData(boundariesData) {
-    for (boundary of boundariesData) {
-        // First looks for the existence of the element to add
-        if(!document.getElementById(`${boundary.name}-data`)){
-            if( boundary.type === 'patch' ) {
-                document.getElementById('boundary-conditions').innerHTML += 
-                    `<div id="${boundary.name}-data" class="walls-zero">
-                        <h3 class="input-title">${capitalize(boundary.name)}</h3>
-                        <div class="data-container">
-                            <div class="input-data">
-                                <label for="inlet-type">Condición</label>
-                                <select id="inlet-type" >
-                                    <option>Valor fijo</option>
-                                    <option>Gradiente nulo</option>
-                                    <option>No-deslizamiento</option>
-                                    <option>Vacío</option>
-                                </select>
+function fillFormsData(boundariesData, turbulenceModels) {
+    if(boundariesData){
+        for (boundary of boundariesData) {
+            // First looks for the existence of the element to add
+            if(!document.getElementById(`${boundary.name}-data`)){
+                if( boundary.type === 'patch' ) {
+                    document.getElementById('boundary-conditions').innerHTML += 
+                        `<div id="${boundary.name}-data" class="walls-zero">
+                            <h3 class="input-title">${capitalize(boundary.name)}</h3>
+                            <div class="data-container">
+                                <div class="input-data">
+                                    <label for="${boundary.name}-type">Condición</label>
+                                    <select id="${boundary.name}-type" >
+                                        <option>Valor libre</option>
+                                        <option>Valor fijo</option>
+                                        <option>Gradiente nulo</option>
+                                        <option>No-deslizamiento</option>
+                                        <option>Vacío</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                    </div>`;
-            } else if( boundary.type === 'wall' ) {
-                document.getElementById('boundary-conditions').innerHTML += 
-                    `<div id="${boundary.name}-data" class="walls-zero">
-                        <h3 class="input-title">${capitalize(boundary.name)}</h3>
-                        <div class="data-container">
-                            <div class="input-data">
-                                <label for="inlet-type">Condición</label>
-                                <select id="inlet-type" >
-                                    <option>Valor fijo</option>
-                                    <option>Gradiente nulo</option>
-                                    <option>No-deslizamiento</option>
-                                    <option>Vacío</option>
-                                </select>
+                        </div>`;
+                } else if( boundary.type === 'wall' ) {
+                    document.getElementById('boundary-conditions').innerHTML += 
+                        `<div id="${boundary.name}-data" class="walls-zero">
+                            <h3 class="input-title">${capitalize(boundary.name)}</h3>
+                            <div class="data-container">
+                                <div class="input-data">
+                                    <label for="${boundary.name}-type">Condición</label>
+                                    <select id="${boundary.name}-type" >
+                                        <option>Valor fijo</option>
+                                        <option>Gradiente nulo</option>
+                                        <option>No-deslizamiento</option>
+                                        <option>Vacío</option>
+                                    </select>
+                                </div>
+                                <br>
+                                <div class="input-data">
+                                    <label for="${boundary.name}-wall">Funciones de pared</label>
+                                    <select id="${boundary.name}-wall" >
+                                        <option>Sí</option>
+                                        <option>No</option>
+                                    </select>
+                                </div>
                             </div>
-                            <br>
-                            <div class="input-data">
-                                <label for="inlet-type">Funciones de pared</label>
-                                <select id="inlet-type" >
-                                    <option>Valor fijo</option>
-                                    <option>Gradiente nulo</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>`;
-            } else if( boundary.type === 'empty' ) {
-                // document.getElementById('boundary-conditions').innerHTML += 
-                //     `<div id="${boundary.name}-data" class="walls-zero">
-                //         <h3 class="input-title">${capitalize(boundary.name)}</h3>
-                //         <div class="data-container">
-                //             <div class="input-data">
-                //                 <label for="inlet-type">Tipo</label>
-                //                 <select id="inlet-type" >
-                //                     <option>Valor fijo</option>
-                //                     <option>Gradiente nulo</option>
-                //                     <option>No-deslizamiento</option>
-                //                     <option>Vacío</option>
-                //                 </select>
-                //             </div>
-                //         </div>
-                //     </div>`;
+                        </div>`;
+                } else if( boundary.type === 'empty' ) {
+                    // document.getElementById('boundary-conditions').innerHTML += 
+                    //     `<div id="${boundary.name}-data" class="walls-zero">
+                    //         <h3 class="input-title">${capitalize(boundary.name)}</h3>
+                    //         <div class="data-container">
+                    //             <div class="input-data">
+                    //                 <label for="inlet-type">Tipo</label>
+                    //                 <select id="inlet-type" >
+                    //                     <option>Valor fijo</option>
+                    //                     <option>Gradiente nulo</option>
+                    //                     <option>No-deslizamiento</option>
+                    //                     <option>Vacío</option>
+                    //                 </select>
+                    //             </div>
+                    //         </div>
+                    //     </div>`;
+                }
             }
+        }
+    }
+
+    console.log('turbulenceModels', turbulenceModels);
+    if (turbulenceModels) {
+        let turbulenceOptions = document.getElementById('turbulence-model');
+        turbulenceOptions.innerHTML = `
+            <option value="default">Seleccione...</option>`;
+
+        for (model of turbulenceModels){
+            turbulenceOptions.innerHTML += `
+                <option value="${model.model} ">${model.model}</option>`;
         }
     }
 }
@@ -185,9 +200,8 @@ function vectorDirections(vectorName, value) {
     }
 }
 
-function variablesSchemes(turbulenceModel) {
-    // TODO: We have to look for turbulenceModel needs at node. 
-    let variables = [];
+async function variablesSchemes(turbulenceModel) {
+    let variables = await getTurbulenceModelVariables(turbulenceModel.variables);
     let variablesInputs = document.getElementById("fvSchemes-variables-inputs");
 
     if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
@@ -209,7 +223,7 @@ function variablesSchemes(turbulenceModel) {
             {
                 name: 'nut',
                 variable: 'nut',
-                type: 'asymmetric',
+                type: null,
                 schemes: []
             },
             {

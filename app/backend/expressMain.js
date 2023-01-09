@@ -23,7 +23,7 @@ function start() {
     });
 
     app.post('/foldersData', (req, res, next) => {
-        // console.log('Request: ', req.body);
+        console.log('Reading mesh info... ');
         const fs = require('fs');
         
         try {
@@ -44,8 +44,6 @@ function start() {
                     i+=2;
                 }
             }
-
-            console.log(boundaries);
             
             res.json({
                 "message": 'Success processing',
@@ -56,8 +54,20 @@ function start() {
         }
     });
 
-    app.get('/getTurbulenceModelsInfo', (req, res) => {
-        res.send( db.getTurbulenceModelsInfo() );
+    app.get('/getTurbulenceModelsInfo', async (req, res) => {
+        console.log('Getting turbulence models info... ');
+        res.json({
+            "message": 'Success processing',
+            "data": await db.getTurbulenceModelsInfo()
+        });
+    });
+
+    app.post('/getTurbulenceModelVariables', async (req, res) => {
+        console.log('Getting turbulence model variables info... ');
+        res.json({
+            "message": 'Success processing',
+            "data": await db.getTurbulenceModelVariables(req.body.model)
+        });
     });
 }
 

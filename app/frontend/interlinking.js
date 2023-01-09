@@ -21,9 +21,10 @@ async function secondPage() {
 
     //linker function
     let boundariesData = await pathsData();
+    let turbulenceModels = await getTurbulenceModelsInfo();
     
     //formatter function
-    fillFormsData(boundariesData);
+    fillFormsData(boundariesData, turbulenceModels);
 }
 
 function changeSection(actualContent, nextContent) {
