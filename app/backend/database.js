@@ -52,13 +52,13 @@ function start() {
                 console.log('Table boundaries_variables just created.');
                 const insert = `INSERT INTO boundaries_variables (name, variable, type, schemes)
                                  VALUES (?,?,?,?)`;
-                db.run(insert, ['presión', 'p', 'asymmetric', "['grad' ]"]);
-                db.run(insert, ['velocidad', 'U', 'symmetric', "['grad', 'div']"]);
+                db.run(insert, ['presión', 'p', 'asymmetric', "'grad'"]);
+                db.run(insert, ['velocidad', 'U', 'symmetric', "'grad','div'"]);
                 db.run(insert, ['nut', 'nut', null, null]);
-                db.run(insert, ['nuTilda', 'nuTilda', 'symmetric', "['grad', 'div']"]);
-                db.run(insert, ['k', 'k', 'symmetric', "['div' ]"]);
-                db.run(insert, ['epsilon', 'epsilon', 'symmetric', "['div' ]"]);
-                db.run(insert, ['omega', 'omega', 'symmetric', "['div' ]"]);
+                db.run(insert, ['nuTilda', 'nuTilda', 'symmetric', "'grad','div'"]);
+                db.run(insert, ['k', 'k', 'symmetric', "'div'"]);
+                db.run(insert, ['epsilon', 'epsilon', 'symmetric', "'div'"]);
+                db.run(insert, ['omega', 'omega', 'symmetric', "'div'"]);
             }
         }
     );

@@ -65,7 +65,6 @@ function fillFormsData(boundariesData, turbulenceModels) {
         }
     }
 
-    console.log('turbulenceModels', turbulenceModels);
     if (turbulenceModels) {
         let turbulenceOptions = document.getElementById('turbulence-model');
         turbulenceOptions.innerHTML = `
@@ -73,7 +72,7 @@ function fillFormsData(boundariesData, turbulenceModels) {
 
         for (model of turbulenceModels){
             turbulenceOptions.innerHTML += `
-                <option value="${model.model} ">${model.model}</option>`;
+                <option value="${model.model}">${model.model}</option>`;
         }
     }
 }
@@ -201,43 +200,40 @@ function vectorDirections(vectorName, value) {
 }
 
 async function variablesSchemes(turbulenceModel) {
-    let variables = await getTurbulenceModelVariables(turbulenceModel.variables);
+    let variables = [
+        {
+            name: 'presión',
+            variable: 'p',
+            type: 'asymmetric',
+            schemes: 'grad'
+        },
+        {
+            name: 'velocidad',
+            variable: 'U',
+            type: 'symmetric',
+            schemes: "'grad','div'"
+        }
+    ];
+
     let variablesInputs = document.getElementById("fvSchemes-variables-inputs");
 
     if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
 
     if (turbulenceModel !== 'default') {
-        variables = [
-            {
-                name: 'presión',
-                variable: 'p',
-                type: 'asymmetric',
-                schemes: ['grad' ]
-            },
-            {
-                name: 'velocidad',
-                variable: 'U',
-                type: 'symmetric',
-                schemes: ['grad', 'div']
-            },
-            {
-                name: 'nut',
-                variable: 'nut',
-                type: null,
-                schemes: []
-            },
-            {
-                name: 'nuTilda',
-                variable: 'nuTilda',
-                type: 'asymmetric',
-                schemes: ['grad', 'div']
+        let newVariables = await getTurbulenceModelVariables(turbulenceModel);
+
+        if(newVariables != null && newVariables.length > 0){
+            for(let newVariable of newVariables){
+                variables.push(newVariable);
             }
-        ]
+        }
+        console.log('variables', variables);
     } 
 
     if(variables.length > 0) {
         for ( let variable of variables ) {
-            if(variable.schemes.length > 0) {
+            let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
+            if(schemes != null && schemes.length > 0) {
                 let newHTML = `
                     <p class="input-label">Esquemas para ${variable.name.toLowerCase()}</p>
                     <div class="data-container">`;
@@ -333,106 +329,101 @@ async function variablesSchemes(turbulenceModel) {
     }
 }
 
-function solverVariables(solver){
-    // TODO: We have to look for turbulenceModel needs at python. 
-    let variables = [];
+async function solverVariables(solver){
+    let variables = [
+        {
+            name: 'presión',
+            variable: 'p',
+            type: 'asymmetric',
+            schemes: 'grad'
+        },
+        {
+            name: 'velocidad',
+            variable: 'U',
+            type: 'symmetric',
+            schemes: "'grad','div'"
+        }
+    ];
+
     let variablesInputs = document.getElementById("fvSolution-variables-inputs");
     let solverInputs = document.getElementById("fvSolution-solver-inputs");
     let relaxationInputs = document.getElementById("fvSolution-relaxationFactors-inputs");
     const turbulenceModel = document.getElementById("turbulence-model");
-    console.log('turbulenceModel', turbulenceModel);
 
     if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
     if (solverInputs.innerHTML != '') solverInputs.innerHTML = '';
     if (relaxationInputs.innerHTML != '') relaxationInputs.innerHTML = '';
 
     if (solver !== 'default') {
-        variables = [
-            {
-                name: 'presión',
-                variable: 'p',
-                type: 'asymmetric',
-                schemes: ['grad' ]
-            },
-            {
-                name: 'velocidad',
-                variable: 'U',
-                type: 'symmetric',
-                schemes: ['grad', 'div']
-            },
-            {
-                name: 'nut',
-                variable: 'nut',
-                type: 'asymmetric',
-                schemes: []
-            },
-            {
-                name: 'nuTilda',
-                variable: 'nuTilda',
-                type: 'asymmetric',
-                schemes: ['grad', 'div']
-            }
-        ]
-    }
+        let newVariables = await getTurbulenceModelVariables(turbulenceModel.value);
 
-    if(variables.length > 0) {
-        solverVariablesData(variablesInputs, variables);
-        solverData(solver, solverInputs, variables);
-        residualControl(solverInputs, variables);
-        relaxationData(relaxationInputs, variables);
-    }
+        if(newVariables != null && newVariables.length > 0){
+            for(let newVariable of newVariables){
+                variables.push(newVariable);
+            }
+        }
+        console.log('variables', variables);
+        
+        if(variables.length > 0) {
+            solverVariablesData(variablesInputs, variables);
+            solverData(solver, solverInputs, variables);
+            residualControl(solverInputs, variables);
+            relaxationData(relaxationInputs, variables);
+        }
+    } 
 }
 
 function solverVariablesData(variablesInputs, variables) {
     let newHTML = '';
     for ( let variable of variables ) {
-        newHTML = `
-            <p class="input-label">Parámetros para el solver de ${variable.name.toLowerCase()}</p>
-            <div class="data-container">`;
-        
-        if ( variable.type === 'symmetric' ) {
+        if(variable.type != null) {
+            newHTML = `
+                <p class="input-label">Parámetros para el solver de ${variable.name.toLowerCase()}</p>
+                <div class="data-container">`;
+            
+            if ( variable.type === 'symmetric' ) {
+                newHTML += `
+                    <div class="input-data">
+                        <label for="${variable.variable}-solver-schema">Solver</label>
+                        <select id="${variable.variable}-solver-schema"> <!-- onchange="startTime(value)" -->
+                            <option value="default">Seleccione...</option>
+                            <option value="PCG">PCG</option>
+                            <option value="PBiCG">PBiCG</option>
+                            <option value="PBiCGStab">PBiCGStab</option>
+                            <option value="GAMG">GAMG</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
+                        <select id="${variable.variable}-preconditioner-schema"> <!-- onchange="startTime(value)" -->
+                            <option value="default">Seleccione...</option>
+                            <option value="DIC">DIC</option>
+                            <option value="symGaussSeidel">Gauss-Seidel</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-tolerance-data">Tolerancia</label>
+                        <input class="long-input" type="text" id="${variable.variable}-tolerance-data"/>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
+                        <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-smoother-data">Tolerancia</label>
+                        <input class="long-input" type="text" id="${variable.variable}-smoother-data"/>
+                    </div>
+                    <br>`;
+            } else if ( variable.type === 'asymmetric' ) {
             newHTML += `
                 <div class="input-data">
                     <label for="${variable.variable}-solver-schema">Solver</label>
                     <select id="${variable.variable}-solver-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
-                        <option value="PCG">PCG</option>
-                        <option value="PBiCG">PBiCG</option>
-                        <option value="PBiCGStab">PBiCGStab</option>
-                        <option value="GAMG">GAMG</option>
-                    </select>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
-                    <select id="${variable.variable}-preconditioner-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
-                        <option value="DIC">DIC</option>
-                        <option value="symGaussSeidel">Gauss-Seidel</option>
-                    </select>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="${variable.variable}-tolerance-data">Tolerancia</label>
-                    <input class="long-input" type="text" id="${variable.variable}-tolerance-data"/>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
-                    <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="${variable.variable}-smoother-data">Tolerancia</label>
-                    <input class="long-input" type="text" id="${variable.variable}-smoother-data"/>
-                </div>
-                <br>`;
-        } else if ( variable.type === 'asymmetric' ) {
-            newHTML += `
-                <div class="input-data">
-                    <label for="${variable.variable}-solver-schema">Solver</label>
-                    <select id="${variable.variable}-solver-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
+                    <option value="default">Seleccione...</option>
                         <option value="smoothSolver">smoothSolver</option>
                         <option value="PCG">PCG</option>
                         <option value="PBiCGStab">PBiCGStab</option>
@@ -469,10 +460,11 @@ function solverVariablesData(variablesInputs, variables) {
                     <input class="long-input" type="text" id="${variable.variable}-smoother-data"/>
                 </div>
                 <br>`;
-        }
+            }
             
-        newHTML += '</div>';
-        variablesInputs.innerHTML += newHTML;
+            newHTML += '</div>';
+            variablesInputs.innerHTML += newHTML;
+        }
     }
 }
 
@@ -480,21 +472,21 @@ function solverData(solver, solverInputs, variables){
     let newHTML = '';
     if(solver === 'simpleFoam') {
         newHTML = `
-            <p class="input-label">SIMPLE</p>
-            <div class="data-container">
-                <div class="input-data">
-                    <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
-                    <input class="long-input" id="nNonOrthogonalCorrectors"/>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="consistent">Consistencia</label>
-                    <select id="consistent">
-                        <option value="yes">Sí</option>
-                        <option value="no">No</option>
-                    </select>
-                </div>
-            </div>`;
+        <p class="input-label">SIMPLE</p>
+        <div class="data-container">
+        <div class="input-data">
+            <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
+            <input class="long-input" id="nNonOrthogonalCorrectors"/>
+        </div>
+        <br>
+        <div class="input-data">
+            <label for="consistent">Consistencia</label>
+            <select id="consistent">
+                <option value="yes">Sí</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        </div>`;
     }
     
     solverInputs.innerHTML += newHTML;
@@ -540,4 +532,3 @@ function relaxationData(relaxationInputs, variables) {
     newHTML += '</div>';
     relaxationInputs.innerHTML += newHTML;
 }
-

@@ -14,7 +14,8 @@ async function pathsData() {
             "mesh": "${mesh.replaceAll('\\','/')}",
             "name": "${name}"
         }`,
-    }).then( response => response.json() )
+    })
+    .then( response => response.json() )
     .then( data => {
         console.log(data.data);
         return data.data;
@@ -22,8 +23,6 @@ async function pathsData() {
 }
 
 async function getTurbulenceModelsInfo() {
-    console.log('calling method...');
-
     return await fetch('http://localhost:9876/getTurbulenceModelsInfo', {
         headers: {
             'Accept': 'application/json',
@@ -36,6 +35,22 @@ async function getTurbulenceModelsInfo() {
     });
 }
 
-function execute() {
-    console.log('script endded')
+async function getTurbulenceModelVariables(model) {
+    console.log('calling method...', model);
+
+    return await fetch('http://localhost:9876/getTurbulenceModelVariables', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: `{
+            "model": "${model}"
+        }`,
+    })
+    .then( response => response.json() )
+    .then( data => {
+        console.log(data);
+        return data.data;
+    });
 }

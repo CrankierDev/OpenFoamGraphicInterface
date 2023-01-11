@@ -63,7 +63,7 @@ function start() {
     });
 
     app.post('/getTurbulenceModelVariables', async (req, res) => {
-        console.log('Getting turbulence model variables info... ');
+        console.log('Getting turbulence model variables info for: ', req.body.model);
         res.json({
             "message": 'Success processing',
             "data": await db.getTurbulenceModelVariables(req.body.model)
