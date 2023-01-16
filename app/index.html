@@ -53,7 +53,7 @@
             <div id="flux-conditions" class="data-container">
                 <div class="input-data">
                     <label for="turbulence-model">Modelo de turbulencia</label>
-                    <select id="turbulence-model" onchange="variablesSchemes(value)">
+                    <select id="turbulence-model">
                     </select>
                 </div>
             </div>
@@ -111,7 +111,6 @@
                 <div class="input-data">
                     <label for="simulation-begin">Inicio de la simulación</label>
                     <select id="simulation-begin" onchange="startTime(value)">
-                        <option value="default">Seleccione...</option>
                         <option value="startTime">Primera iteración</option>
                         <option value="iterTime">Seleccionar una iteración</option>
                         <option value="lastTime">Última iteración</option>
@@ -119,12 +118,21 @@
                 </div>
                 <br>
                 <div class="input-data">
+                    <label for="simulation-begin-time">Empezar en</label>
+                    <input class="long-input" id="simulation-begin-time" />
+                </div>
+                <br>
+                <div class="input-data">
                     <label for="simulation-end">Fin de la simulación</label>
                     <select id="simulation-end" onchange="endTime(value)">
-                        <option value="default">Seleccione...</option>
-                        <option value="endTime">Seleccionar una iteración</option>
                         <option value="lastTime">Fin de la simulación</option>
+                        <option value="endTime">Seleccionar una iteración</option>
                     </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="simulation-end-time">Terminar en</label>
+                    <input class="long-input" id="simulation-end-time" />
                 </div>
                 <br>
                 <div class="input-data">
@@ -167,8 +175,7 @@
             <div class="data-container">
                 <div class="input-data">
                     <label for="temporal-schema">Esquema temporal</label>
-                    <select id="temporal-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
+                    <select id="temporal-schema"> 
                         <option value="steadyState">Estacionario</option>
                         <option value="transitory">Transitorio</option>
                     </select>
@@ -176,8 +183,7 @@
                 <br>
                 <div class="input-data">
                     <label for="grad-schema">Esquema para los gradientes</label>
-                    <select id="grad-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
+                    <select id="grad-schema"> 
                         <option value="Linear">Lineal</option>
                         <option value="gaussLinear">Gauss Lineal</option>
                         <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
@@ -187,8 +193,7 @@
                 <br>
                 <div class="input-data">
                     <label for="divergency-schema">Esquema para las divergencias</label>
-                    <select id="divergency-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
+                    <select id="divergency-schema"> 
                         <option value="Linear">Lineal</option>
                         <option value="gaussLinear">Gauss Lineal</option>
                         <option value="gaussLinearBounded">Gauss Lineal limitado</option>
@@ -198,8 +203,7 @@
                 <br>
                 <div class="input-data">
                     <label for="laplacian-schema">Esquema para los laplacianos</label>
-                    <select id="laplacian-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
+                    <select id="laplacian-schema"> 
                         <option value="Linear">Lineal</option>
                         <option value="gaussLinear">Gauss Lineal</option>
                         <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
@@ -209,8 +213,7 @@
                 <br>
                 <div class="input-data">
                     <label for="interpolacion-schema">Esquema de interpolación</label>
-                    <select id="interpolacion-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
+                    <select id="interpolacion-schema">
                         <option value="linear">Lineal</option>
                         <option value="gaussLinear">Gauss Lineal</option>
                     </select>
@@ -218,8 +221,7 @@
                 <br>
                 <div class="input-data">
                     <label for="secondGrad-schema">Gradientes de segundo orden</label>
-                    <select id="secondGrad-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
+                    <select id="secondGrad-schema">
                         <option value="corrected">Corregido</option>
                         <option value="orthogonal">Ortogonal</option>
                     </select>
@@ -227,8 +229,7 @@
                 <br>
                 <div class="input-data">
                     <label for="wall-schema">Distribución de pared</label>
-                    <select id="wall-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
+                    <select id="wall-schema"> 
                         <option value="meshWave">MeshWave</option>
                         <option value="cubic">Cubic</option>
                     </select>
@@ -238,7 +239,7 @@
         </article>
 
         <article id="fvSolution-inputs">
-            <p class="input-label">Parámetros de solución</h2>
+            <h2 class="input-label">Parámetros de solución</h2>
             <div class="data-container">
                 <div class="input-data">
                     <label for="solver">Solver</label>

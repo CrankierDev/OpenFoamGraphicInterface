@@ -36,8 +36,7 @@ async function getTurbulenceModelsInfo() {
 }
 
 async function getTurbulenceModelVariables(model) {
-    console.log('calling method...', model);
-
+    // console.log('calling method...', model);
     return await fetch('http://localhost:9876/getTurbulenceModelVariables', {
         method: 'POST',
         headers: {
@@ -50,7 +49,6 @@ async function getTurbulenceModelVariables(model) {
     })
     .then( response => response.json() )
     .then( data => {
-        console.log(data);
         return data.data;
     });
 }

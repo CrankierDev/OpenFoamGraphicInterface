@@ -68,7 +68,7 @@ function fillFormsData(boundariesData, turbulenceModels) {
     if (turbulenceModels) {
         let turbulenceOptions = document.getElementById('turbulence-model');
         turbulenceOptions.innerHTML = `
-            <option value="default">Seleccione...</option>`;
+            <option value="default">Flujo laminar</option>`;
 
         for (model of turbulenceModels){
             turbulenceOptions.innerHTML += `
@@ -355,11 +355,13 @@ async function solverVariables(solver){
     if (relaxationInputs.innerHTML != '') relaxationInputs.innerHTML = '';
 
     if (solver !== 'default') {
-        let newVariables = await getTurbulenceModelVariables(turbulenceModel.value);
-
-        if(newVariables != null && newVariables.length > 0){
-            for(let newVariable of newVariables){
-                variables.push(newVariable);
+        if(turbulenceModel.value !== 'default') {
+            let newVariables = await getTurbulenceModelVariables(turbulenceModel.value);
+            
+            if(newVariables != null && newVariables.length > 0){
+                for(let newVariable of newVariables){
+                    variables.push(newVariable);
+                }
             }
         }
         console.log('variables', variables);
@@ -385,21 +387,77 @@ function solverVariablesData(variablesInputs, variables) {
                 newHTML += `
                     <div class="input-data">
                         <label for="${variable.variable}-solver-schema">Solver</label>
-                        <select id="${variable.variable}-solver-schema"> <!-- onchange="startTime(value)" -->
-                            <option value="default">Seleccione...</option>
+                        <select id="${variable.variable}-solver-schema">
+                            <!--<option value="GAMG">GAMG</option> -->
+                            <option value="GaussSeidel">Gauss-Seidel</option>
                             <option value="PCG">PCG</option>
                             <option value="PBiCG">PBiCG</option>
                             <option value="PBiCGStab">PBiCGStab</option>
-                            <option value="GAMG">GAMG</option>
                         </select>
                     </div>
                     <br>
                     <div class="input-data">
                         <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
-                        <select id="${variable.variable}-preconditioner-schema"> <!-- onchange="startTime(value)" -->
-                            <option value="default">Seleccione...</option>
-                            <option value="DIC">DIC</option>
+                        <select id="${variable.variable}-preconditioner-schema">
+                            <option value="default">Sin precondicionador</option>
+                            <!--<option value="GAMG">GAMG</option> -->
                             <option value="symGaussSeidel">Gauss-Seidel</option>
+                            <option value="DIC">DIC</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-smoother-data">Smoother</label>
+                        <select id="${variable.variable}-smoother-data">
+                            <!--<option value="GAMG">GAMG</option> -->
+                            <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="DIC">DILU</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-sweeps-data">nSweeps</label>
+                        <input class="long-input" type="text" id="${variable.variable}-sweeps-data"/>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-tolerance-data">Tolerancia</label>
+                        <input class="long-input" type="text" id="${variable.variable}-tolerance-data" />
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
+                        <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
+                    </div>
+                    <br>`;
+            } else if ( variable.type === 'asymmetric' ) {
+                newHTML += `
+                    <div class="input-data">
+                        <label for="${variable.variable}-solver-schema">Solver</label>
+                        <select id="${variable.variable}-solver-schema"> 
+                            <option value="GAMG">GAMG</option>
+                            <option value="smoothSolver">smoothSolver</option>
+                            <option value="PCG">PCG</option>
+                            <option value="PBiCGStab">PBiCGStab</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
+                        <select id="${variable.variable}-preconditioner-schema"> 
+                            <option value="default">Sin precondicionador</option>
+                            <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="GAMG">GAMG</option>
+                            <option value="DILU">DILU</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="input-data">
+                        <label for="${variable.variable}-smoother-data">Smoother</label>
+                        <select id="${variable.variable}-smoother-data">
+                            <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="GAMG">GAMG</option>
+                            <option value="DILU">DILU</option>
                         </select>
                     </div>
                     <br>
@@ -412,54 +470,7 @@ function solverVariablesData(variablesInputs, variables) {
                         <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
                         <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
                     </div>
-                    <br>
-                    <div class="input-data">
-                        <label for="${variable.variable}-smoother-data">Tolerancia</label>
-                        <input class="long-input" type="text" id="${variable.variable}-smoother-data"/>
-                    </div>
                     <br>`;
-            } else if ( variable.type === 'asymmetric' ) {
-            newHTML += `
-                <div class="input-data">
-                    <label for="${variable.variable}-solver-schema">Solver</label>
-                    <select id="${variable.variable}-solver-schema"> <!-- onchange="startTime(value)" -->
-                    <option value="default">Seleccione...</option>
-                        <option value="smoothSolver">smoothSolver</option>
-                        <option value="PCG">PCG</option>
-                        <option value="PBiCGStab">PBiCGStab</option>
-                        <option value="GAMG">GAMG</option>
-                    </select>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
-                    <select id="${variable.variable}-preconditioner-schema"> <!-- onchange="startTime(value)" -->
-                        <option value="default">Seleccione...</option>
-                        <option value="DILU">DILU</option>
-                        <option value="GaussSeidel">Gauss-Seidel</option>
-                    </select>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="${variable.variable}-sweeps-data">nSweeps</label>
-                    <input class="long-input" type="text" id="${variable.variable}-sweeps-data"/>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="${variable.variable}-tolerance-data">Tolerancia</label>
-                    <input class="long-input" type="text" id="${variable.variable}-tolerance-data"/>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
-                    <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="${variable.variable}-smoother-data">Tolerancia</label>
-                    <input class="long-input" type="text" id="${variable.variable}-smoother-data"/>
-                </div>
-                <br>`;
             }
             
             newHTML += '</div>';
@@ -472,21 +483,21 @@ function solverData(solver, solverInputs, variables){
     let newHTML = '';
     if(solver === 'simpleFoam') {
         newHTML = `
-        <p class="input-label">SIMPLE</p>
-        <div class="data-container">
-        <div class="input-data">
-            <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
-            <input class="long-input" id="nNonOrthogonalCorrectors"/>
-        </div>
-        <br>
-        <div class="input-data">
-            <label for="consistent">Consistencia</label>
-            <select id="consistent">
-                <option value="yes">Sí</option>
-                <option value="no">No</option>
-            </select>
-        </div>
-        </div>`;
+            <p class="input-label">SIMPLE</p>
+            <div class="data-container">
+            <div class="input-data">
+                <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
+                <input class="long-input" id="nNonOrthogonalCorrectors"/>
+            </div>
+            <br>
+            <div class="input-data">
+                <label for="consistent">Consistencia</label>
+                <select id="consistent">
+                    <option value="yes">Sí</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            </div>`;
     }
     
     solverInputs.innerHTML += newHTML;
@@ -500,7 +511,7 @@ function residualControl(solverInputs, variables) {
     for( let variable of variables ){
         newHTML += `
             <div class="input-data">
-                <label for="${variable.variable}-residual-control">${variable.name}</label>
+                <label for="${variable.variable}-residual-control">${capitalize(variable.name)}</label>
                 <input class="long-input" id="${variable.variable}-residual-control"/>
             </div>
             <br>`;
@@ -516,14 +527,14 @@ function relaxationData(relaxationInputs, variables) {
         <div class="data-container">
             <div class="input-data">
                 <label for="general-relaxation">General</label>
-                <input class="long-input" id="general-relaxation"/>
+                <input class="long-input" id="general-relaxation" value="0.95"/>
             </div>
             <br>`;
     
     for ( let variable of variables ) {
         newHTML += `
             <div class="input-data">
-                <label for="${variable.variable}-relaxation">${variable.name}</label>
+                <label for="${variable.variable}-relaxation">${capitalize(variable.name)}</label>
                 <input class="long-input" id="${variable.variable}-relaxation"/>
             </div>
             <br>`;    

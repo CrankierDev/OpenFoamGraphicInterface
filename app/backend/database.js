@@ -70,28 +70,135 @@ function start() {
                 console.log('Table simulations_info already created.');
             } else {
                 console.log('Table simulations_info just created.');
+                let currentDate = new Date();
+                let day = currentDate.getDate();
+                let month = currentDate.getMonth();
+                let year = currentDate.getFullYear();
+                currentDate = day + '/' + month + '/' + year;
+                
+                const insert = `INSERT INTO simulations_info (id, creationDate, name,
+                                meshRoute, lastGenerationDate, executable) VALUES (?,?,?,?,?,?)`;
+                db.run(insert, ['default_sim', currentDate, 'default_sim', null, currentDate, true]);
             }
         }
     );
 
-    db.run(`CREATE TABLE zero_data (id text, velocityValue text, pressureValue text,
-                AOAValue text, boundaries text)`,
+    db.run(`CREATE TABLE zero_data (id text, variable text, value text, AOAValue text, boundaries text)`,
         (err) => {
             if(err) {
                 console.log('Table zero_data already created.');
             } else {
                 console.log('Table zero_data just created.');
+                const insert = `INSERT INTO zero_data (id, variable, value,
+                                AOAValue, boundaries) VALUES (?,?,?,?,?)`;
+                db.run(insert, ['default_sim', 'p', '0', '0', `{
+                    inlet
+                    {
+                        type            freestreamPressure;
+                        freestreamValue $internalField;
+                    }
+                
+                    outlet
+                    {
+                        type            freestreamPressure;
+                        freestreamValue $internalField;
+                    }
+                
+                    walls
+                    {
+                        type            zeroGradient;
+                    }
+                
+                    frontAndBack
+                    {
+                        type            empty;
+                    }
+                }`]);
+                db.run(insert, ['default_sim', 'U', '26', '0', `{
+                    inlet
+                    {
+                        type            freestreamVelocity;
+                        freestreamValue $internalField;
+                    }
+                
+                    outlet
+                    {
+                        type            freestreamVelocity;
+                        freestreamValue $internalField;
+                    }
+                
+                    walls
+                    {
+                        type            noSlip;
+                    }
+                
+                    frontAndBack
+                    {
+                        type            empty;
+                    }
+                }`]);
+                db.run(insert, ['default_sim', 'nuTilda', '0.14', '0', `{
+                    inlet
+                    {
+                        type            freestream;
+                        freestreamValue $internalField;
+                    }
+                
+                    outlet
+                    {
+                        type            freestream;
+                        freestreamValue $internalField;
+                    }
+                
+                    walls
+                    {
+                        type            fixedValue;
+                        value           uniform 0;
+                    }
+                
+                    frontAndBack
+                    {
+                        type            empty;
+                    }
+                }`]);
+                db.run(insert, ['default_sim', 'nut', '0.14', '0', `{
+                    inlet
+                    {
+                        type            freestream;
+                        freestreamValue $internalField;
+                    }
+                
+                    outlet
+                    {
+                        type            freestream;
+                        freestreamValue $internalField;
+                    }
+                
+                    walls
+                    {
+                        type            fixedValue;
+                        value           uniform 0;
+                    }
+                
+                    frontAndBack
+                    {
+                        type            empty;
+                    }
+                }`]);
             }
         }
     );
 
     db.run(`CREATE TABLE constant_data (id text, transportModel text, turbulenceModel text,
-                printCoeffs boolean, model text, variables text)`,
+                printCoeffs boolean, rho text, nu text)`,
         (err) => {
             if(err) {
                 console.log('Table constant_data already created.');
             } else {
                 console.log('Table constant_data just created.');
+                const insert = `INSERT INTO constant_data (id, transportModel, turbulenceModel,
+                                printCoeffs, rho, nu) VALUES (?,?,?,?,?,?)`;
+                db.run(insert, ['default_sim', 'Newtonian', 'SpalartAllmaras', true, '1', '1e-05']);
             }
         }
     );
@@ -99,34 +206,119 @@ function start() {
     // Add all control dict variables
     db.run(`CREATE TABLE control_dict_data (id text, application text, startFrom text,
                 startTime text, stopAt text, endTime text, deltaT text,
-                runTimeModifiable boolean, adjustTimeStep boolean)`,
+                runTimeModifiable boolean, adjustTimeStep boolean, writeData boolean)`,
         (err) => {
             if(err) {
                 console.log('Table control_dict_data already created.');
             } else {
                 console.log('Table control_dict_data just created.');
+                const insert = `INSERT INTO control_dict_data (id, application, startFrom,
+                                startTime, stopAt, endTime, deltaT, runTimeModifiable,
+                                adjustTimeStep, writeData) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+                db.run(insert, ['default_sim', 'simpleFoam', 'startTime', '0',
+                                'endTime', '500', '1', true, true, true]);
             }
         }
     );
 
     // Add all schemas, a JSON/text for each one
-    db.run(`CREATE TABLE schemes_data (id text)`,
+    db.run(`CREATE TABLE schemes_data (id text, ddtSchemes text, gradSchemes text, divSchemes text,
+                laplacianSchemes text, interpolationSchemes text, snGradSchemes text, wallDist text)`,
         (err) => {
             if(err) {
                 console.log('Table schemes_data already created.');
             } else {
                 console.log('Table schemes_data just created.');
+                const insert = `INSERT INTO schemes_data (id, ddtSchemes, gradSchemes, divSchemes,
+                                laplacianSchemes, interpolationSchemes, snGradSchemes, wallDist)
+                                VALUES (?,?,?,?,?,?,?,?)`;
+                db.run(insert, ['default_sim', `{
+                    default         steadyState;
+                }`, `{
+                    default         Gauss linear;
+                }`, `{
+                    default         none;
+                    div(phi,U)      bounded Gauss linearUpwind grad(U);
+                    div(phi,nuTilda) bounded Gauss linearUpwind grad(nuTilda);
+                    div((nuEff*dev2(T(grad(U))))) Gauss linear;
+                }`, `{
+                    default         Gauss linear corrected;
+                }`, `{
+                    default         linear;
+                }`, `{
+                    default         corrected;
+                }`, `{
+                    method meshWave;
+                }`]);
             }
         }
     );
 
     db.run(`CREATE TABLE solutions_data (id text, solvers text, simple text,
-                piso text, relaxationFactors text, residuals text)`,
+                piso text, relaxationFactors text)`,
         (err) => {
             if(err) {
                 console.log('Table solutions_data already created.');
             } else {
                 console.log('Table solutions_data just created.');
+                const insert = `INSERT INTO solutions_data (id, solvers, simple, piso, relaxationFactors)
+                                VALUES (?,?,?,?,?)`;
+                db.run(insert, ['default_sim', `{
+                    p
+                    {
+                        solver          GAMG;
+                        tolerance       1e-06;
+                        relTol          0.1;
+                        smoother        GaussSeidel;
+                    }
+                
+                    U
+                    {
+                        solver          smoothSolver;
+                        smoother        GaussSeidel;
+                        nSweeps         2;
+                        tolerance       1e-08;
+                        relTol          0.1;
+                    }
+                
+                    nuTilda
+                    {
+                        solver          smoothSolver;
+                        smoother        GaussSeidel;
+                        nSweeps         2;
+                        tolerance       1e-08;
+                        relTol          0.1;
+                    }
+                }`, `{
+                    nNonOrthogonalCorrectors 0;
+                
+                    residualControl
+                    {
+                        p               1e-5;
+                        U               1e-5;
+                        nuTilda         1e-5;
+                    }
+                }`, `{
+                    nCorrectors             2;
+                    nNonOrthogonalCorrectors 4;
+                
+                    residualControl
+                    {
+                        p               1e-4;
+                        U			    1e-4;
+                        "(k|omega)"     1e-4;
+                    }
+                }`, `{
+                    fields
+                    {
+                        p               0.3;
+                    }
+                    equations
+                    {
+                        U               0.7;
+                        nuTilda         0.7;
+                    }
+                }`]);
             }
         }
     );

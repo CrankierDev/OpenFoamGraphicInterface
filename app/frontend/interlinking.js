@@ -47,6 +47,7 @@ function pagination(direction) {
     if( activeId == 'constant-ball' ) {
         if (direction){
             changeSection('constant', 'zero');
+            variablesSchemes(document.getElementById("turbulence-model").value);
         } else {
             firstPage();
         }
@@ -76,6 +77,8 @@ function pagination(direction) {
             document.getElementById('generator2-button').style.display = "block";
             document.getElementById('generator3-button').style.display = "block";
             document.getElementById('next-button').style.display = "none";
+
+            console.log('relajacion', document.getElementById("general-relaxation").value);
         } else {
             changeSection('fvSolution', 'fvSchemes');
         }

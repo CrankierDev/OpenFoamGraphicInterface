@@ -8,6 +8,10 @@
     --disabled-text-color: white;
 }
 
+html {
+    background-color: rgb(118, 118, 118);
+}
+
 h1 {
     text-align: center;
 }
