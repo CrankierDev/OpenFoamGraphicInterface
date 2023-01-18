@@ -15,7 +15,7 @@ function start() {
     
     app.listen(port, () => console.log(`Listening at the port: ${port}`));
     
-    //Starts the db if it non opened before
+    //Starts the db if it was non created before
     db.start();
 
     app.get('/', (req, res) => {

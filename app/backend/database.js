@@ -52,8 +52,6 @@ function start() {
                 console.log('Table boundaries_variables just created.');
                 const insert = `INSERT INTO boundaries_variables (name, variable, type, schemes)
                                  VALUES (?,?,?,?)`;
-                db.run(insert, ['presión', 'p', 'asymmetric', "'grad'"]);
-                db.run(insert, ['velocidad', 'U', 'symmetric', "'grad','div'"]);
                 db.run(insert, ['nut', 'nut', null, null]);
                 db.run(insert, ['nuTilda', 'nuTilda', 'symmetric', "'grad','div'"]);
                 db.run(insert, ['k', 'k', 'symmetric', "'div'"]);
@@ -72,8 +70,12 @@ function start() {
                 console.log('Table simulations_info just created.');
                 let currentDate = new Date();
                 let day = currentDate.getDate();
-                let month = currentDate.getMonth();
+                let month = currentDate.getMonth() + 1;
                 let year = currentDate.getFullYear();
+                month = month == 10 || month == 11 || month == 12 ? 
+                        month : 
+                        "0" + month;
+                        
                 currentDate = day + '/' + month + '/' + year;
                 
                 const insert = `INSERT INTO simulations_info (id, creationDate, name,
@@ -189,6 +191,22 @@ function start() {
         }
     );
 
+    db.run(`CREATE TABLE simulation_boundaries (id text, name text, type text)`,
+        (err) => {
+            if(err) {
+                console.log('Table simulation_boundaries already created.');
+            } else {
+                console.log('Table simulation_boundaries just created.');
+                
+                const insert = `INSERT INTO simulation_boundaries (id, name, type) VALUES (?,?,?)`;
+                db.run(insert, ['default_sim', 'inlet', 'patch']);
+                db.run(insert, ['default_sim', 'outlet', 'patch']);
+                db.run(insert, ['default_sim', 'walls', 'wall']);
+                db.run(insert, ['default_sim', 'frontAndBack', 'empty']);
+            }
+        }
+    );
+
     db.run(`CREATE TABLE constant_data (id text, transportModel text, turbulenceModel text,
                 printCoeffs boolean, rho text, nu text)`,
         (err) => {
@@ -203,7 +221,6 @@ function start() {
         }
     );
 
-    // Add all control dict variables
     db.run(`CREATE TABLE control_dict_data (id text, application text, startFrom text,
                 startTime text, stopAt text, endTime text, deltaT text,
                 runTimeModifiable boolean, adjustTimeStep boolean, writeData boolean)`,
@@ -221,7 +238,6 @@ function start() {
         }
     );
 
-    // Add all schemas, a JSON/text for each one
     db.run(`CREATE TABLE schemes_data (id text, ddtSchemes text, gradSchemes text, divSchemes text,
                 laplacianSchemes text, interpolationSchemes text, snGradSchemes text, wallDist text)`,
         (err) => {
