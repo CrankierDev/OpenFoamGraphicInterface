@@ -20,11 +20,10 @@ async function secondPage() {
     document.getElementById('back-button').style.display = "block";
 
     //linker function
-    let boundariesData = await pathsData();
     let turbulenceModels = await getTurbulenceModelsInfo();
-    
+
     //formatter function
-    fillFormsData(boundariesData, turbulenceModels);
+    setModels(turbulenceModels);
 }
 
 function changeSection(actualContent, nextContent) {
@@ -33,10 +32,8 @@ function changeSection(actualContent, nextContent) {
     document.getElementById(`${nextContent}-inputs`).style.display = "block";
 }
 
-function pagination(direction) {
+async function pagination(direction) {
     let activeId = null;
-    // Clean
-    // document.getElementById('next-button').disabled = !direction;
     try{
         activeId = document.getElementsByClassName('active-ball')[0].id;
         document.getElementById(activeId).classList.remove('active-ball');
@@ -46,41 +43,43 @@ function pagination(direction) {
     
     if( activeId == 'constant-ball' ) {
         if (direction){
+            if(document.getElementById('mesh').value) {
+                let boundariesData = await pathsData();
+                fillFormsData(boundariesData, document.getElementById("turbulence-model").value);
+            }
+            
             changeSection('constant', 'zero');
-            variablesSchemes(document.getElementById("turbulence-model").value);
         } else {
             firstPage();
         }
     } else if( activeId == 'zero-ball' ) {
         if (direction){
-            changeSection('zero', 'controlDict');
+            changeSection('zero', 'fvSolution');
         } else {
             changeSection('zero', 'constant');
         }
     } else if( activeId == 'controlDict-ball' ) {
         if (direction){
-            changeSection('controlDict', 'fvSchemes');
-        } else {
-            changeSection('controlDict', 'zero');
-        }
-    } else if( activeId == 'fvSchemes-ball' ) {
-        if (direction){
-            changeSection('fvSchemes', 'fvSolution');
-        } else {
-            changeSection('fvSchemes', 'controlDict');
-        }
-    } else if( activeId == 'fvSolution-ball' ) {
-        if (direction){
-            changeSection('fvSolution', 'generator');
+            changeSection('controlDict', 'generator');
 
             document.getElementById('generator-button').style.display = "block";
             document.getElementById('generator2-button').style.display = "block";
             document.getElementById('generator3-button').style.display = "block";
             document.getElementById('next-button').style.display = "none";
-
-            console.log('relajacion', document.getElementById("general-relaxation").value);
         } else {
+            changeSection('controlDict', 'fvSchemes');
+        }
+    } else if( activeId == 'fvSchemes-ball' ) {
+        if (direction){
+            changeSection('fvSchemes', 'controlDict');
+        } else {
+            changeSection('fvSchemes', 'fvSolution');
+        }
+    } else if( activeId == 'fvSolution-ball' ) {
+        if (direction){
             changeSection('fvSolution', 'fvSchemes');
+        } else {
+            changeSection('fvSolution', 'zero');
         }
     } else if( activeId == 'generator-ball' ) {
         if (direction){

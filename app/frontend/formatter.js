@@ -1,16 +1,159 @@
-function fillFormsData(boundariesData, turbulenceModels) {
+async function fillFormsData(boundariesData, turbulenceModel) {
+    let variables = [
+        {
+            name: 'presión',
+            variable: 'p',
+            type: 'asymmetric',
+            schemes: 'grad',
+            wallFunction: 0
+        },
+        {
+            name: 'velocidad',
+            variable: 'U',
+            type: 'symmetric',
+            schemes: "'grad','div'",
+            wallFunction: 0
+        }
+    ];
+
+    if (turbulenceModel !== 'default') {
+        let newVariables = await getTurbulenceModelVariables(turbulenceModel);
+
+        if(newVariables != null && newVariables.length > 0){
+            for(let newVariable of newVariables){
+                variables.push(newVariable);
+            }
+        }
+    } 
+
+    setSchemes(variables);
+    setBoundariesInfo(boundariesData, variables);
+}
+
+async function setSchemes(variables) {
+    let variablesInputs = document.getElementById("fvSchemes-variables-inputs");
+
+    if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
+
+    if(variables.length > 0) {
+        for ( let variable of variables ) {
+
+
+            let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
+            if(schemes != null && schemes.length > 0) {
+                let newHTML = `
+                    <p class="input-label">Esquemas para ${variable.name.toLowerCase()}</p>
+                    <div class="data-container">`;
+                
+                if ( variable.schemes.indexOf('grad') != -1 ) {
+                    newHTML += `
+                        <div class="input-data">
+                            <label for="grad-schema">Esquema para los gradientes</label>
+                            <select id="grad-schema"> <!-- onchange="startTime(value)" -->
+                                <option value="default">Predeterminado</option>
+                                <option value="Linear">Lineal</option>
+                                <option value="gaussLinear">Gauss Lineal</option>
+                                <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
+                                <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
+                            </select>
+                        </div>
+                        <br>`;
+                }
+                    
+                if ( variable.schemes.indexOf('div') != -1 ) {
+                    newHTML += `
+                        <div class="input-data">
+                            <label for="divergency-schema">Esquema para las divergencias</label>
+                            <select id="divergency-schema"> <!-- onchange="startTime(value)" -->
+                                <option value="default">Predeterminado</option>
+                                <option value="Linear">Lineal</option>
+                                <option value="gaussLinear">Gauss Lineal</option>
+                                <option value="gaussLinearBounded">Gauss Lineal limitado</option>
+                                <option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
+                            </select>
+                        </div>
+                        <br>`;
+                }
+                
+                if ( variable.schemes.indexOf('lap') != -1 ) {
+                    newHTML += `
+                        <div class="input-data">
+                            <label for="laplacian-schema">Esquema para los laplacianos</label>
+                            <select id="laplacian-schema"> <!-- onchange="startTime(value)" -->
+                                <option value="default">Predeterminado</option>
+                                <option value="Linear">Lineal</option>
+                                <option value="gaussLinear">Gauss Lineal</option>
+                                <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
+                                <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
+                            </select>
+                        </div>
+                        <br>`;
+                }
+                
+                if ( variable.schemes.indexOf('interp') != -1 ) {
+                    newHTML += `
+                        <div class="input-data">
+                            <label for="interpolation-schema">Esquema de interpolación</label>
+                            <select id="interpolation-schema"> <!-- onchange="startTime(value)" -->
+                                <option value="default">Predeterminado</option>
+                                <option value="linear">Lineal</option>
+                                <option value="gaussLinear">Gauss Lineal</option>
+                            </select>
+                        </div>
+                        <br>`;
+                }
+                
+                if ( variable.schemes.indexOf('secondGrad') != -1 ) {
+                    newHTML += `
+                        <div class="input-data">
+                            <label for="secondGrad-schema">Gradientes de segundo orden</label>
+                            <select id="secondGrad-schema"> <!-- onchange="startTime(value)" -->
+                                <option value="default">Predeterminado</option>
+                                <option value="corrected">Corregido</option>
+                                <option value="orthogonal">Ortogonal</option>
+                            </select>
+                        </div>
+                        <br>`;
+                }
+                
+                if ( variable.schemes.indexOf('wall') != -1 ) {
+                    newHTML += `
+                        <div class="input-data">
+                            <label for="wall-schema">Distribución de pared</label>
+                            <select id="wall-schema"> <!-- onchange="startTime(value)" -->
+                                <option value="default">Predeterminado</option>
+                                <option value="meshWave">MeshWave</option>
+                                <option value="cubic">Cubic</option>
+                            </select>
+                        </div>`;
+                }
+                
+                newHTML += '</div>';
+
+                variablesInputs.innerHTML += newHTML;
+            }
+        }
+    }
+}
+
+function setBoundariesInfo(boundariesData, variables) {
     if(boundariesData){
         for (boundary of boundariesData) {
-            // First looks for the existence of the element to add
             if(!document.getElementById(`${boundary.name}-data`)){
+                document.getElementById('boundary-conditions').innerHTML += 
+                    '<h2 class="input-label">Condiciones de contorno</h2>';
+                    
                 if( boundary.type === 'patch' ) {
-                    document.getElementById('boundary-conditions').innerHTML += 
-                        `<div id="${boundary.name}-data" class="walls-zero">
+                    let newText = `
+                        <div id="${boundary.name}-data" class="walls-zero">
                             <h3 class="input-title">${capitalize(boundary.name)}</h3>
-                            <div class="data-container">
+                            <div class="data-container">`;
+                            
+                        for(let variable of variables){
+                            newText += `
                                 <div class="input-data">
-                                    <label for="${boundary.name}-type">Condición</label>
-                                    <select id="${boundary.name}-type" >
+                                    <label for="${variable.variable}-data-${boundary.name}-type">Condición para ${variable.name}</label>
+                                    <select id="${variable.variable}-data-${boundary.name}-type" >
                                         <option>Valor libre</option>
                                         <option>Valor fijo</option>
                                         <option>Gradiente nulo</option>
@@ -18,61 +161,49 @@ function fillFormsData(boundariesData, turbulenceModels) {
                                         <option>Vacío</option>
                                     </select>
                                 </div>
-                            </div>
-                        </div>`;
+                                <br>`;
+                        }
+                        
+                        newText += `</div>
+                                </div>`;
+                        document.getElementById('boundary-conditions').innerHTML += newText;
                 } else if( boundary.type === 'wall' ) {
-                    document.getElementById('boundary-conditions').innerHTML += 
-                        `<div id="${boundary.name}-data" class="walls-zero">
+                    let newText =`
+                        <div id="${boundary.name}-data" class="walls-zero">
                             <h3 class="input-title">${capitalize(boundary.name)}</h3>
-                            <div class="data-container">
-                                <div class="input-data">
-                                    <label for="${boundary.name}-type">Condición</label>
-                                    <select id="${boundary.name}-type" >
-                                        <option>Valor fijo</option>
-                                        <option>Gradiente nulo</option>
-                                        <option>No-deslizamiento</option>
-                                        <option>Vacío</option>
-                                    </select>
-                                </div>
-                                <br>
-                                <div class="input-data">
-                                    <label for="${boundary.name}-wall">Funciones de pared</label>
-                                    <select id="${boundary.name}-wall" >
-                                        <option>Sí</option>
-                                        <option>No</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>`;
-                } else if( boundary.type === 'empty' ) {
-                    // document.getElementById('boundary-conditions').innerHTML += 
-                    //     `<div id="${boundary.name}-data" class="walls-zero">
-                    //         <h3 class="input-title">${capitalize(boundary.name)}</h3>
-                    //         <div class="data-container">
-                    //             <div class="input-data">
-                    //                 <label for="inlet-type">Tipo</label>
-                    //                 <select id="inlet-type" >
-                    //                     <option>Valor fijo</option>
-                    //                     <option>Gradiente nulo</option>
-                    //                     <option>No-deslizamiento</option>
-                    //                     <option>Vacío</option>
-                    //                 </select>
-                    //             </div>
-                    //         </div>
-                    //     </div>`;
+                            <div class="data-container">`;
+                            
+                            for(let variable of variables){
+                                newText += `
+                                    <div class="input-data">
+                                        <label for="${variable.variable}-data-${boundary.name}-type">Condición para ${variable.name}</label>
+                                        <select id="${variable.variable}-data-${boundary.name}-type" >
+                                            <option>Valor fijo</option>
+                                            <option>Gradiente nulo</option>
+                                            <option>No-deslizamiento</option>
+                                            <option>Vacío</option>
+                                        </select>
+                                    </div>
+                                    <br>`;
+
+                                if(variable.wallFunction == 1){
+                                    newText += `
+                                        <div class="input-data">
+                                            <label for="${boundary.name}-wall">Funciones de pared para ${variable.name}</label>
+                                            <select id="${boundary.name}-wall" >
+                                            <option>Sí</option>
+                                            <option>No</option>
+                                            </select>
+                                        </div>
+                                        <br>`;
+                                }
+                            }
+                            
+                            newText += `</div>
+                                    </div>`;
+                    document.getElementById('boundary-conditions').innerHTML += newText;
                 }
             }
-        }
-    }
-
-    if (turbulenceModels) {
-        let turbulenceOptions = document.getElementById('turbulence-model');
-        turbulenceOptions.innerHTML = `
-            <option value="default">Flujo laminar</option>`;
-
-        for (model of turbulenceModels){
-            turbulenceOptions.innerHTML += `
-                <option value="${model.model}">${model.model}</option>`;
         }
     }
 }
@@ -199,132 +330,15 @@ function vectorDirections(vectorName, value) {
     }
 }
 
-async function variablesSchemes(turbulenceModel) {
-    let variables = [
-        {
-            name: 'presión',
-            variable: 'p',
-            type: 'asymmetric',
-            schemes: 'grad'
-        },
-        {
-            name: 'velocidad',
-            variable: 'U',
-            type: 'symmetric',
-            schemes: "'grad','div'"
-        }
-    ];
+async function setModels(turbulenceModels) {
+    if (turbulenceModels) {
+        let turbulenceOptions = document.getElementById('turbulence-model');
+        turbulenceOptions.innerHTML = `
+            <option value="default">Flujo laminar</option>`;
 
-    let variablesInputs = document.getElementById("fvSchemes-variables-inputs");
-
-    if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
-
-    if (turbulenceModel !== 'default') {
-        let newVariables = await getTurbulenceModelVariables(turbulenceModel);
-
-        if(newVariables != null && newVariables.length > 0){
-            for(let newVariable of newVariables){
-                variables.push(newVariable);
-            }
-        }
-        console.log('variables', variables);
-    } 
-
-    if(variables.length > 0) {
-        for ( let variable of variables ) {
-            let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
-            if(schemes != null && schemes.length > 0) {
-                let newHTML = `
-                    <p class="input-label">Esquemas para ${variable.name.toLowerCase()}</p>
-                    <div class="data-container">`;
-                
-                if ( variable.schemes.indexOf('grad') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="grad-schema">Esquema para los gradientes</label>
-                            <select id="grad-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="Linear">Lineal</option>
-                                <option value="gaussLinear">Gauss Lineal</option>
-                                <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
-                                <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                    
-                if ( variable.schemes.indexOf('div') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="divergency-schema">Esquema para las divergencias</label>
-                            <select id="divergency-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="Linear">Lineal</option>
-                                <option value="gaussLinear">Gauss Lineal</option>
-                                <option value="gaussLinearBounded">Gauss Lineal limitado</option>
-                                <option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                
-                if ( variable.schemes.indexOf('lap') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="laplacian-schema">Esquema para los laplacianos</label>
-                            <select id="laplacian-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="Linear">Lineal</option>
-                                <option value="gaussLinear">Gauss Lineal</option>
-                                <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
-                                <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                
-                if ( variable.schemes.indexOf('interp') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="interpolation-schema">Esquema de interpolación</label>
-                            <select id="interpolation-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="linear">Lineal</option>
-                                <option value="gaussLinear">Gauss Lineal</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                
-                if ( variable.schemes.indexOf('secondGrad') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="secondGrad-schema">Gradientes de segundo orden</label>
-                            <select id="secondGrad-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="corrected">Corregido</option>
-                                <option value="orthogonal">Ortogonal</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                
-                if ( variable.schemes.indexOf('wall') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="wall-schema">Distribución de pared</label>
-                            <select id="wall-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="meshWave">MeshWave</option>
-                                <option value="cubic">Cubic</option>
-                            </select>
-                        </div>`;
-                }
-                
-                newHTML += '</div>';
-
-                variablesInputs.innerHTML += newHTML;
-            }
+        for (model of turbulenceModels){
+            turbulenceOptions.innerHTML += `
+                <option value="${model.model}">${model.model}</option>`;
         }
     }
 }

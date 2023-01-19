@@ -44,19 +44,19 @@ function start() {
         }
     );  
 
-    db.run(`CREATE TABLE boundaries_variables (name text, variable text, type text, schemes text)`,
+    db.run(`CREATE TABLE boundaries_variables (name text, variable text, type text, schemes text, wallFunction boolean)`,
         (err) => {
             if(err) {
                 console.log('Table boundaries_variables already created.');
             } else {
                 console.log('Table boundaries_variables just created.');
-                const insert = `INSERT INTO boundaries_variables (name, variable, type, schemes)
-                                 VALUES (?,?,?,?)`;
-                db.run(insert, ['nut', 'nut', null, null]);
-                db.run(insert, ['nuTilda', 'nuTilda', 'symmetric', "'grad','div'"]);
-                db.run(insert, ['k', 'k', 'symmetric', "'div'"]);
-                db.run(insert, ['epsilon', 'epsilon', 'symmetric', "'div'"]);
-                db.run(insert, ['omega', 'omega', 'symmetric', "'div'"]);
+                const insert = `INSERT INTO boundaries_variables (name, variable, type, schemes, wallFunction)
+                                 VALUES (?,?,?,?,?)`;
+                db.run(insert, ['nut', 'nut', null, null, true]);
+                db.run(insert, ['nuTilda', 'nuTilda', 'symmetric', "'grad','div'", false]);
+                db.run(insert, ['k', 'k', 'symmetric', "'div'", true]);
+                db.run(insert, ['epsilon', 'epsilon', 'symmetric', "'div'", true]);
+                db.run(insert, ['omega', 'omega', 'symmetric', "'div'", true]);
             }
         }
     );
@@ -406,6 +406,10 @@ async function getTurbulenceModelVariables(model) {
         close(db);
         console.log(err);
     });
+}
+
+async function getDefaultData() {
+    
 }
 
 module.exports = {

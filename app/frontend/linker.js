@@ -19,7 +19,7 @@ async function pathsData() {
     .then( data => {
         console.log(data.data);
         return data.data;
-    });
+    })
 }
 
 async function getTurbulenceModelsInfo() {
