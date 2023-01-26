@@ -49,24 +49,21 @@
         </article>
         
         <article id="constant-inputs">
-            <h2 class="input-label">Condiciones del flujo</h2>
+            <h2 class="input-label">Condiciones de simulación</h2>
             <div id="flux-conditions" class="data-container">
                 <div class="input-data">
-                    <label for="turbulence-model">Modelo de turbulencia</label>
-                    <select id="turbulence-model">
+                    <label for="solver">Solver</label>
+                    <select id="solver" onchange="solverChanges(value)">
+                        <option value="default">Seleccione...</option>
+                        <option value="icoFoam">icoFoam</option>
+                        <option value="simpleFoam">simpleFoam</option>
+                        <option value="pimpleFoam">pimpleFoam</option>
+                        <option value="pisoFoam">pisoFoam</option>
                     </select>
                 </div>
-            </div>
-            <h2 class="input-label">Condiciones de transporte</h2>
-            <div id="transport-conditions" class="data-container">
-                <div class="input-data">
-                    <label for="flux-density">Densidad de flujo</label>
-                    <input class="long-input" id="flux-density" />
-                </div>
-                <br>
-                <div class="input-data">
-                    <label for="flux-viscosity">Viscosidad de flujo</label>
-                    <input class="long-input" id="flux-viscosity" />
+                <div id="turbulence-model-div" class="input-data">
+                    <label for="turbulence-model">Modelo de turbulencia</label>
+                    <select id="turbulence-model"></select>
                 </div>
             </div>
         </article>
@@ -89,10 +86,17 @@
                         <label for="flux-pressure">Presión del flujo</label>
                         <input class="long-input" id="flux-pressure" type="number"/>
                     </div>
+                    <div class="input-data">
+                        <label for="flux-density">Densidad de flujo</label>
+                        <input class="long-input" id="flux-density" />
+                    </div>
+                    <div class="input-data">
+                        <label for="flux-viscosity">Viscosidad de flujo</label>
+                        <input class="long-input" id="flux-viscosity" />
+                    </div>
                 </div>
             </div>
-            <div id="boundary-conditions">
-            </div>
+            <div id="boundary-conditions"></div>
         </article>
 
         <article id="controlDict-inputs">
@@ -174,8 +178,8 @@
                 <div class="input-data">
                     <label for="grad-schema">Esquema para los gradientes</label>
                     <select id="grad-schema"> 
-                        <option value="Linear">Lineal</option>
                         <option value="gaussLinear">Gauss Lineal</option>
+                        <option value="Linear">Lineal</option>
                         <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
                         <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
                     </select>
@@ -184,8 +188,8 @@
                 <div class="input-data">
                     <label for="divergency-schema">Esquema para las divergencias</label>
                     <select id="divergency-schema"> 
-                        <option value="Linear">Lineal</option>
                         <option value="gaussLinear">Gauss Lineal</option>
+                        <option value="Linear">Lineal</option>
                         <option value="gaussLinearBounded">Gauss Lineal limitado</option>
                         <option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
                     </select>
@@ -194,8 +198,8 @@
                 <div class="input-data">
                     <label for="laplacian-schema">Esquema para los laplacianos</label>
                     <select id="laplacian-schema"> 
-                        <option value="Linear">Lineal</option>
                         <option value="gaussLinear">Gauss Lineal</option>
+                        <option value="Linear">Lineal</option>
                         <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
                         <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
                     </select>
@@ -230,18 +234,6 @@
 
         <article id="fvSolution-inputs">
             <h2 class="input-label">Parámetros de solución</h2>
-            <div class="data-container">
-                <div class="input-data">
-                    <label for="solver">Solver</label>
-                    <select id="solver" onchange="solverVariables(value)">
-                        <option value="default">Seleccione...</option>
-                        <option value="icoFoam">icoFoam</option>
-                        <option value="simpleFoam">simpleFoam</option>
-                        <option value="pimpleFoam">pimpleFoam</option>
-                        <option value="pisoFoam">pisoFoam</option>
-                    </select>
-                </div>
-            </div>
             <div id="fvSolution-variables-inputs"></div>
             <div id="fvSolution-solver-inputs"></div>
             <div id="fvSolution-relaxationFactors-inputs"></div>

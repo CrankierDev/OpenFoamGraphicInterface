@@ -30,6 +30,8 @@ function changeSection(actualContent, nextContent) {
     document.getElementById(`${actualContent}-inputs`).style.display = "none";
     document.getElementById(`${nextContent}-ball`).classList.add('active-ball');
     document.getElementById(`${nextContent}-inputs`).style.display = "block";
+
+    window.scrollTo(0, 0);
 }
 
 async function pagination(direction) {
@@ -47,6 +49,8 @@ async function pagination(direction) {
                 let boundariesData = await pathsData();
                 fillFormsData(boundariesData, document.getElementById("turbulence-model").value);
             }
+
+            solverVariables(document.getElementById('solver').value);
             
             changeSection('constant', 'zero');
         } else {
@@ -57,6 +61,18 @@ async function pagination(direction) {
             changeSection('zero', 'fvSolution');
         } else {
             changeSection('zero', 'constant');
+        }
+    } else if( activeId == 'fvSolution-ball' ) {
+        if (direction){
+            changeSection('fvSolution', 'fvSchemes');
+        } else {
+            changeSection('fvSolution', 'zero');
+        }
+    } else if( activeId == 'fvSchemes-ball' ) {
+        if (direction){
+            changeSection('fvSchemes', 'controlDict');
+        } else {
+            changeSection('fvSchemes', 'fvSolution');
         }
     } else if( activeId == 'controlDict-ball' ) {
         if (direction){
@@ -69,24 +85,12 @@ async function pagination(direction) {
         } else {
             changeSection('controlDict', 'fvSchemes');
         }
-    } else if( activeId == 'fvSchemes-ball' ) {
-        if (direction){
-            changeSection('fvSchemes', 'controlDict');
-        } else {
-            changeSection('fvSchemes', 'fvSolution');
-        }
-    } else if( activeId == 'fvSolution-ball' ) {
-        if (direction){
-            changeSection('fvSolution', 'fvSchemes');
-        } else {
-            changeSection('fvSolution', 'zero');
-        }
     } else if( activeId == 'generator-ball' ) {
         if (direction){
             document.getElementById('generator-inputs').style.display = "none";
             firstPage();
         } else {
-            changeSection('generator', 'fvSolution');
+            changeSection('generator', 'controlDict');
 
             document.getElementById('generator-button').style.display = "none";
             document.getElementById('next-button').style.display = "block";

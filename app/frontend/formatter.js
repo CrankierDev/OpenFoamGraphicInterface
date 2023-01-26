@@ -26,8 +26,8 @@ async function fillFormsData(boundariesData, turbulenceModel) {
         }
     } 
 
-    setSchemes(variables);
     setBoundariesInfo(boundariesData, variables);
+    setSchemes(variables);
 }
 
 async function setSchemes(variables) {
@@ -138,10 +138,11 @@ async function setSchemes(variables) {
 
 function setBoundariesInfo(boundariesData, variables) {
     if(boundariesData){
+        document.getElementById('boundary-conditions').innerHTML = 
+            '<h2 class="input-label">Condiciones de contorno</h2>';
+
         for (boundary of boundariesData) {
             if(!document.getElementById(`${boundary.name}-data`)){
-                document.getElementById('boundary-conditions').innerHTML += 
-                    '<h2 class="input-label">Condiciones de contorno</h2>';
                     
                 if( boundary.type === 'patch' ) {
                     let newText = `
@@ -214,6 +215,18 @@ function startTime(value) {
 
 function endTime(value) {
     console.log('on change is working!', value);
+}
+
+function solverChanges(value) {
+    let selector = document.getElementById('turbulence-model');
+
+    if(value === 'icoFoam') {
+        selector.disabled = true;
+        selector.value = 'default';
+
+    } else {
+        selector.disabled = false;
+    }
 }
 
 function forces() {
@@ -378,7 +391,6 @@ async function solverVariables(solver){
                 }
             }
         }
-        console.log('variables', variables);
         
         if(variables.length > 0) {
             solverVariablesData(variablesInputs, variables);
@@ -402,8 +414,9 @@ function solverVariablesData(variablesInputs, variables) {
                     <div class="input-data">
                         <label for="${variable.variable}-solver-schema">Solver</label>
                         <select id="${variable.variable}-solver-schema">
-                            <!--<option value="GAMG">GAMG</option> -->
                             <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="smoothSolver">smoothSolver</option>
+                            <option value="DILU">DILU</option>
                             <option value="PCG">PCG</option>
                             <option value="PBiCG">PBiCG</option>
                             <option value="PBiCGStab">PBiCGStab</option>
@@ -414,16 +427,14 @@ function solverVariablesData(variablesInputs, variables) {
                         <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
                         <select id="${variable.variable}-preconditioner-schema">
                             <option value="default">Sin precondicionador</option>
-                            <!--<option value="GAMG">GAMG</option> -->
                             <option value="symGaussSeidel">Gauss-Seidel</option>
-                            <option value="DIC">DIC</option>
+                            <option value="DILU">DILU</option>
                         </select>
                     </div>
                     <br>
                     <div class="input-data">
                         <label for="${variable.variable}-smoother-data">Smoother</label>
                         <select id="${variable.variable}-smoother-data">
-                            <!--<option value="GAMG">GAMG</option> -->
                             <option value="GaussSeidel">Gauss-Seidel</option>
                             <option value="DIC">DILU</option>
                         </select>
@@ -450,7 +461,7 @@ function solverVariablesData(variablesInputs, variables) {
                         <label for="${variable.variable}-solver-schema">Solver</label>
                         <select id="${variable.variable}-solver-schema"> 
                             <option value="GAMG">GAMG</option>
-                            <option value="smoothSolver">smoothSolver</option>
+                            <option value="DIC">DIC</option>
                             <option value="PCG">PCG</option>
                             <option value="PBiCGStab">PBiCGStab</option>
                         </select>
@@ -462,7 +473,7 @@ function solverVariablesData(variablesInputs, variables) {
                             <option value="default">Sin precondicionador</option>
                             <option value="GaussSeidel">Gauss-Seidel</option>
                             <option value="GAMG">GAMG</option>
-                            <option value="DILU">DILU</option>
+                            <option value="DIC">DIC</option>
                         </select>
                     </div>
                     <br>
@@ -471,7 +482,7 @@ function solverVariablesData(variablesInputs, variables) {
                         <select id="${variable.variable}-smoother-data">
                             <option value="GaussSeidel">Gauss-Seidel</option>
                             <option value="GAMG">GAMG</option>
-                            <option value="DILU">DILU</option>
+                            <option value="DIC">DIC</option>
                         </select>
                     </div>
                     <br>

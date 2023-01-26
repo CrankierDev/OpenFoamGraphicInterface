@@ -69,6 +69,85 @@ function start() {
             "data": await db.getTurbulenceModelVariables(req.body.model)
         });
     });
+
+    app.post('/getSolutionData', async (req, res) => {
+        console.log('Getting default data for simulation... ');
+
+        let response = await db.getSolutionData(req.body.simulation_id);
+        
+        if(response != null) {
+            response.solvers = parseSolvers( response.solvers.replaceAll('\n', '').split('{') );
+            response.simple = buildJSON( response.simple.replaceAll('\n', '')
+                                                .replaceAll('{', '')
+                                                .replaceAll('}', '')
+                                                .split(';') );
+            response.pimple = buildJSON( response.pimple.replaceAll('\n', '')
+                                                .replaceAll('{', '')
+                                                .replaceAll('}', '')
+                                                .split(';') );
+            response.piso = buildJSON( response.piso.replaceAll('\n', '')
+                                                .replaceAll('{', '')
+                                                .replaceAll('}', '')
+                                                .split(';') );
+            response.residualControl = buildJSON( response.residualControl.replaceAll('\n', '')
+                                                .replaceAll('{', '')
+                                                .replaceAll('}', '')
+                                                .split(';') );
+            response.relaxationFactors = buildJSON( response.relaxationFactors.replaceAll('\n', '')
+                                                .replaceAll('{', '')
+                                                .replaceAll('}', '')
+                                                .split(';') );
+        }
+
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
+}
+
+function buildJSON(data) {
+    let solution = {};
+
+    // Here we build a JSON object to return later
+    data.forEach( (row) => {
+        let inputJSON = row.trim().split(' ');
+
+        if (inputJSON[0] !== '') {
+            solution[`${inputJSON[0]}`] = inputJSON.slice(-1)[0];
+        }
+    });
+
+    return solution;
+}
+
+function parseSolvers(solversData) {
+    let solvers = {};
+    let solver;
+
+    solversData.forEach( (row) => {
+        if ( row === '' ) {
+            // We dont want to process this row
+            return;
+        }
+
+        row = row.split('}');
+
+        if (row.length === 1 ) {
+            solver = row[0].trim();
+
+        } else {
+            let solverBody = buildJSON( row[0].split(';') );
+
+            // Sets a new parameter on the solvers JSON with the previous JSON
+            solvers[`${solver}`] = solverBody;
+
+            // Sets the solver param for the next iteration
+            solver = row[1].trim();
+        }
+    });
+
+    return solvers;
 }
 
 module.exports.start = start;

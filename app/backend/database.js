@@ -2,6 +2,25 @@ const sqlite3 = require('sqlite3').verbose();
 
 const DBSOURCE = './db.sqlite';
 
+// Prepared statements
+const TURBULENCE_MODELS_INSERT = `INSERT INTO turbulence_models (model, variables) VALUES (?,?)`;
+const BOUNDARIES_VARIABLES_INSERT = `INSERT INTO boundaries_variables (name, variable, type,
+                                        schemes, wallFunction) VALUES (?,?,?,?,?)`;
+const SIMULATIONS_INFO_INSERT = `INSERT INTO simulations_info (id, creationDate, name, meshRoute,
+                                    lastGenerationDate, executable) VALUES (?,?,?,?,?,?)`;
+const ZERO_DATA_INSERT = `INSERT INTO zero_data (id, variable, value, AOAValue, boundaries) VALUES (?,?,?,?,?)`;
+const SIMULATION_BOUNDARIES_INSERT = `INSERT INTO simulation_boundaries (id, name, type) VALUES (?,?,?)`;
+const CONSTANT_DATA_INSERT = `INSERT INTO constant_data (id, transportModel, turbulenceModel,
+                                printCoeffs, rho, nu) VALUES (?,?,?,?,?,?)`;
+const CONTROL_DICT_DATA_INSERT = `INSERT INTO control_dict_data (id, application, startFrom, startTime,
+                            stopAt, endTime, deltaT, runTimeModifiable, adjustTimeStep, writeData)
+                            VALUES (?,?,?,?,?,?,?,?,?,?)`;
+const SCHEMES_DATA_INSERT = `INSERT INTO schemes_data (id, ddtSchemes, gradSchemes, divSchemes,
+                                laplacianSchemes, interpolationSchemes, snGradSchemes, wallDist)
+                                VALUES (?,?,?,?,?,?,?,?)`;
+const SOLUTIONS_DATA_INSERT = `INSERT INTO solutions_data (id, solvers, simple, pimple, piso,
+                                residualControl, relaxationFactors) VALUES (?,?,?,?,?,?,?)`;
+
 function open() {
     let db = new sqlite3.Database(DBSOURCE, (err) => {
         if(err) {
@@ -36,10 +55,9 @@ function start() {
                 console.log('Table turbulence_models already created.');
             } else {
                 console.log('Table turbulence_models just created.');
-                const insert = `INSERT INTO turbulence_models (model, variables) VALUES (?,?)`;
-                db.run(insert, ["kOmegaSST", "nut,k,omega"]);
-                db.run(insert, ["kEpsilon", "nut,k,epsilon"]);
-                db.run(insert, ["Spalart-Allmaras", "nut,nuTilda"]);
+                db.run(TURBULENCE_MODELS_INSERT, ["kOmegaSST", "nut,k,omega"]);
+                db.run(TURBULENCE_MODELS_INSERT, ["kEpsilon", "nut,k,epsilon"]);
+                db.run(TURBULENCE_MODELS_INSERT, ["Spalart-Allmaras", "nut,nuTilda"]);
             }
         }
     );  
@@ -50,13 +68,11 @@ function start() {
                 console.log('Table boundaries_variables already created.');
             } else {
                 console.log('Table boundaries_variables just created.');
-                const insert = `INSERT INTO boundaries_variables (name, variable, type, schemes, wallFunction)
-                                 VALUES (?,?,?,?,?)`;
-                db.run(insert, ['nut', 'nut', null, null, true]);
-                db.run(insert, ['nuTilda', 'nuTilda', 'symmetric', "'grad','div'", false]);
-                db.run(insert, ['k', 'k', 'symmetric', "'div'", true]);
-                db.run(insert, ['epsilon', 'epsilon', 'symmetric', "'div'", true]);
-                db.run(insert, ['omega', 'omega', 'symmetric', "'div'", true]);
+                db.run(BOUNDARIES_VARIABLES_INSERT, ['nut', 'nut', null, null, true]);
+                db.run(BOUNDARIES_VARIABLES_INSERT, ['nuTilda', 'nuTilda', 'symmetric', "'grad','div'", false]);
+                db.run(BOUNDARIES_VARIABLES_INSERT, ['k', 'k', 'symmetric', "'div'", true]);
+                db.run(BOUNDARIES_VARIABLES_INSERT, ['epsilon', 'epsilon', 'symmetric', "'div'", true]);
+                db.run(BOUNDARIES_VARIABLES_INSERT, ['omega', 'omega', 'symmetric', "'div'", true]);
             }
         }
     );
@@ -78,9 +94,7 @@ function start() {
                         
                 currentDate = day + '/' + month + '/' + year;
                 
-                const insert = `INSERT INTO simulations_info (id, creationDate, name,
-                                meshRoute, lastGenerationDate, executable) VALUES (?,?,?,?,?,?)`;
-                db.run(insert, ['default_sim', currentDate, 'default_sim', null, currentDate, true]);
+                db.run(SIMULATIONS_INFO_INSERT, ['default_sim', currentDate, 'default_sim', null, currentDate, true]);
             }
         }
     );
@@ -91,9 +105,8 @@ function start() {
                 console.log('Table zero_data already created.');
             } else {
                 console.log('Table zero_data just created.');
-                const insert = `INSERT INTO zero_data (id, variable, value,
-                                AOAValue, boundaries) VALUES (?,?,?,?,?)`;
-                db.run(insert, ['default_sim', 'p', '0', '0', `{
+                
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'p', '0', '0', `{
                     inlet
                     {
                         type            freestreamPressure;
@@ -116,7 +129,7 @@ function start() {
                         type            empty;
                     }
                 }`]);
-                db.run(insert, ['default_sim', 'U', '26', '0', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'U', '26', '0', `{
                     inlet
                     {
                         type            freestreamVelocity;
@@ -139,7 +152,7 @@ function start() {
                         type            empty;
                     }
                 }`]);
-                db.run(insert, ['default_sim', 'nuTilda', '0.14', '0', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'nuTilda', '0.14', '0', `{
                     inlet
                     {
                         type            freestream;
@@ -163,7 +176,7 @@ function start() {
                         type            empty;
                     }
                 }`]);
-                db.run(insert, ['default_sim', 'nut', '0.14', '0', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'nut', '0.14', '0', `{
                     inlet
                     {
                         type            freestream;
@@ -198,11 +211,10 @@ function start() {
             } else {
                 console.log('Table simulation_boundaries just created.');
                 
-                const insert = `INSERT INTO simulation_boundaries (id, name, type) VALUES (?,?,?)`;
-                db.run(insert, ['default_sim', 'inlet', 'patch']);
-                db.run(insert, ['default_sim', 'outlet', 'patch']);
-                db.run(insert, ['default_sim', 'walls', 'wall']);
-                db.run(insert, ['default_sim', 'frontAndBack', 'empty']);
+                db.run(SIMULATION_BOUNDARIES_INSERT, ['default_sim', 'inlet', 'patch']);
+                db.run(SIMULATION_BOUNDARIES_INSERT, ['default_sim', 'outlet', 'patch']);
+                db.run(SIMULATION_BOUNDARIES_INSERT, ['default_sim', 'walls', 'wall']);
+                db.run(SIMULATION_BOUNDARIES_INSERT, ['default_sim', 'frontAndBack', 'empty']);
             }
         }
     );
@@ -214,9 +226,8 @@ function start() {
                 console.log('Table constant_data already created.');
             } else {
                 console.log('Table constant_data just created.');
-                const insert = `INSERT INTO constant_data (id, transportModel, turbulenceModel,
-                                printCoeffs, rho, nu) VALUES (?,?,?,?,?,?)`;
-                db.run(insert, ['default_sim', 'Newtonian', 'SpalartAllmaras', true, '1', '1e-05']);
+                
+                db.run(CONSTANT_DATA_INSERT, ['default_sim', 'Newtonian', 'SpalartAllmaras', true, '1', '1e-05']);
             }
         }
     );
@@ -229,10 +240,8 @@ function start() {
                 console.log('Table control_dict_data already created.');
             } else {
                 console.log('Table control_dict_data just created.');
-                const insert = `INSERT INTO control_dict_data (id, application, startFrom,
-                                startTime, stopAt, endTime, deltaT, runTimeModifiable,
-                                adjustTimeStep, writeData) VALUES (?,?,?,?,?,?,?,?,?,?)`;
-                db.run(insert, ['default_sim', 'simpleFoam', 'startTime', '0',
+                
+                db.run(CONTROL_DICT_DATA_INSERT, ['default_sim', 'simpleFoam', 'startTime', '0',
                                 'endTime', '500', '1', true, true, true]);
             }
         }
@@ -245,10 +254,8 @@ function start() {
                 console.log('Table schemes_data already created.');
             } else {
                 console.log('Table schemes_data just created.');
-                const insert = `INSERT INTO schemes_data (id, ddtSchemes, gradSchemes, divSchemes,
-                                laplacianSchemes, interpolationSchemes, snGradSchemes, wallDist)
-                                VALUES (?,?,?,?,?,?,?,?)`;
-                db.run(insert, ['default_sim', `{
+                
+                db.run(SCHEMES_DATA_INSERT, ['default_sim', `{
                     default         steadyState;
                 }`, `{
                     default         Gauss linear;
@@ -271,15 +278,14 @@ function start() {
     );
 
     db.run(`CREATE TABLE solutions_data (id text, solvers text, simple text,
-                piso text, relaxationFactors text)`,
+                pimple text, piso text, residualControl text, relaxationFactors text)`,
         (err) => {
             if(err) {
                 console.log('Table solutions_data already created.');
             } else {
                 console.log('Table solutions_data just created.');
-                const insert = `INSERT INTO solutions_data (id, solvers, simple, piso, relaxationFactors)
-                                VALUES (?,?,?,?,?)`;
-                db.run(insert, ['default_sim', `{
+                
+                db.run(SOLUTIONS_DATA_INSERT, ['default_sim', `{
                     p
                     {
                         solver          GAMG;
@@ -308,22 +314,22 @@ function start() {
                 }`, `{
                     nNonOrthogonalCorrectors 0;
                 
-                    residualControl
-                    {
-                        p               1e-5;
-                        U               1e-5;
-                        nuTilda         1e-5;
-                    }
                 }`, `{
                     nCorrectors             2;
                     nNonOrthogonalCorrectors 4;
                 
-                    residualControl
-                    {
-                        p               1e-4;
-                        U			    1e-4;
-                        "(k|omega)"     1e-4;
-                    }
+                    maxCo                   1;
+                    rDeltaTSmoothingCoeff   0.1;
+                    maxDeltaT               1;
+
+                }`, `{
+                    nCorrectors             2;
+                    nNonOrthogonalCorrectors 4;
+
+                }`, `{
+                        p               1e-5;
+                        U               1e-5;
+                        nuTilda         1e-5;
                 }`, `{
                     fields
                     {
@@ -408,12 +414,36 @@ async function getTurbulenceModelVariables(model) {
     });
 }
 
-async function getDefaultData() {
-    
+async function getSolutionData(simulation_id) {
+    let db = open();
+
+    return new Promise( (resolve, reject) => {
+        db.get(`SELECT * FROM solutions_data WHERE id = (?)`, simulation_id,
+            (err, rows) => {
+                if (err) {
+                    console.log('err', err.message);
+                }
+
+                if(rows != null){
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }            
+            }
+        );
+    }).then( (response) => {
+        close(db);
+        return response;
+
+    }).catch( (err) => {
+        close(db);
+        console.log(err);
+    });
 }
 
 module.exports = {
     start: start,
     getTurbulenceModelsInfo: getTurbulenceModelsInfo,
     getTurbulenceModelVariables: getTurbulenceModelVariables,
+    getSolutionData: getSolutionData,
 };
