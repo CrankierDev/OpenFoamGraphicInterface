@@ -1,9 +1,10 @@
 /*--------------------------------- INPUTS STYLES ---------------------------------------------*/
 .data-container {
+    color: var(--blacktext-pallete);
     width: 80%;
     margin: 0 auto;
     margin-bottom: 0.5em;
-    background-color: var(--bg-section-color);
+    background-color: var(--whitetext-pallete);
     border: solid;
     border-radius: 20px;
     border-width: 0;

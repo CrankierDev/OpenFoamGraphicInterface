@@ -32,25 +32,21 @@
     font-weight: bold;
 }
 
-.next-button, .folder-button {
-    margin-top: 0;
-    background-color: var(--bg-next-button);
-    color: var(--secondary-text-color);
-}
-
-.generator-button {
-    margin-top: 0;
-    background-color: var(--bg-next-button);
-    color: var(--secondary-text-color);
-}
-
 .back-button {
     margin-top: 0;
-    background-color: var(--bg-back-button);
+    background-color: var(--orange-pallete);
+    color: var(--background-pallete);
+}
+
+
+.next-button, .folder-button, .generator-button {
+    margin-top: 0;
+    background-color: var(--yellow-pallete);
+    color: var(--whitetext-pallete);
 }
 
 button:disabled,
 button[disabled] {
-    background-color: var(--bg-button-disabled-color);
+    background-color: var(--grey-pallete);
     color: var(--disabled-text-color)
 }

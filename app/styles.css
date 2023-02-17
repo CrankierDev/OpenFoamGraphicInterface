@@ -1,14 +1,25 @@
 :root{
-    --ball-color: cyan;
-    --bg-section-color: rgb(221, 221, 221);
-    --bg-button-disabled-color: rgb(121, 121, 121);
-    --bg-next-button: rgb(0, 102, 255);
-    --bg-back-button: rgb(255, 115, 0);
-    --secondary-text-color: white;
     --disabled-text-color: white;
+    
+    /* --------------------------- TEXTS ------------------------- */
+    --whitetext-pallete: rgb(236, 236, 236);
+    --blacktext-pallete: #0F0C0C;
+    
+    /* ----------------------- BACKGROUNDS ----------------------- */
+    --white-color-pallete: rgb(136,140,146);
+    --grey-pallete: rgb(136,140,146);
+    --yellow-pallete: rgb(6,100,135);
+    --orange-pallete:  rgb(210,112,26);
+    --background-pallete: rgb(7, 13, 36);
 }
 
-html {
-    background-color: rgb(118, 118, 118);
+html, body {
+    background-color: var(--background-pallete);
+    color: var(--whitetext-pallete);
+    /* background-color: rgb(118, 118, 118); */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
 }
-

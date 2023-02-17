@@ -6,7 +6,9 @@
 @import "./axis.css";
 
 h1 {
+    font-size: 28px;
     text-align: center;
+    color: var(--whitetext-pallete);
 }
 
 h2 {

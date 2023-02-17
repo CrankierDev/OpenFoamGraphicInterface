@@ -1,5 +1,7 @@
 /*--------------------------------- BALLS STYLES ---------------------------------------------*/
 .balls-section {
+    color: var(--blacktext-pallete);
+    font-weight: bold;
     width: 100%;
     text-align: center;
     margin-bottom: 0;
@@ -12,9 +14,9 @@
     border-radius: 40px;
     border: solid;
     border-width: 1px;
-    border-color: var(--bg-back-button);
+    border-color: var(--grey-pallete);
     text-align: center;
-    background-color: white;
+    background-color: var(--grey-pallete);
 }
 
 .ball>p {
@@ -22,12 +24,12 @@
 }
 
 .active-ball {
-    background-color: var(--bg-next-button);
-    border-color: var(--bg-next-button);
+    background-color: var(--orange-pallete);
+    border-color: var(--orange-pallete);
 }
 
 .active-ball>p {
-    color: var(--secondary-text-color);
+    color: var(--whitetext-pallete);
 }
 
 .ball-separator {
@@ -41,6 +43,6 @@
 
 .ball-separator>hr {
     width: 100%;
-    border: 0.5px solid var(--bg-back-button);
+    border: 0.5px solid var(--grey-pallete);
     margin-bottom: 4px;
 }

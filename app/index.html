@@ -8,20 +8,31 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="./frontend/static/styles/index.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+	        $('#start-section').load("./frontend/static/pages/start.html");
+        });
+    </script>
 </head>
 <body>
     <main>
         <aside>
-            <ul>
-                <li>Simulación simple</li>
-                <li onclick="loadAdvancedSearch()">Simulación avanzada</li>
-            </ul>
+            <img src="./frontend/static/images/ESI-color.png" >
+            <section>
+                <ul>
+                    <li onclick="loadStart()">Inicio</li>
+                    <li onclick="loadSimpleSimulation()">Simulación simple</li>
+                    <li onclick="loadAdvancedSimulation()">Simulación avanzada</li>
+                    <li onclick="loadPostProcess()">Post-procesado</li>
+                </ul>
+                <footer>Footer con informacion de copy, anio y demas</footer>
+            </section>
         </aside>
-        <section>
-            <article id="advancedSearch"></article>
+        <section class="content-container">
+            <article id="start-section"></article>
+            <article id="content-section"></article>
         </section>
     </main>
-    <footer>Footer con informacion de copy, anio y demas</footer>
     
     <!-- FrontEnd scripts -->
     <script type="text/javascript" src="frontend/jquery.js"></script>
