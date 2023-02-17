@@ -1,0 +1,49 @@
+<head>
+    <link rel="stylesheet" href="./frontend/static/styles/advancedSimulation.css">
+    <script>
+        $(document).ready(function(){
+            $('#firstContent').load("./frontend/static/pages/components/starterSection.html");
+            $('#constant-inputs').load("./frontend/static/pages/components/constants.html");
+            $('#zero-inputs').load("./frontend/static/pages/components/zero.html");
+            $('#controlDict-inputs').load("./frontend/static/pages/components/controlDict.html");
+            $('#fvSchemes-inputs').load("./frontend/static/pages/components/fvSchemes.html");
+            $('#fvSolution-inputs').load("./frontend/static/pages/components/fvSolutions.html");
+            $('#generator-inputs').load("./frontend/static/pages/components/executioner.html");
+        });
+    </script>
+</head>
+<body>
+    <section id="firstContent"></section>
+    <section id="secondContent">
+        <h1>Rellene los datos de los parámetros de simulación</h1>
+
+        <nav class="balls-section">
+            <div id="constant-ball" class="ball"><p>1</p></div>            
+            <div class="ball-separator"><hr></div>
+            <div id="zero-ball" class="ball"><p>2</p></div>
+            <div class="ball-separator"><hr></div>
+            <div id="fvSolution-ball" class="ball"><p>3</p></div>
+            <div class="ball-separator"><hr></div>
+            <div id="fvSchemes-ball" class="ball"><p>4</p></div>           
+            <div class="ball-separator"><hr></div>
+            <div id="controlDict-ball" class="ball"><p>5</p></div>           
+            <div class="ball-separator"><hr></div>
+            <div id="generator-ball" class="ball"><p>6</p></div>
+        </nav>
+        
+        <article id="constant-inputs"></article>
+        <article id="zero-inputs"></article>
+        <article id="controlDict-inputs"></article>
+        <article id="fvSchemes-inputs"></article>
+        <article id="fvSolution-inputs"></article>
+        <article id="generator-inputs"></article>
+        
+    </section>
+
+    <div class="buttons-container">
+        <button id="back-button" class="left-button buttons-style back-button" onclick="pagination(false)">Atrás</button>
+        <button id="next-button" class="center-buttons buttons-style next-button" onclick="pagination(true)">Siguiente</button>
+        <button id="generator-button" class="right-button buttons-style generator-button" onclick="pagination(true)">Generar ficheros</button>
+    </div> 
+    <!-- <h2 id="resultsReady">Ya se encuentran disponibles los resultados de la simulación</h2> -->
+</body>

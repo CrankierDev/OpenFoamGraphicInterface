@@ -414,11 +414,173 @@ async function getTurbulenceModelVariables(model) {
     });
 }
 
-async function getSolutionData(simulation_id) {
+async function getSolutionData(simulationID) {
     let db = open();
 
     return new Promise( (resolve, reject) => {
-        db.get(`SELECT * FROM solutions_data WHERE id = (?)`, simulation_id,
+        db.get(`SELECT * FROM solutions_data WHERE id = (?)`, simulationID,
+            (err, rows) => {
+                if (err) {
+                    console.log('err', err.message);
+                }
+
+                if(rows != null){
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }            
+            }
+        );
+    }).then( (response) => {
+        close(db);
+        return response;
+
+    }).catch( (err) => {
+        close(db);
+        console.log(err);
+    });
+}
+
+async function getSchemesData(simulationID) {
+    let db = open();
+
+    return new Promise( (resolve, reject) => {
+        db.get(`SELECT * FROM schemes_data WHERE id = (?)`, simulationID,
+            (err, rows) => {
+                if (err) {
+                    console.log('err', err.message);
+                }
+
+                if(rows != null){
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }            
+            }
+        );
+    }).then( (response) => {
+        close(db);
+        return response;
+
+    }).catch( (err) => {
+        close(db);
+        console.log(err);
+    });
+}
+
+async function getSimulationInfo(simulationID) {
+    let db = open();
+
+    return new Promise( (resolve, reject) => {
+        db.get(`SELECT * FROM simulations_info WHERE id = (?)`, simulationID,
+            (err, rows) => {
+                if (err) {
+                    console.log('err', err.message);
+                }
+
+                if(rows != null){
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }            
+            }
+        );
+    }).then( (response) => {
+        close(db);
+        return response;
+
+    }).catch( (err) => {
+        close(db);
+        console.log(err);
+    });
+}
+
+async function getZeroData(simulationID) {
+    let db = open();
+
+    return new Promise( (resolve, reject) => {
+        db.all(`SELECT * FROM zero_data WHERE id = (?)`, simulationID,
+            (err, rows) => {
+                if (err) {
+                    console.log('err', err.message);
+                }
+
+                if(rows != null){
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }            
+            }
+        );
+    }).then( (response) => {
+        close(db);
+        return response;
+
+    }).catch( (err) => {
+        close(db);
+        console.log(err);
+    });
+}
+
+async function getControlDictData(simulationID) {
+    let db = open();
+
+    return new Promise( (resolve, reject) => {
+        db.get(`SELECT * FROM control_dict_data WHERE id = (?)`, simulationID,
+            (err, rows) => {
+                if (err) {
+                    console.log('err', err.message);
+                }
+
+                if(rows != null){
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }            
+            }
+        );
+    }).then( (response) => {
+        close(db);
+        return response;
+
+    }).catch( (err) => {
+        close(db);
+        console.log(err);
+    });
+}
+
+async function getConstantData(simulationID) {
+    let db = open();
+
+    return new Promise( (resolve, reject) => {
+        db.get(`SELECT * FROM constant_data WHERE id = (?)`, simulationID,
+            (err, rows) => {
+                if (err) {
+                    console.log('err', err.message);
+                }
+
+                if(rows != null){
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }            
+            }
+        );
+    }).then( (response) => {
+        close(db);
+        return response;
+
+    }).catch( (err) => {
+        close(db);
+        console.log(err);
+    });
+}
+
+async function getSimulationBoundariesData(simulationID) {
+    let db = open();
+
+    return new Promise( (resolve, reject) => {
+        db.all(`SELECT * FROM simulation_boundaries WHERE id = (?)`, simulationID,
             (err, rows) => {
                 if (err) {
                     console.log('err', err.message);
@@ -446,4 +608,10 @@ module.exports = {
     getTurbulenceModelsInfo: getTurbulenceModelsInfo,
     getTurbulenceModelVariables: getTurbulenceModelVariables,
     getSolutionData: getSolutionData,
+    getSchemesData: getSchemesData,
+    getZeroData: getZeroData,
+    getSimulationInfo: getSimulationInfo,
+    getControlDictData: getControlDictData,
+    getConstantData: getConstantData,
+    getSimulationBoundariesData: getSimulationBoundariesData
 };

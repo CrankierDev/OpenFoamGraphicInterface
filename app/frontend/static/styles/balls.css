@@ -1,0 +1,46 @@
+/*--------------------------------- BALLS STYLES ---------------------------------------------*/
+.balls-section {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.ball {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    border: solid;
+    border-width: 1px;
+    border-color: var(--bg-back-button);
+    text-align: center;
+    background-color: white;
+}
+
+.ball>p {
+    margin-top: 11px;
+}
+
+.active-ball {
+    background-color: var(--bg-next-button);
+    border-color: var(--bg-next-button);
+}
+
+.active-ball>p {
+    color: var(--secondary-text-color);
+}
+
+.ball-separator {
+    display: inline-block;
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    margin-left: -4px;
+    margin-right: -4px;
+}
+
+.ball-separator>hr {
+    width: 100%;
+    border: 0.5px solid var(--bg-back-button);
+    margin-bottom: 4px;
+}

@@ -1,0 +1,31 @@
+/*------------------------- IMPORTS -------------------------*/
+@import "./buttons.css";
+@import "./inputs.css";
+@import "./generator.css";
+@import "./balls.css";
+@import "./axis.css";
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    padding-left: 4rem;
+    padding-bottom: 1rem;
+}
+
+#firstContent, #next-button {
+    display: block;
+}
+
+#secondContent, #zero-inputs, #constant-inputs, #controlDict-inputs, #fvSchemes-inputs, #fvSolution-inputs {
+    display: none;
+}
+
+#generator-inputs, #generator-button, #back-button, #lift-vector, #drag-vector, #pitch-vector {
+    display: none;
+}
+
+#resultsReady {
+    display: none;
+}

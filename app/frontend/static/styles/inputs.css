@@ -1,0 +1,83 @@
+/*--------------------------------- INPUTS STYLES ---------------------------------------------*/
+.data-container {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 0.5em;
+    background-color: var(--bg-section-color);
+    border: solid;
+    border-radius: 20px;
+    border-width: 0;
+    padding-top: 0;
+    padding-bottom: 25px;
+}
+
+.input-label, .input-title {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.input-data {
+    display: inline-flex;
+    width: 100%;
+    margin-bottom: 0;
+    align-items: flex-end;
+}
+
+.input-data>label, .input-data>select, .input-data>input , .input-data>p {
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+.input-data>label {
+    width: 228px;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.input-data>p {
+    width: 200px;
+    margin-left: 50px;
+    margin-right: auto;
+}
+
+.input-data>.long-label {
+    width: 350px;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.input-data>.checkbox-label {
+    width: 511px;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.input-data>.long-input {
+    width: 300px;
+    margin-left: 5px;
+    margin-right: auto;
+}
+
+.input-data>.short-input {
+    width: 100px;
+    margin-left: 5px;
+    margin-right: auto;
+}
+
+.input-data>select {
+    width: 308px;
+    margin-left: 4px;
+    margin-right: auto;
+}
+
+.input-data>.short-selector {
+    width: 108px;
+    margin-left: 4px;
+    margin-right: auto;
+}
+
+.input-data>.checkbox {
+    width: 30px;
+    margin-left: 0;
+    margin-right: auto;
+}

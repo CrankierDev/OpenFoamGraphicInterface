@@ -1,0 +1,22 @@
+/*--------------------------------- AXIS STYLES ---------------------------------------------*/
+.axis-data {
+    display: inline-flex;
+    width: 100%;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0 0em;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.axis-data>div>.axis-label {
+    width: 100px;
+    margin-left: 5px;
+    margin-right: 0;
+}
+
+.axis-data>div>.axis-input {
+    width: 100px;
+    margin-left: 0;
+    margin-right: 5px;
+}

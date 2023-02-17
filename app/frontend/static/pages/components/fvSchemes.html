@@ -1,0 +1,65 @@
+<h2 class="input-label">Esquemas predeterminados de la simulación</h2>
+<div class="data-container">
+	<div class="input-data">
+		<label for="temporal-schema">Esquema temporal</label>
+		<select id="temporal-schema"> 
+			<option value="steadyState">Estacionario</option>
+			<option value="transitory">Transitorio</option>
+		</select>
+	</div>
+	<br>
+	<div class="input-data">
+		<label for="grad-schema">Esquema para los gradientes</label>
+		<select id="grad-schema"> 
+			<option value="gaussLinear">Gauss Lineal</option>
+			<option value="Linear">Lineal</option>
+			<option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
+			<option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
+		</select>
+	</div>
+	<br>
+	<div class="input-data">
+		<label for="divergency-schema">Esquema para las divergencias</label>
+		<select id="divergency-schema"> 
+			<option value="gaussLinear">Gauss Lineal</option>
+			<option value="Linear">Lineal</option>
+			<option value="gaussLinearBounded">Gauss Lineal limitado</option>
+			<option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
+		</select>
+	</div>
+	<br>
+	<div class="input-data">
+		<label for="laplacian-schema">Esquema para los laplacianos</label>
+		<select id="laplacian-schema"> 
+			<option value="gaussLinear">Gauss Lineal</option>
+			<option value="Linear">Lineal</option>
+			<option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
+			<option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
+		</select>
+	</div>
+	<br>
+	<div class="input-data">
+		<label for="interpolacion-schema">Esquema de interpolación</label>
+		<select id="interpolacion-schema">
+			<option value="linear">Lineal</option>
+			<option value="gaussLinear">Gauss Lineal</option>
+		</select>
+	</div>
+	<br>
+	<div class="input-data">
+		<label for="secondGrad-schema">Gradientes de segundo orden</label>
+		<select id="secondGrad-schema">
+			<option value="corrected">Corregido</option>
+			<option value="orthogonal">Ortogonal</option>
+		</select>
+	</div>
+	<br>
+	<div class="input-data">
+		<label for="wall-schema">Distribución de pared</label>
+		<select id="wall-schema"> 
+			<option value="meshWave">MeshWave</option>
+			<option value="cubic">Cubic</option>
+		</select>
+	</div>
+</div>
+<div id="fvSchemes-variables-inputs"></div>

@@ -1,0 +1,17 @@
+<h2 class="input-label">Condiciones de simulación</h2>
+<div id="flux-conditions" class="data-container">
+	<div class="input-data">
+		<label for="solver">Solver</label>
+		<select id="solver" onchange="solverChanges(value)">
+			<option value="default">Seleccione...</option>
+			<option value="icoFoam">icoFoam</option>
+			<option value="simpleFoam">simpleFoam</option>
+			<option value="pimpleFoam">pimpleFoam</option>
+			<option value="pisoFoam">pisoFoam</option>
+		</select>
+	</div>
+	<div id="turbulence-model-div" class="input-data">
+		<label for="turbulence-model">Modelo de turbulencia</label>
+		<select id="turbulence-model"></select>
+	</div>
+</div>
