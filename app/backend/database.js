@@ -603,6 +603,33 @@ async function getSimulationBoundariesData(simulationID) {
     });
 }
 
+async function getAllSimulationsInfo() {
+    let db = open();
+
+    return new Promise( (resolve, reject) => {
+        db.all(`SELECT * FROM simulations_info`,
+            (err, rows) => {
+                if (err) {
+                    console.log('err', err.message);
+                }
+
+                if(rows != null){
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }            
+            }
+        );
+    }).then( (response) => {
+        close(db);
+        return response;
+
+    }).catch( (err) => {
+        close(db);
+        console.log(err);
+    });
+}
+
 module.exports = {
     start: start,
     getTurbulenceModelsInfo: getTurbulenceModelsInfo,
@@ -613,5 +640,6 @@ module.exports = {
     getSimulationInfo: getSimulationInfo,
     getControlDictData: getControlDictData,
     getConstantData: getConstantData,
-    getSimulationBoundariesData: getSimulationBoundariesData
+    getSimulationBoundariesData: getSimulationBoundariesData,
+    getAllSimulationsInfo: getAllSimulationsInfo
 };

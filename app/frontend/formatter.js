@@ -1,3 +1,38 @@
+function getFooter() {
+	const currentYear = new Date().getFullYear();
+	let footer = document.getElementById('footer');
+	footer.innerHTML = `&copy; Copyright ${currentYear}, <a href="https://www.uca.es/" target="blank">Universidad de Cádiz</a>`;
+}
+
+async function setLastSimulationsTable() {
+    let info = await getAllSimulationsInfo();
+    console.log(info);
+    if( info.data.length === 0 ){
+        return ;
+    }
+
+    document.getElementById('table-title').style.display = 'block';
+    let table = document.getElementById('last-simulations-table');
+    table.innerHTML = `
+        <tr>
+            <th>Nombre</th>
+            <th>Fecha de creación</th>
+            <th>Ruta de la simulación</th>
+            <th>Último trabajo</th>
+        </tr>`;
+
+    for( row of info.data ) {
+        table.innerHTML += `
+            <tr>
+                <td>${row.name}</td>
+                <td>${row.creationDate}</th>
+                <td>${row.simulationRoute}</th>
+                <td>${row.lastGenerationDate}</th>
+            </tr>`;
+    }
+
+}
+
 async function fillFormsData(boundariesData, turbulenceModel) {
     let variables = [
         {

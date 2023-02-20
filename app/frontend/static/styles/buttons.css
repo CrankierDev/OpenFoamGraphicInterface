@@ -41,7 +41,7 @@
 
 .next-button, .folder-button, .generator-button {
     margin-top: 0;
-    background-color: var(--yellow-pallete);
+    background-color: var(--blue-pallete);
     color: var(--whitetext-pallete);
 }
 

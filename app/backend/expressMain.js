@@ -68,29 +68,7 @@ function start() {
             "data": await db.getTurbulenceModelVariables(req.body.model)
         });
     });
-
-    app.post('/getSolutionData', async (req, res) => {
-        console.log('Getting solution data for simulation: ', req.body.simulation_id);
-
-        let response = await getSolutionData(req.body.simulation_id);
-
-        res.json({
-            "message": 'Success processing',
-            "data": response
-        });
-    });
-
-    app.post('/getSchemasData', async (req, res) => {
-        console.log('Getting schemes data for simulation: ', req.body.simulation_id);
-
-        let response = await getSchemesData(req.body.simulation_id);
-
-        res.json({
-            "message": 'Success processing',
-            "data": response
-        });
-    });
-
+    
     app.post('/getSimulationData', async (req, res) => {
         let simulationID = req.body.simulation_id;
         console.log('Getting simulation data for simulation: ', simulationID);
@@ -108,6 +86,43 @@ function start() {
             "data": response
         });
     });
+    
+    app.get('/getAllSimulationsInfo', async (req, res) => {
+        console.log('Getting old simulations data');
+
+        let response = await getAllSimulationsInfo();
+
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
+
+    // app.post('/getSolutionData', async (req, res) => {
+    //     console.log('Getting solution data for simulation: ', req.body.simulation_id);
+
+    //     let response = await getSolutionData(req.body.simulation_id);
+
+    //     res.json({
+    //         "message": 'Success processing',
+    //         "data": response
+    //     });
+    // });
+
+    // app.post('/getSchemasData', async (req, res) => {
+    //     console.log('Getting schemes data for simulation: ', req.body.simulation_id);
+
+    //     let response = await getSchemesData(req.body.simulation_id);
+
+    //     res.json({
+    //         "message": 'Success processing',
+    //         "data": response
+    //     });
+    // });
+}
+
+async function getAllSimulationsInfo() {
+    return await db.getAllSimulationsInfo();
 }
 
 async function getSimulationInfo(simulationID) {

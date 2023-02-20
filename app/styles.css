@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
 :root{
     --disabled-text-color: white;
     
@@ -8,15 +9,15 @@
     /* ----------------------- BACKGROUNDS ----------------------- */
     --white-color-pallete: rgb(136,140,146);
     --grey-pallete: rgb(136,140,146);
-    --yellow-pallete: rgb(6,100,135);
+    --blue-pallete: rgb(6,100,135);
     --orange-pallete:  rgb(210,112,26);
     --background-pallete: rgb(7, 13, 36);
 }
 
 html, body {
+    font-family: 'Source Sans Pro', sans-serif;
     background-color: var(--background-pallete);
     color: var(--whitetext-pallete);
-    /* background-color: rgb(118, 118, 118); */
     margin: 0;
     padding: 0;
     width: 100%;

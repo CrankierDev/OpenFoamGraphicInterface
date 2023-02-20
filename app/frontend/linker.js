@@ -22,6 +22,19 @@ async function pathsData() {
     })
 }
 
+async function getAllSimulationsInfo() {
+    return await fetch('http://localhost:9876/getAllSimulationsInfo', {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then( response => response.json() )
+    .then( data => {
+        return data.data;
+    });
+}
+
 async function getTurbulenceModelsInfo() {
     return await fetch('http://localhost:9876/getTurbulenceModelsInfo', {
         headers: {

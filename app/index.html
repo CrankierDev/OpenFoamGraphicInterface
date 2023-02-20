@@ -10,14 +10,17 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script>
         $(document).ready(function(){
+            getFooter();
 	        $('#start-section').load("./frontend/static/pages/start.html");
         });
-    </script>
+    </script>        
 </head>
 <body>
     <main>
         <aside>
-            <img src="./frontend/static/images/ESI-color.png" >
+            <a href="https://esingenieria.uca.es/" target="blank">
+                <img src="./frontend/static/images/ESI-color.png" title="Escuela Superior de Ingeniería">
+            </a>
             <section>
                 <ul>
                     <li onclick="loadStart()">Inicio</li>
@@ -25,7 +28,7 @@
                     <li onclick="loadAdvancedSimulation()">Simulación avanzada</li>
                     <li onclick="loadPostProcess()">Post-procesado</li>
                 </ul>
-                <footer>Footer con informacion de copy, anio y demas</footer>
+                <footer id="footer"></footer>
             </section>
         </aside>
         <section class="content-container">

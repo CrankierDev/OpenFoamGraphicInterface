@@ -1,9 +1,25 @@
 .img-div {
-	width: 20%;
 	margin: 0 auto;
+	text-align: center;
 }
 
 .img-start {
-	margin: 100px auto;
-	max-height: 300px;
+	margin: 50px auto;
+	max-height: 350px;
+}
+
+.table-title{
+	display: none;
+	text-align: start;
+	margin-left: 10%;
+}
+
+table {
+	width: 80%;
+	margin: 0 auto;
+	border-collapse: collapse;
+}
+
+th, td {
+	border: 1px solid whitesmoke;
 }

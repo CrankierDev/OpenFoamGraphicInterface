@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, ipcMain} = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, shell } = require('electron');
 const path = require('path');
 const backEndApp = require('./app/backend/expressMain');
 
@@ -29,6 +29,12 @@ function createWindow() {
 
     mainWindow.loadFile('app/index.html');
     mainWindow.webContents.openDevTools();
+    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith('https:')) {
+            shell.openExternal(url);
+        }
+        return { action: 'deny' };
+    });
     mainWindow.maximize();
     require('electron-reload')(__dirname, {
         electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
