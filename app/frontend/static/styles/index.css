@@ -87,3 +87,7 @@ footer>a:visited {
     margin: 0 auto;
 	padding: 1em;
 }
+
+#content-section {
+    display: none;
+}

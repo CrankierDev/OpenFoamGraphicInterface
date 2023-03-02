@@ -12,14 +12,23 @@
 	display: none;
 	text-align: start;
 	margin-left: 10%;
+	padding: 0;
 }
 
 table {
+	display: none;
 	width: 80%;
 	margin: 0 auto;
 	border-collapse: collapse;
 }
 
 th, td {
-	border: 1px solid whitesmoke;
+	color: var(--blacktext-pallete);
+	border: 1px solid var(--whitetext-pallete);
+	background-color: var(--grey-pallete);
+}
+
+.clickable-td:hover {
+	cursor: pointer;
+	text-decoration: underline;
 }

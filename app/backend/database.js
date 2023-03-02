@@ -20,6 +20,9 @@ const SCHEMES_DATA_INSERT = `INSERT INTO schemes_data (id, ddtSchemes, gradSchem
                                 VALUES (?,?,?,?,?,?,?,?)`;
 const SOLUTIONS_DATA_INSERT = `INSERT INTO solutions_data (id, solvers, simple, pimple, piso,
                                 residualControl, relaxationFactors) VALUES (?,?,?,?,?,?,?)`;
+const FORCES_DATA_INSERT = `INSERT INTO forces_data (id, patches, rho, rhoInf, cofR, forceCoeffs,
+                                magUInf, lRef, aRef, liftDir, dragDir, pitchAxis)
+                                VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
 
 function open() {
     let db = new sqlite3.Database(DBSOURCE, (err) => {
@@ -344,6 +347,20 @@ function start() {
             }
         }
     );
+
+    db.run(`CREATE TABLE forces_data (id text, patches text, rho text, rhoInf text, cofR text,
+        forceCoeffs boolean, magUInf text, lRef text, aRef text, liftDir text, dragDir text, pitchAxis text)`,
+        (err) => {
+            if(err) {
+                console.log('Table forces_data already created.');
+            } else {
+                console.log('Table forces_data just created.');
+                
+                db.run(FORCES_DATA_INSERT, ['default_sim', 'walls', 'rhoInf', '1.0', '(0.25 0 0)',
+                        true, '2', '1.0', '0.1', '(0 1 0)', '(1 0 0)', '(0 0 1)']);
+            }
+        }
+    );
     
     close(db);
 }
@@ -576,6 +593,33 @@ async function getConstantData(simulationID) {
     });
 }
 
+async function getForcesData(simulationID) {
+    let db = open();
+
+    return new Promise( (resolve, reject) => {
+        db.get(`SELECT * FROM forces_data WHERE id = (?)`, simulationID,
+            (err, rows) => {
+                if (err) {
+                    console.log('err', err.message);
+                }
+
+                if(rows != null){
+                    resolve(rows);
+                } else {
+                    reject(err);
+                }            
+            }
+        );
+    }).then( (response) => {
+        close(db);
+        return response;
+
+    }).catch( (err) => {
+        close(db);
+        console.log(err);
+    });
+}
+
 async function getSimulationBoundariesData(simulationID) {
     let db = open();
 
@@ -640,6 +684,7 @@ module.exports = {
     getSimulationInfo: getSimulationInfo,
     getControlDictData: getControlDictData,
     getConstantData: getConstantData,
+    getForcesData: getForcesData,
     getSimulationBoundariesData: getSimulationBoundariesData,
     getAllSimulationsInfo: getAllSimulationsInfo
 };

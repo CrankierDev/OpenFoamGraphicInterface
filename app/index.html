@@ -11,7 +11,8 @@
     <script>
         $(document).ready(function(){
             getFooter();
-	        $('#start-section').load("./frontend/static/pages/start.html");
+            loadContent('start')
+            setLastSimulationsTable();
         });
     </script>        
 </head>
@@ -23,23 +24,25 @@
             </a>
             <section>
                 <ul>
-                    <li onclick="loadStart()">Inicio</li>
-                    <li onclick="loadSimpleSimulation()">Simulación simple</li>
-                    <li onclick="loadAdvancedSimulation()">Simulación avanzada</li>
-                    <li onclick="loadPostProcess()">Post-procesado</li>
+                    <li onclick="showStart()">Inicio</li>
+                    <li onclick="loadContent('simpleSimulation')">Simulación simple</li>
+                    <li onclick="loadContent('advancedSimulation')">Simulación avanzada</li>
+                    <li onclick="loadContent('postprocess')">Post-procesado</li>
                 </ul>
                 <footer id="footer"></footer>
             </section>
         </aside>
         <section class="content-container">
-            <article id="start-section"></article>
-            <article id="content-section"></article>
+            <article id="start-section" class="hideShow"></article>
+            <article id="simpleSimulation-section" class="hideShow"></article>
+            <article id="advancedSimulation-section" class="hideShow"></article>
+            <article id="postprocess-section" class="hideShow"></article>
         </section>
     </main>
     
     <!-- FrontEnd scripts -->
-    <script type="text/javascript" src="frontend/jquery.js"></script>
     <script type="text/javascript" src="frontend/common.js"></script>
+    <script type="text/javascript" src="frontend/jquery.js"></script>
     <script type="text/javascript" src="frontend/linker.js"></script>
     <script type="text/javascript" src="frontend/interlinking.js"></script>
     <script type="text/javascript" src="frontend/formatter.js"></script>

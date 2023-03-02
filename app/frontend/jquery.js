@@ -1,22 +1,36 @@
-function loadStart() {
-	document.getElementById('content-section').style.display = 'none';
-	document.getElementById('start-section').style.display = 'block';
+function loadContent(id) {
+	const sectionID = `${id}-section`;
+	
+	if( document.getElementById(sectionID).style.display === 'block' ){
+		return;
+	}
+	
+	const htmlRoute = `./frontend/static/pages/${id}.html`;
+
+	$(`#${sectionID}`).load(htmlRoute);
+	showContent(sectionID)
 }
 
-function loadAdvancedSimulation() {
-	document.getElementById('start-section').style.display = 'none';
-	$('#content-section').load("./frontend/static/pages/advancedSimulation.html");
-	document.getElementById('content-section').style.display = 'block';
+function showContent(id) {
+	setTimeout(() => {
+		const sections = document.getElementsByClassName('hideShow');
+
+		for (let section of sections) {
+			let element = document.getElementById(section.id);
+			
+			if( section.id !== id ){
+				if( section.id !== 'start-section' ){
+					element.innerHTML = '';
+				}
+				
+				element.style.display = 'none';
+			} else {
+				element.style.display = 'block';
+			}
+		}
+	}, 300);
 }
 
-function loadSimpleSimulation() {
-	document.getElementById('start-section').style.display = 'none';
-	$('#content-section').load("./frontend/static/pages/simpleSimulation.html");
-	document.getElementById('content-section').style.display = 'block';
-}
-
-function loadPostProcess() {
-	document.getElementById('start-section').style.display = 'none';
-	$('#content-section').load("./frontend/static/pages/postprocess.html");
-	document.getElementById('content-section').style.display = 'block';
+function showStart() {
+	showContent('start-section');
 }

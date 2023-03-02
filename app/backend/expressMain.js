@@ -98,6 +98,39 @@ function start() {
         });
     });
 
+    app.post('/getConstantData', async (req, res) => {
+        console.log('Getting constant data for simulation: ', req.body.simulation_id);
+
+        let response = await getConstantData(req.body.simulation_id);
+
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
+
+    app.post('/getControlDictData', async (req, res) => {
+        console.log('Getting constant data for simulation: ', req.body.simulation_id);
+
+        let response = await getControlDictData(req.body.simulation_id);
+
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
+
+    app.post('/getForcesData', async (req, res) => {
+        console.log('Getting forces data for simulation: ', req.body.simulation_id);
+
+        let response = await getForcesData(req.body.simulation_id);
+
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
+
     // app.post('/getSolutionData', async (req, res) => {
     //     console.log('Getting solution data for simulation: ', req.body.simulation_id);
 
@@ -169,6 +202,12 @@ async function getControlDictData(simulationID) {
 
 async function getConstantData(simulationID) {
     let response = await db.getConstantData(simulationID);
+    delete response.id;
+    return response;
+}
+
+async function getForcesData(simulationID) {
+    let response = await db.getForcesData(simulationID);
     delete response.id;
     return response;
 }

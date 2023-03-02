@@ -6,31 +6,88 @@ function getFooter() {
 
 async function setLastSimulationsTable() {
     let info = await getAllSimulationsInfo();
-    console.log(info);
-    if( info.data.length === 0 ){
+    if( info[0].length === 0 ){
         return ;
     }
+    
+    let table = document.getElementById('last-simulations-table');
+    const tblBody = document.createElement("tbody");
+    let tblHeader = document.createElement("tr");
+    tblHeader.innerHTML = `
+        <th>Nombre</th>
+        <th>Fecha de creación</th>
+        <th>Ruta de la simulación</th>
+        <th>Último trabajo</th>`;
+
+    tblBody.appendChild(tblHeader);
+    
+    for( row of info ) {
+        const newRow = document.createElement("tr");
+        newRow.innerHTML += `
+            <td onclick="loadSimulationData('${row.id}')"
+                class="clickable-td">
+                ${row.name}
+            </td>
+            <td>${row.creationDate}</td>
+            <td>${row.simulationRoute}</td>
+            <td>${row.lastGenerationDate}</td>`;
+        
+        tblBody.appendChild(newRow);
+    }
+    
+    table.appendChild(tblBody);
 
     document.getElementById('table-title').style.display = 'block';
-    let table = document.getElementById('last-simulations-table');
-    table.innerHTML = `
-        <tr>
-            <th>Nombre</th>
-            <th>Fecha de creación</th>
-            <th>Ruta de la simulación</th>
-            <th>Último trabajo</th>
-        </tr>`;
+    table.style.display = 'table';
+    
+}
 
-    for( row of info.data ) {
-        table.innerHTML += `
-            <tr>
-                <td>${row.name}</td>
-                <td>${row.creationDate}</th>
-                <td>${row.simulationRoute}</th>
-                <td>${row.lastGenerationDate}</th>
-            </tr>`;
+async function fillFluxData(simulation) {
+    let constantData = await getConstantData(simulation);
+
+    document.getElementById('flux-density').value = constantData.rho;
+    document.getElementById('flux-viscosity').value = constantData.nu;
+}
+
+async function fillControlDictData(simulation) {
+    let controlDictData = await getControlDictData(simulation);
+    console.log(controlDictData);
+    
+    // Fill inputs with default data
+    document.getElementById('simulation-begin').value = controlDictData.startFrom;
+    document.getElementById('simulation-begin-time').value = controlDictData.startTime;
+    document.getElementById('simulation-end').value = controlDictData.stopAt;
+    document.getElementById('simulation-end-time').value = controlDictData.endTime;
+    document.getElementById('simulation-deltat').value = controlDictData.deltaT;
+
+    // Check boxes with default data
+    document.getElementById('deltat-adjust').checked = controlDictData.adjustTimeStep === 1 ? true : false;
+    document.getElementById('save-data').checked = controlDictData.writeData === 1 ? true : false;
+    document.getElementById('run-time-modifiable').checked = controlDictData.runTimeModifiable === 1 ? true : false;
+
+    let forcesData = await getForcesData(simulation);
+
+    if( forcesData !== null && forcesData !== [] ){
+        console.log(forcesData);
+
+        document.getElementById('forces-data').checked = true;
+        document.getElementById('forcesCoeffs-data').checked = forcesData.forceCoeffs === 1 ? true : false;
+
+        // Calls the format function that prints values if forces or forcesCoeffs-data is checked
+        if( forces() ){
+            // Fill inputs with default data
+            document.getElementById('rhoInf-data').value = forcesData.rhoInf;
+            document.getElementById('magUInf-data').value = forcesData.magUInf;
+            document.getElementById('lRef-data').value = forcesData.lRef;
+            document.getElementById('aRef-data').value = forcesData.aRef;
+
+            
+            document.getElementById('lift-option').value = 'X';
+            document.getElementById('drag-option').value = 'Y';
+            document.getElementById('pitch-option').value = 'Z';
+        }
+
     }
-
 }
 
 async function fillFormsData(boundariesData, turbulenceModel) {
@@ -63,10 +120,15 @@ async function fillFormsData(boundariesData, turbulenceModel) {
 
     setBoundariesInfo(boundariesData, variables);
     setSchemes(variables);
+
+    await fillFluxData('default_sim');
+    await fillControlDictData('default_sim')
 }
 
 async function setSchemes(variables) {
     let variablesInputs = document.getElementById("fvSchemes-variables-inputs");
+
+    if(variablesInputs == null) return;
 
     if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
 
@@ -333,16 +395,16 @@ function forces() {
             </div>
             <div id="pitch-vector" class="axis-data"></div>
             <div class="input-data">
-                <label for="rhoInf-data" class="long-label">Velocidad de flujo sin perturbar</label>
-                <input class="short-input" type="text" id="rhoInf-data"/>
+                <label for="magUInf-data" class="long-label">Velocidad de flujo sin perturbar</label>
+                <input class="short-input" type="text" id="magUInf-data"/>
             </div>
             <div class="input-data">
-                <label for="rhoInf-data" class="long-label">Longitud de referencia</label>
-                <input class="short-input" type="text" id="rhoInf-data"/>
+                <label for="lRef-data" class="long-label">Longitud de referencia</label>
+                <input class="short-input" type="text" id="lRef-data"/>
             </div>
             <div class="input-data">
-                <label for="rhoInf-data" class="long-label">Área de referencia</label>
-                <input class="short-input" type="text" id="rhoInf-data"/>
+                <label for="aRef-data" class="long-label">Área de referencia</label>
+                <input class="short-input" type="text" id="aRef-data"/>
             </div>
             `;
     } else if (!coeffs){
@@ -351,7 +413,10 @@ function forces() {
 
     if (!forces && !coeffs) {
         inputsOn.innerHTML = '';
+        return false;
     }
+
+    return true;
 }
 
 function vectorDirections(vectorName, value) {
@@ -411,11 +476,11 @@ async function solverVariables(solver){
     let solverInputs = document.getElementById("fvSolution-solver-inputs");
     let relaxationInputs = document.getElementById("fvSolution-relaxationFactors-inputs");
     const turbulenceModel = document.getElementById("turbulence-model");
-
-    if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
-    if (solverInputs.innerHTML != '') solverInputs.innerHTML = '';
-    if (relaxationInputs.innerHTML != '') relaxationInputs.innerHTML = '';
-
+    
+    if (variablesInputs != null && variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
+    if (solverInputs != null && solverInputs.innerHTML != '') solverInputs.innerHTML = '';
+    if (relaxationInputs != null && relaxationInputs.innerHTML != '') relaxationInputs.innerHTML = '';
+        
     if (solver !== 'default') {
         if(turbulenceModel.value !== 'default') {
             let newVariables = await getTurbulenceModelVariables(turbulenceModel.value);
@@ -428,10 +493,12 @@ async function solverVariables(solver){
         }
         
         if(variables.length > 0) {
-            solverVariablesData(variablesInputs, variables);
-            solverData(solver, solverInputs, variables);
-            residualControl(solverInputs, variables);
-            relaxationData(relaxationInputs, variables);
+            if (variablesInputs != null) solverVariablesData(variablesInputs, variables);
+            if (solverInputs != null) {
+                solverData(solver, solverInputs, variables);
+                residualControl(solverInputs, variables);
+            }
+            if (relaxationInputs != null) relaxationData(relaxationInputs, variables);
         }
     } 
 }

@@ -35,6 +35,57 @@ async function getAllSimulationsInfo() {
     });
 }
 
+async function getConstantData(simulationID) {
+    return await fetch('http://localhost:9876/getConstantData', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: `{
+            "simulation_id": "${simulationID}"
+        }`,
+    })
+    .then( response => response.json() )
+    .then( data => {
+        return data.data;
+    });
+}
+
+async function getControlDictData(simulationID) {
+    return await fetch('http://localhost:9876/getControlDictData', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: `{
+            "simulation_id": "${simulationID}"
+        }`,
+    })
+    .then( response => response.json() )
+    .then( data => {
+        return data.data;
+    });
+}
+
+async function getForcesData(simulationID) {
+    return await fetch('http://localhost:9876/getForcesData', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: `{
+            "simulation_id": "${simulationID}"
+        }`,
+    })
+    .then( response => response.json() )
+    .then( data => {
+        return data.data;
+    });
+}
+
 async function getTurbulenceModelsInfo() {
     return await fetch('http://localhost:9876/getTurbulenceModelsInfo', {
         headers: {
@@ -49,7 +100,6 @@ async function getTurbulenceModelsInfo() {
 }
 
 async function getTurbulenceModelVariables(model) {
-    // console.log('calling method...', model);
     return await fetch('http://localhost:9876/getTurbulenceModelVariables', {
         method: 'POST',
         headers: {
@@ -64,4 +114,8 @@ async function getTurbulenceModelVariables(model) {
     .then( data => {
         return data.data;
     });
+}
+
+function loadSimulationData(SimulationID) {
+    console.log('Buscamos la info de:', SimulationID);
 }

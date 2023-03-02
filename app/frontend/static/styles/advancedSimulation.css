@@ -11,23 +11,44 @@ h1 {
     color: var(--whitetext-pallete);
 }
 
+.sim-name{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    text-align: start;
+    padding: 0;
+}
+
 h2 {
     padding-left: 4rem;
     padding-bottom: 1rem;
 }
 
-#firstContent, #next-button {
+#firstContent-simple, #firstContent-advanced, #next-button {
     display: block;
 }
 
-#secondContent, #zero-inputs, #constant-inputs, #controlDict-inputs, #fvSchemes-inputs, #fvSolution-inputs {
+#secondContent-simple, #zero-inputs-simple, #secondContent-advanced, #zero-inputs-advanced {
     display: none;
 }
 
-#generator-inputs, #generator-button, #back-button, #lift-vector, #drag-vector, #pitch-vector {
+#constant-inputs-simple, #controlDict-inputs-simple, #constant-inputs-advanced, #controlDict-inputs-advanced {
+    display: none;
+} 
+
+#fvSchemes-inputs-simple, #fvSolution-inputs-simple, #fvSchemes-inputs-advanced, #fvSolution-inputs-advanced {
     display: none;
 }
 
-#resultsReady {
+#generator-inputs-simple, #generator-inputs-advanced {
+    display: none;
+}
+
+#back-button, #generator-button {
+    display: none;
+} 
+
+#drag-vector, #pitch-vector, #lift-vector {
     display: none;
 }
