@@ -1,15 +1,28 @@
+/**
+ * Updates copyright year and fills with it on footer
+ */
 function getFooter() {
 	const currentYear = new Date().getFullYear();
 	let footer = document.getElementById('footer');
 	footer.innerHTML = `&copy; Copyright ${currentYear}, <a href="https://www.uca.es/" target="blank">Universidad de Cádiz</a>`;
 }
 
+/**
+ * Looks for past simulations on DB and fills the initial page with this data tabulated 
+ */
 async function setLastSimulationsTable() {
+    // Looks for past simulations on DB
     let info = await getAllSimulationsInfo();
+
+    // Checks how many simulations there are
+    // TODO: increase this 0 to 1 in order to not show 'default' simulation
     if( info[0].length === 0 ){
         return ;
     }
     
+    // TODO: not show table if there is only 'default' simulation on the DB.
+
+    // Writes the table with the DB data from past simulations
     let table = document.getElementById('last-simulations-table');
     const tblBody = document.createElement("tbody");
     let tblHeader = document.createElement("tr");
@@ -37,21 +50,31 @@ async function setLastSimulationsTable() {
     
     table.appendChild(tblBody);
 
+    // Sets visibility on to the table
     document.getElementById('table-title').style.display = 'block';
     table.style.display = 'table';
     
 }
 
+/**
+ * Fills basic flux data from DB
+ */
 async function fillFluxData(simulation) {
+    // TODO: add flux data from zero_data table and fill form
+
+    // Gets flux data from DB
     let constantData = await getConstantData(simulation);
 
     document.getElementById('flux-density').value = constantData.rho;
     document.getElementById('flux-viscosity').value = constantData.nu;
 }
 
+/**
+ * Fills control dict and forces data from DB
+ */
 async function fillControlDictData(simulation) {
+    // Gets control dict data from DB
     let controlDictData = await getControlDictData(simulation);
-    console.log(controlDictData);
     
     // Fill inputs with default data
     document.getElementById('simulation-begin').value = controlDictData.startFrom;
@@ -61,36 +84,93 @@ async function fillControlDictData(simulation) {
     document.getElementById('simulation-deltat').value = controlDictData.deltaT;
 
     // Check boxes with default data
-    document.getElementById('deltat-adjust').checked = controlDictData.adjustTimeStep === 1 ? true : false;
-    document.getElementById('save-data').checked = controlDictData.writeData === 1 ? true : false;
-    document.getElementById('run-time-modifiable').checked = controlDictData.runTimeModifiable === 1 ? true : false;
+    document.getElementById('deltat-adjust').checked
+        = controlDictData.adjustTimeStep === 1 ? true : false;
+    document.getElementById('save-data').checked
+        = controlDictData.writeData === 1 ? true : false;
+    document.getElementById('run-time-modifiable').checked
+        = controlDictData.runTimeModifiable === 1 ? true : false;
 
+    // Gets forces data from DB
     let forcesData = await getForcesData(simulation);
 
+    // If there is data we fill the form
     if( forcesData !== null && forcesData !== [] ){
         console.log(forcesData);
 
         document.getElementById('forces-data').checked = true;
-        document.getElementById('forcesCoeffs-data').checked = forcesData.forceCoeffs === 1 ? true : false;
+        document.getElementById('forcesCoeffs-data').checked 
+            = forcesData.forceCoeffs === 1 ? true : false;
 
         // Calls the format function that prints values if forces or forcesCoeffs-data is checked
         if( forces() ){
             // Fill inputs with default data
+            setCofR(forcesData.cofR);
             document.getElementById('rhoInf-data').value = forcesData.rhoInf;
-            document.getElementById('magUInf-data').value = forcesData.magUInf;
-            document.getElementById('lRef-data').value = forcesData.lRef;
-            document.getElementById('aRef-data').value = forcesData.aRef;
-
             
-            document.getElementById('lift-option').value = 'X';
-            document.getElementById('drag-option').value = 'Y';
-            document.getElementById('pitch-option').value = 'Z';
+            if(forcesData.forceCoeffs === 1){
+                document.getElementById('magUInf-data').value = forcesData.magUInf;
+                document.getElementById('lRef-data').value = forcesData.lRef;
+                document.getElementById('aRef-data').value = forcesData.aRef;
+                    
+                setVectorDirection(forcesData.liftDir, 'lift');
+                setVectorDirection(forcesData.dragDir, 'drag');
+                setVectorDirection(forcesData.pitchAxis, 'pitch');
+            }
         }
 
     }
 }
 
+/**
+ * This method fills the vector directions data with vector parameter.
+ * optionName parameter has to be given in order to select wich field 
+ * is going to be filled with the data
+ */
+function setVectorDirection(vector, optionName) {
+
+    // First we check if the vector is one of the axis
+    if( vector === '(1 0 0)'){
+        document.getElementById(`${optionName}-option`).value = 'X';
+
+    } else if( vector === '(0 1 0)') {
+        document.getElementById(`${optionName}-option`).value = 'Y';
+
+    } else if( vector === '(0 0 1)') {
+        document.getElementById(`${optionName}-option`).value = 'Z';
+
+    } else {
+        // If the vector is not anyone of the axis, we build an unitary 
+        // array with the vector cartesian components and fill the form
+        document.getElementById(`${optionName}-option`).value = 'unitVector';
+        vectorDirections(optionName, 'unitVector');
+
+        let vectorSplit = parseVector(vector);
+        document.getElementById(`${optionName}X-data`).value = vectorSplit[0];
+        document.getElementById(`${optionName}Y-data`).value = vectorSplit[1];
+        document.getElementById(`${optionName}Z-data`).value = vectorSplit[2];
+    }
+}
+
+/**
+ * This method fills the center of rotation data with vector parameter 
+ */
+function setCofR(vector) {
+    let vectorSplit = parseVector(vector);
+
+    document.getElementById(`CofRX-data`).value = vectorSplit[0];
+    document.getElementById(`CofRY-data`).value = vectorSplit[1];
+    document.getElementById(`CofRZ-data`).value = vectorSplit[2];
+
+}
+
+/**
+ * Fills forms with the basic inputs for every simulation (flux and control dict data)
+ * Boundaries data is obtained by the given mesh. Turbulence model is selected by the 
+ * user at the form
+ */
 async function fillFormsData(boundariesData, turbulenceModel) {
+    // Initialize the array with two variables that will ever be in a simulation
     let variables = [
         {
             name: 'presión',
@@ -108,6 +188,8 @@ async function fillFormsData(boundariesData, turbulenceModel) {
         }
     ];
 
+    /* If a turbulence model has been selected by the user, it looks for the model on DB 
+    and add to the array the variables this model needs to work properly */ 
     if (turbulenceModel !== 'default') {
         let newVariables = await getTurbulenceModelVariables(turbulenceModel);
 
@@ -118,6 +200,7 @@ async function fillFormsData(boundariesData, turbulenceModel) {
         }
     } 
 
+    // Use the variables array to format the form and add the necessary fields to the form
     setBoundariesInfo(boundariesData, variables);
     setSchemes(variables);
 
@@ -134,7 +217,6 @@ async function setSchemes(variables) {
 
     if(variables.length > 0) {
         for ( let variable of variables ) {
-
 
             let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
             if(schemes != null && schemes.length > 0) {
