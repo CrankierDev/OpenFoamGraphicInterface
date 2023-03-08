@@ -55,10 +55,10 @@ async function paginationAdvanced(direction) {
         if (direction){
             if(document.getElementById('mesh').value) {
                 let boundariesData = await pathsData();
-                fillFormsData(boundariesData, document.getElementById("turbulence-model").value);
+                fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
             }
 
-            solverVariables(document.getElementById('solver').value);
+            fillFormsSolverVariables(document.getElementById('solver').value);
             
             changeSection('constant', 'zero', 'advanced');
         } else {
@@ -123,10 +123,10 @@ async function paginationSimple(direction) {
         if (direction){
             if(document.getElementById('mesh').value) {
                 let boundariesData = await pathsData();
-                fillFormsData(boundariesData, document.getElementById("turbulence-model").value);
+                fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
             }
 
-            solverVariables(document.getElementById('solver').value);
+            fillFormsSolverVariables(document.getElementById('solver').value);
             
             changeSection('constant', 'zero', 'simple');
         } else {

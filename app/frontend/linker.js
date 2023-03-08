@@ -86,6 +86,40 @@ async function getForcesData(simulationID) {
     });
 }
 
+async function getSolutionData(simulationID) {
+    return await fetch('http://localhost:9876/getSolutionData', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: `{
+            "simulation_id": "${simulationID}"
+        }`,
+    })
+    .then( response => response.json() )
+    .then( data => {
+        return data.data;
+    });
+}
+
+async function getSchemasData(simulationID) {
+    return await fetch('http://localhost:9876/getSchemasData', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: `{
+            "simulation_id": "${simulationID}"
+        }`,
+    })
+    .then( response => response.json() )
+    .then( data => {
+        return data.data;
+    });
+}
+
 async function getTurbulenceModelsInfo() {
     return await fetch('http://localhost:9876/getTurbulenceModelsInfo', {
         headers: {

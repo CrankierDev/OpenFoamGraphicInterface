@@ -131,27 +131,27 @@ function start() {
         });
     });
 
-    // app.post('/getSolutionData', async (req, res) => {
-    //     console.log('Getting solution data for simulation: ', req.body.simulation_id);
+    app.post('/getSolutionData', async (req, res) => {
+        console.log('Getting solution data for simulation: ', req.body.simulation_id);
 
-    //     let response = await getSolutionData(req.body.simulation_id);
+        let response = await getSolutionData(req.body.simulation_id);
 
-    //     res.json({
-    //         "message": 'Success processing',
-    //         "data": response
-    //     });
-    // });
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
 
-    // app.post('/getSchemasData', async (req, res) => {
-    //     console.log('Getting schemes data for simulation: ', req.body.simulation_id);
+    app.post('/getSchemasData', async (req, res) => {
+        console.log('Getting schemes data for simulation: ', req.body.simulation_id);
 
-    //     let response = await getSchemesData(req.body.simulation_id);
+        let response = await getSchemesData(req.body.simulation_id);
 
-    //     res.json({
-    //         "message": 'Success processing',
-    //         "data": response
-    //     });
-    // });
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
 }
 
 async function getAllSimulationsInfo() {

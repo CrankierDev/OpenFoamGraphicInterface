@@ -59,7 +59,7 @@ async function setLastSimulationsTable() {
 /**
  * Fills basic flux data from DB
  */
-async function fillFluxData(simulation) {
+async function setFluxDefaultData(simulation) {
     // TODO: add flux data from zero_data table and fill form
 
     // Gets flux data from DB
@@ -72,7 +72,7 @@ async function fillFluxData(simulation) {
 /**
  * Fills control dict and forces data from DB
  */
-async function fillControlDictData(simulation) {
+async function setControlDictDefaultData(simulation) {
     // Gets control dict data from DB
     let controlDictData = await getControlDictData(simulation);
     
@@ -103,7 +103,7 @@ async function fillControlDictData(simulation) {
             = forcesData.forceCoeffs === 1 ? true : false;
 
         // Calls the format function that prints values if forces or forcesCoeffs-data is checked
-        if( forces() ){
+        if( fillFormsForcesFields() ){
             // Fill inputs with default data
             setCofR(forcesData.cofR);
             document.getElementById('rhoInf-data').value = forcesData.rhoInf;
@@ -143,7 +143,7 @@ function setVectorDirection(vector, optionName) {
         // If the vector is not anyone of the axis, we build an unitary 
         // array with the vector cartesian components and fill the form
         document.getElementById(`${optionName}-option`).value = 'unitVector';
-        vectorDirections(optionName, 'unitVector');
+        fillFormsvectorDirections(optionName, 'unitVector');
 
         let vectorSplit = parseVector(vector);
         document.getElementById(`${optionName}X-data`).value = vectorSplit[0];
@@ -169,7 +169,7 @@ function setCofR(vector) {
  * Boundaries data is obtained by the given mesh. Turbulence model is selected by the 
  * user at the form
  */
-async function fillFormsData(boundariesData, turbulenceModel) {
+async function fillFormsBasicFields(boundariesData, turbulenceModel) {
     // Initialize the array with two variables that will ever be in a simulation
     let variables = [
         {
@@ -201,17 +201,17 @@ async function fillFormsData(boundariesData, turbulenceModel) {
     } 
 
     // Use the variables array to format the form and add the necessary fields to the form
-    setBoundariesInfo(boundariesData, variables);
-    setSchemes(variables);
+    fillFormsBoundariesFields(boundariesData, variables);
+    fillFormsSchemesFields(variables);
 
-    await fillFluxData('default_sim');
-    await fillControlDictData('default_sim')
+    await setFluxDefaultData('default_sim');
+    await setControlDictDefaultData('default_sim')
 }
 
 /**
  * Fills schemes form with the necessary inputs for the variables list
  */
-async function setSchemes(variables) {
+async function fillFormsSchemesFields(variables) {
     // Checks if the fvSchemes is on the forms, it will not appear on simple simulation
     let variablesInputs = document.getElementById("fvSchemes-variables-inputs");
     if(variablesInputs == null) return;
@@ -322,7 +322,7 @@ async function setSchemes(variables) {
  * Fills the form with the necessary inputs to manage the conditions of the variables
  * on the variables list on each mesh boundary 
  */
-function setBoundariesInfo(boundariesData, variables) {
+function fillFormsBoundariesFields(boundariesData, variables) {
     if(boundariesData){
         document.getElementById('boundary-conditions').innerHTML = 
             '<h2 class="input-label">Condiciones de contorno</h2>';
@@ -430,7 +430,7 @@ function solverChanges(value) {
 /**
  * Checks if its necessary and fills the form with the inputs for forces and/or forceCoeffs
  */
-function forces() {
+function fillFormsForcesFields() {
     const forces = document.getElementById("forces-data").checked;
     const coeffs = document.getElementById("forcesCoeffs-data").checked;
     let inputsOn = document.getElementById("forces-inputs");
@@ -527,7 +527,7 @@ function forces() {
  * Checks if its necessary and fills the form with the inputs to define a vector
  * with cartesian components
  */
-function vectorDirections(vectorName, value) {
+function fillFormsvectorDirections(vectorName, value) {
     let vector = document.getElementById(`${vectorName}-vector`);
 
     if (value === 'unitVector') {
@@ -571,7 +571,7 @@ async function setModels(turbulenceModels) {
 /**
  * Fills the form with the necessary inputs for OepnFOAM to solve the variables 
  */
-async function solverVariables(solver){
+async function fillFormsSolverVariables(solver){
     // Initialize the array with two variables that will ever be in a simulation
     let variables = [
         {
@@ -613,19 +613,19 @@ async function solverVariables(solver){
     }
     
     // Once we have the data, we fill the form
-    if (variablesInputs != null) solverVariablesData(variablesInputs, variables);
+    if (variablesInputs != null) fillFormsSolverVariablesSections(variablesInputs, variables);
     if (solverInputs != null) {
-        solverData(solver, solverInputs);
-        residualControl(solverInputs, variables);
+        fillFormsSolverSection(solver, solverInputs);
+        fillFormsResidualControlSection(solverInputs, variables);
     }
-    if (relaxationInputs != null) relaxationData(relaxationInputs, variables);
+    if (relaxationInputs != null) fillFormsRelaxationSection(relaxationInputs, variables);
 
 }
 
 /**
  * Fills form with a section for each variable OpenFOAM will have to solve
  */
-function solverVariablesData(variablesInputs, variables) {
+function fillFormsSolverVariablesSections(variablesInputs, variables) {
     let newHTML = '';
     for ( let variable of variables ) {
         if(variable.type != null) {
@@ -732,7 +732,7 @@ function solverVariablesData(variablesInputs, variables) {
 /**
  * Fills form with inputs to define the solver OpenFOAM will use
  */
-function solverData(solver, solverInputs){
+function fillFormsSolverSection(solver, solverInputs){
     let newHTML = '';
     // TODO: create fields for the other solvers (pimple, piso, ...)
     if(solver === 'simpleFoam') {
@@ -760,7 +760,7 @@ function solverData(solver, solverInputs){
 /**
  * Fills form with inputs to define the residual control OpenFOAM will use
  */
-function residualControl(solverInputs, variables) {
+function fillFormsResidualControlSection(solverInputs, variables) {
     let newHTML = `
         <p class="input-label">Control residual</p>
         <div class="data-container">`;
@@ -781,7 +781,7 @@ function residualControl(solverInputs, variables) {
 /**
  * Fills form with inputs to define the relaxation parameters OpenFOAM will use
  */
-function relaxationData(relaxationInputs, variables) {
+function fillFormsRelaxationSection(relaxationInputs, variables) {
     let newHTML = `
         <p class="input-label">Factores de relajación</p>
         <div class="data-container">
