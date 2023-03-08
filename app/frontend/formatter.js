@@ -208,9 +208,12 @@ async function fillFormsData(boundariesData, turbulenceModel) {
     await fillControlDictData('default_sim')
 }
 
+/**
+ * Fills schemes form with the necessary inputs for the variables list
+ */
 async function setSchemes(variables) {
+    // Checks if the fvSchemes is on the forms, it will not appear on simple simulation
     let variablesInputs = document.getElementById("fvSchemes-variables-inputs");
-
     if(variablesInputs == null) return;
 
     if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
@@ -315,6 +318,10 @@ async function setSchemes(variables) {
     }
 }
 
+/**
+ * Fills the form with the necessary inputs to manage the conditions of the variables
+ * on the variables list on each mesh boundary 
+ */
 function setBoundariesInfo(boundariesData, variables) {
     if(boundariesData){
         document.getElementById('boundary-conditions').innerHTML = 
@@ -322,7 +329,7 @@ function setBoundariesInfo(boundariesData, variables) {
 
         for (boundary of boundariesData) {
             if(!document.getElementById(`${boundary.name}-data`)){
-                    
+                // Checks the type of the boundary to apply the correct inputs    
                 if( boundary.type === 'patch' ) {
                     let newText = `
                         <div id="${boundary.name}-data" class="walls-zero">
@@ -347,6 +354,7 @@ function setBoundariesInfo(boundariesData, variables) {
                         newText += `</div>
                                 </div>`;
                         document.getElementById('boundary-conditions').innerHTML += newText;
+
                 } else if( boundary.type === 'wall' ) {
                     let newText =`
                         <div id="${boundary.name}-data" class="walls-zero">
@@ -388,14 +396,25 @@ function setBoundariesInfo(boundariesData, variables) {
     }
 }
 
+/**
+ * Makes appear/desappear 'simulation-begin-time' input for start time
+ */
 function startTime(value) {
+    // TODO: finish the method
     console.log('on change is working!', value);
 }
 
+/**
+ * Makes appear/desappear 'simulation-end-time' input for start time
+ */
 function endTime(value) {
+    // TODO: finish the method
     console.log('on change is working!', value);
 }
 
+/**
+ * Assures that if the user selects 'icoFoam' solver the turbulence model will ever be default/laminar
+ */
 function solverChanges(value) {
     let selector = document.getElementById('turbulence-model');
 
@@ -408,6 +427,9 @@ function solverChanges(value) {
     }
 }
 
+/**
+ * Checks if its necessary and fills the form with the inputs for forces and/or forceCoeffs
+ */
 function forces() {
     const forces = document.getElementById("forces-data").checked;
     const coeffs = document.getElementById("forcesCoeffs-data").checked;
@@ -501,6 +523,10 @@ function forces() {
     return true;
 }
 
+/**
+ * Checks if its necessary and fills the form with the inputs to define a vector
+ * with cartesian components
+ */
 function vectorDirections(vectorName, value) {
     let vector = document.getElementById(`${vectorName}-vector`);
 
@@ -525,6 +551,10 @@ function vectorDirections(vectorName, value) {
     }
 }
 
+/**
+ * Fills turbulence model selectior with the models found on DB
+ * turbulenceModels is the list of models to work with
+ */
 async function setModels(turbulenceModels) {
     if (turbulenceModels) {
         let turbulenceOptions = document.getElementById('turbulence-model');
@@ -538,7 +568,11 @@ async function setModels(turbulenceModels) {
     }
 }
 
+/**
+ * Fills the form with the necessary inputs for OepnFOAM to solve the variables 
+ */
 async function solverVariables(solver){
+    // Initialize the array with two variables that will ever be in a simulation
     let variables = [
         {
             name: 'presión',
@@ -559,32 +593,38 @@ async function solverVariables(solver){
     let relaxationInputs = document.getElementById("fvSolution-relaxationFactors-inputs");
     const turbulenceModel = document.getElementById("turbulence-model");
     
+    // Cleans HTML from the fields in order to avoid duplicated fields
     if (variablesInputs != null && variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
     if (solverInputs != null && solverInputs.innerHTML != '') solverInputs.innerHTML = '';
     if (relaxationInputs != null && relaxationInputs.innerHTML != '') relaxationInputs.innerHTML = '';
         
-    if (solver !== 'default') {
-        if(turbulenceModel.value !== 'default') {
-            let newVariables = await getTurbulenceModelVariables(turbulenceModel.value);
-            
-            if(newVariables != null && newVariables.length > 0){
-                for(let newVariable of newVariables){
-                    variables.push(newVariable);
-                }
-            }
-        }
+    // Prevents that a solver has been selected by the user
+    if (solver !== 'default') return ;
+    
+    // Looks for the variables the turbulence model needs
+    if(turbulenceModel.value !== 'default') {
+        let newVariables = await getTurbulenceModelVariables(turbulenceModel.value);
         
-        if(variables.length > 0) {
-            if (variablesInputs != null) solverVariablesData(variablesInputs, variables);
-            if (solverInputs != null) {
-                solverData(solver, solverInputs, variables);
-                residualControl(solverInputs, variables);
+        if(newVariables != null && newVariables.length > 0){
+            for(let newVariable of newVariables){
+                variables.push(newVariable);
             }
-            if (relaxationInputs != null) relaxationData(relaxationInputs, variables);
         }
-    } 
+    }
+    
+    // Once we have the data, we fill the form
+    if (variablesInputs != null) solverVariablesData(variablesInputs, variables);
+    if (solverInputs != null) {
+        solverData(solver, solverInputs);
+        residualControl(solverInputs, variables);
+    }
+    if (relaxationInputs != null) relaxationData(relaxationInputs, variables);
+
 }
 
+/**
+ * Fills form with a section for each variable OpenFOAM will have to solve
+ */
 function solverVariablesData(variablesInputs, variables) {
     let newHTML = '';
     for ( let variable of variables ) {
@@ -593,6 +633,7 @@ function solverVariablesData(variablesInputs, variables) {
                 <p class="input-label">Parámetros para el solver de ${variable.name.toLowerCase()}</p>
                 <div class="data-container">`;
             
+            // We distinguish betwwen symmetric and assymetric variables
             if ( variable.type === 'symmetric' ) {
                 newHTML += `
                     <div class="input-data">
@@ -688,8 +729,12 @@ function solverVariablesData(variablesInputs, variables) {
     }
 }
 
-function solverData(solver, solverInputs, variables){
+/**
+ * Fills form with inputs to define the solver OpenFOAM will use
+ */
+function solverData(solver, solverInputs){
     let newHTML = '';
+    // TODO: create fields for the other solvers (pimple, piso, ...)
     if(solver === 'simpleFoam') {
         newHTML = `
             <p class="input-label">SIMPLE</p>
@@ -712,6 +757,9 @@ function solverData(solver, solverInputs, variables){
     solverInputs.innerHTML += newHTML;
 }
 
+/**
+ * Fills form with inputs to define the residual control OpenFOAM will use
+ */
 function residualControl(solverInputs, variables) {
     let newHTML = `
         <p class="input-label">Control residual</p>
@@ -730,6 +778,9 @@ function residualControl(solverInputs, variables) {
     solverInputs.innerHTML += newHTML;
 }
 
+/**
+ * Fills form with inputs to define the relaxation parameters OpenFOAM will use
+ */
 function relaxationData(relaxationInputs, variables) {
     let newHTML = `
         <p class="input-label">Factores de relajación</p>
