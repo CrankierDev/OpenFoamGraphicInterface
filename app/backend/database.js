@@ -113,13 +113,13 @@ function start() {
                     inlet
                     {
                         type            freestreamPressure;
-                        freestreamValue $internalField;
+                        freestreamValue    $internalField;
                     }
                 
                     outlet
                     {
                         type            freestreamPressure;
-                        freestreamValue $internalField;
+                        freestreamValue    $internalField;
                     }
                 
                     walls
@@ -136,13 +136,13 @@ function start() {
                     inlet
                     {
                         type            freestreamVelocity;
-                        freestreamValue $internalField;
+                        freestreamValue    $internalField;
                     }
                 
                     outlet
                     {
                         type            freestreamVelocity;
-                        freestreamValue $internalField;
+                        freestreamValue    $internalField;
                     }
                 
                     walls
@@ -159,13 +159,13 @@ function start() {
                     inlet
                     {
                         type            freestream;
-                        freestreamValue $internalField;
+                        freestreamValue    $internalField;
                     }
                 
                     outlet
                     {
                         type            freestream;
-                        freestreamValue $internalField;
+                        freestreamValue    $internalField;
                     }
                 
                     walls
@@ -183,13 +183,13 @@ function start() {
                     inlet
                     {
                         type            freestream;
-                        freestreamValue $internalField;
+                        freestreamValue    $internalField;
                     }
                 
                     outlet
                     {
                         type            freestream;
-                        freestreamValue $internalField;
+                        freestreamValue    $internalField;
                     }
                 
                     walls
@@ -265,8 +265,8 @@ function start() {
                 }`, `{
                     default         none;
                     div(phi,U)      bounded Gauss linearUpwind grad(U);
-                    div(phi,nuTilda) bounded Gauss linearUpwind grad(nuTilda);
-                    div((nuEff*dev2(T(grad(U))))) Gauss linear;
+                    div(phi,nuTilda)    bounded Gauss linearUpwind grad(nuTilda);
+                    div((nuEff*dev2(T(grad(U)))))    Gauss linear;
                 }`, `{
                     default         Gauss linear corrected;
                 }`, `{
@@ -274,7 +274,7 @@ function start() {
                 }`, `{
                     default         corrected;
                 }`, `{
-                    method meshWave;
+                    method    meshWave;
                 }`]);
             }
         }
@@ -315,11 +315,11 @@ function start() {
                         relTol          0.1;
                     }
                 }`, `{
-                    nNonOrthogonalCorrectors 0;
+                    nNonOrthogonalCorrectors    0;
                 
                 }`, `{
                     nCorrectors             2;
-                    nNonOrthogonalCorrectors 4;
+                    nNonOrthogonalCorrectors    4;
                 
                     maxCo                   1;
                     rDeltaTSmoothingCoeff   0.1;
@@ -327,7 +327,7 @@ function start() {
 
                 }`, `{
                     nCorrectors             2;
-                    nNonOrthogonalCorrectors 4;
+                    nNonOrthogonalCorrectors    4;
 
                 }`, `{
                         p               1e-5;

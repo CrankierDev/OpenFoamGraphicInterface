@@ -96,8 +96,6 @@ async function setControlDictDefaultData(simulation) {
 
     // If there is data we fill the form
     if( forcesData !== null && forcesData !== [] ){
-        console.log(forcesData);
-
         document.getElementById('forces-data').checked = true;
         document.getElementById('forcesCoeffs-data').checked 
             = forcesData.forceCoeffs === 1 ? true : false;
@@ -118,7 +116,6 @@ async function setControlDictDefaultData(simulation) {
                 setVectorDirection(forcesData.pitchAxis, 'pitch');
             }
         }
-
     }
 }
 
@@ -128,7 +125,6 @@ async function setControlDictDefaultData(simulation) {
  * is going to be filled with the data
  */
 function setVectorDirection(vector, optionName) {
-
     // First we check if the vector is one of the axis
     if( vector === '(1 0 0)'){
         document.getElementById(`${optionName}-option`).value = 'X';
@@ -165,11 +161,21 @@ function setCofR(vector) {
 }
 
 /**
- * Fills forms with the basic inputs for every simulation (flux and control dict data)
+ * Fills forms with the basic inputs for every simulation and fills those inputs with default data.
  * Boundaries data is obtained by the given mesh. Turbulence model is selected by the 
  * user at the form
  */
 async function fillFormsBasicFields(boundariesData, turbulenceModel) {
+    await fillFormsBasicFieldsSim(boundariesData, turbulenceModel, 'default_sim');
+}
+
+/**
+ * Fills forms with the basic inputs for every simulation and fills those inputs with data
+ * from a given simulation.
+ * Boundaries data is obtained by the given mesh. Turbulence model is selected by the 
+ * user at the form
+ */
+async function fillFormsBasicFieldsSim(boundariesData, turbulenceModel, simulationID) {
     // Initialize the array with two variables that will ever be in a simulation
     let variables = [
         {
@@ -202,118 +208,171 @@ async function fillFormsBasicFields(boundariesData, turbulenceModel) {
 
     // Use the variables array to format the form and add the necessary fields to the form
     fillFormsBoundariesFields(boundariesData, variables);
-    fillFormsSchemesFields(variables);
+    fillFormsSchemesFields(variables, simulationID);
 
-    await setFluxDefaultData('default_sim');
-    await setControlDictDefaultData('default_sim')
+    await setFluxDefaultData(simulationID);
+    await setControlDictDefaultData(simulationID)
 }
 
 /**
  * Fills schemes form with the necessary inputs for the variables list
  */
-async function fillFormsSchemesFields(variables) {
+async function fillFormsSchemesFields(variables, simulationID) {
     // Checks if the fvSchemes is on the forms, it will not appear on simple simulation
     let variablesInputs = document.getElementById("fvSchemes-variables-inputs");
     if(variablesInputs == null) return;
 
+    // Cleans HTML from the fields in order to avoid duplicated fields
     if (variablesInputs.innerHTML != '') variablesInputs.innerHTML = '';
 
-    if(variables.length > 0) {
-        for ( let variable of variables ) {
-
-            let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
-            if(schemes != null && schemes.length > 0) {
-                let newHTML = `
-                    <p class="input-label">Esquemas para ${variable.name.toLowerCase()}</p>
-                    <div class="data-container">`;
-                
-                if ( variable.schemes.indexOf('grad') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="grad-schema">Esquema para los gradientes</label>
-                            <select id="grad-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="Linear">Lineal</option>
-                                <option value="gaussLinear">Gauss Lineal</option>
-                                <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
-                                <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                    
-                if ( variable.schemes.indexOf('div') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="divergency-schema">Esquema para las divergencias</label>
-                            <select id="divergency-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="Linear">Lineal</option>
-                                <option value="gaussLinear">Gauss Lineal</option>
-                                <option value="gaussLinearBounded">Gauss Lineal limitado</option>
-                                <option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                
-                if ( variable.schemes.indexOf('lap') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="laplacian-schema">Esquema para los laplacianos</label>
-                            <select id="laplacian-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="Linear">Lineal</option>
-                                <option value="gaussLinear">Gauss Lineal</option>
-                                <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
-                                <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                
-                if ( variable.schemes.indexOf('interp') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="interpolation-schema">Esquema de interpolación</label>
-                            <select id="interpolation-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="linear">Lineal</option>
-                                <option value="gaussLinear">Gauss Lineal</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                
-                if ( variable.schemes.indexOf('secondGrad') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="secondGrad-schema">Gradientes de segundo orden</label>
-                            <select id="secondGrad-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="corrected">Corregido</option>
-                                <option value="orthogonal">Ortogonal</option>
-                            </select>
-                        </div>
-                        <br>`;
-                }
-                
-                if ( variable.schemes.indexOf('wall') != -1 ) {
-                    newHTML += `
-                        <div class="input-data">
-                            <label for="wall-schema">Distribución de pared</label>
-                            <select id="wall-schema"> <!-- onchange="startTime(value)" -->
-                                <option value="default">Predeterminado</option>
-                                <option value="meshWave">MeshWave</option>
-                                <option value="cubic">Cubic</option>
-                            </select>
-                        </div>`;
-                }
-                
-                newHTML += '</div>';
-
-                variablesInputs.innerHTML += newHTML;
+    for ( let variable of variables ) {
+        let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
+        if(schemes != null && schemes.length > 0) {
+            let newHTML = `
+                <p class="input-label">Esquemas para ${variable.name.toLowerCase()}</p>
+                <div class="data-container">`;
+            
+            if ( variable.schemes.indexOf('grad') != -1 ) {
+                newHTML += `
+                    <div class="input-data">
+                        <label for="${variable.variable}-grad-schema">Esquema para los gradientes</label>
+                        <select id="${variable.variable}-grad-schema">
+                            <option value="default">Predeterminado</option>
+                            <option value="linear">Lineal</option>
+                            <option value="gaussLinear">Gauss Lineal</option>
+                            <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
+                            <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
+                        </select>
+                    </div>
+                    <br>`;
             }
+                
+            if ( variable.schemes.indexOf('div') != -1 ) {
+                newHTML += `
+                    <div class="input-data">
+                        <label for="${variable.variable}-divergency-schema">Esquema para las divergencias</label>
+                        <select id="${variable.variable}-divergency-schema">
+                            <option value="default">Predeterminado</option>
+                            <option value="linear">Lineal</option>
+                            <option value="gaussLinear">Gauss Lineal</option>
+                            <option value="gaussLinearBounded">Gauss Lineal limitado</option>
+                            <option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
+                        </select>
+                    </div>
+                    <br>`;
+            }
+            
+            if ( variable.schemes.indexOf('lap') != -1 ) {
+                newHTML += `
+                    <div class="input-data">
+                        <label for="${variable.variable}-laplacian-schema">Esquema para los laplacianos</label>
+                        <select id="${variable.variable}-laplacian-schema">
+                            <option value="default">Predeterminado</option>
+                            <option value="corrected">Corregido</option>
+                            <option value="orthogonal">Ortogonal</option>
+                        </select>
+                    </div>
+                    <br>`;
+            }
+            
+            if ( variable.schemes.indexOf('interp') != -1 ) {
+                newHTML += `
+                    <div class="input-data">
+                        <label for="${variable.variable}-interpolation-schema">Esquema de interpolación</label>
+                        <select id="${variable.variable}-interpolation-schema">
+                            <option value="default">Predeterminado</option>
+                            <option value="linear">Lineal</option>
+                            <option value="gaussLinear">Gauss Lineal</option>
+                        </select>
+                    </div>
+                    <br>`;
+            }
+            
+            if ( variable.schemes.indexOf('secondGrad') != -1 ) {
+                newHTML += `
+                    <div class="input-data">
+                        <label for="${variable.variable}-secondGrad-schema">Gradientes de segundo orden</label>
+                        <select id="${variable.variable}-secondGrad-schema"> 
+                            <option value="default">Predeterminado</option>
+                            <option value="corrected">Corregido</option>
+                            <option value="orthogonal">Ortogonal</option>
+                        </select>
+                    </div>
+                    <br>`;
+            }
+            
+            if ( variable.schemes.indexOf('wall') != -1 ) {
+                newHTML += `
+                    <div class="input-data">
+                        <label for="${variable.variable}-wall-schema">Distribución de pared</label>
+                        <select id="${variable.variable}-wall-schema">
+                            <option value="default">Predeterminado</option>
+                            <option value="meshWave">MeshWave</option>
+                            <option value="cubic">Cubic</option>
+                        </select>
+                    </div>`;
+            }
+            
+            newHTML += '</div>';
+
+            variablesInputs.innerHTML += newHTML;
+        }
+    }
+
+    // Once we have the fields, we'll fill them with simulation data
+    await setSchemesDefaultData(simulationID, variables);
+}
+
+
+/**
+ * Fills form with schemes data from DB
+ */
+async function setSchemesDefaultData(simulationID, variables) {
+    // Gets schemes data from DB
+    let schemesData = await getSchemasData(simulationID);
+
+    // Fill inputs with default data
+    // Here predeteminated schemes are set
+    document.getElementById('temporal-schema').value = schemesData.ddtSchemes.default;
+    document.getElementById('grad-schema').value = schemesData.gradSchemes.default;
+    document.getElementById('divergency-schema').value = schemesData.divSchemes.default;
+    document.getElementById('laplacian-schema').value = schemesData.laplacianSchemes.default;
+    document.getElementById('interpolation-schema').value = schemesData.interpolationSchemes.default;
+    document.getElementById('secondGrad-schema').value = schemesData.snGradSchemes.default;
+    document.getElementById('wall-schema').value = schemesData.wallDist.method;
+
+    for ( let variable of variables ) {
+        // let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
+        if(variable.schemes != null && variable.schemes.length > 0) {            
+            if ( variable.schemes.indexOf('grad') != -1 ) {
+                document.getElementById(`${variable.variable}-grad-schema`).value = 
+                    schemesData.gradSchemes[`${variable.variable}`] != null ? 
+                    schemesData.gradSchemes[`${variable.variable}`] : 'default';
+            }
+                
+            if ( variable.schemes.indexOf('div') != -1 ) {
+                document.getElementById(`${variable.variable}-divergency-schema`).value = 
+                    schemesData.divSchemes[`${variable.variable}`] != null ? 
+                    schemesData.divSchemes[`${variable.variable}`] : 'default';
+            }
+            
+            if ( variable.schemes.indexOf('lap') != -1 ) {
+                document.getElementById(`${variable.variable}-laplacian-schema`).value = 
+                    schemesData.laplacianSchemes[`${variable.variable}`] != null ? 
+                    schemesData.laplacianSchemes[`${variable.variable}`] : 'default';
+            }
+            
+            if ( variable.schemes.indexOf('interp') != -1 ) {
+                document.getElementById(`${variable.variable}-interpolation-schema`).value = 
+                    schemesData.interpolationSchemes[`${variable.variable}`] != null ? 
+                    schemesData.interpolationSchemes[`${variable.variable}`] : 'default';
+            }
+            
+            if ( variable.schemes.indexOf('secondGrad') != -1 ) {
+                document.getElementById(`${variable.variable}-secondGrad-schema`).value = 
+                    schemesData.snGradSchemes[`${variable.variable}`] != null ? 
+                    schemesData.snGradSchemes[`${variable.variable}`] : 'default';
+            }            
         }
     }
 }
@@ -462,11 +521,14 @@ function fillFormsForcesFields() {
                 </div>
                 <div id="forces-extra-inputs"></div>
             </div>`;
-    } 
+
+    } else if (forces || coeffs) {
+        inputsOn.style.display = 'block';
+    }
 
     let extraInputs = document.getElementById("forces-extra-inputs");
 
-    if(coeffs && extraInputs.innerHTML == ''){ 
+    if (coeffs && extraInputs.innerHTML == ''){ 
         extraInputs.innerHTML +=
             `<div class="input-data">
                 <label class="long-label">Direccion vector unitario de sustentación</label>
@@ -511,12 +573,16 @@ function fillFormsForcesFields() {
                 <input class="short-input" type="text" id="aRef-data"/>
             </div>
             `;
+
+    } else if (coeffs && extraInputs.innerHTML !== '') {
+        extraInputs.style.display = 'block';
+
     } else if (!coeffs){
-        extraInputs.innerHTML = '';
+        extraInputs.style.display = 'none';
     }
 
     if (!forces && !coeffs) {
-        inputsOn.innerHTML = '';
+        inputsOn.style.display = 'none';
         return false;
     }
 
@@ -571,7 +637,7 @@ async function setModels(turbulenceModels) {
 /**
  * Fills the form with the necessary inputs for OepnFOAM to solve the variables 
  */
-async function fillFormsSolverVariables(solver){
+async function fillFormsSolverVariables(solver, simulationID){
     // Initialize the array with two variables that will ever be in a simulation
     let variables = [
         {
@@ -599,8 +665,22 @@ async function fillFormsSolverVariables(solver){
     if (relaxationInputs != null && relaxationInputs.innerHTML != '') relaxationInputs.innerHTML = '';
         
     // Prevents that a solver has been selected by the user
-    if (solver !== 'default') return ;
+    if (solver === 'default') return ;
     
+    // Once we have the data, we fill the form
+    if (variablesInputs != null) fillFormsSolverVariablesSections(variablesInputs, variables);
+    if (solverInputs != null) {
+        fillFormsSolverSection(solver, solverInputs);
+        fillFormsResidualControlSection(solverInputs, variables);
+    }
+    if (relaxationInputs != null) fillFormsRelaxationSection(relaxationInputs, variables);
+
+    // Looks for the simulation data to fill the inputs
+    let solutionData = await getSolutionData(simulationID);
+    console.log('solutionData', solutionData);
+
+    // TODO: Fill the form with the DB data
+
     // Looks for the variables the turbulence model needs
     if(turbulenceModel.value !== 'default') {
         let newVariables = await getTurbulenceModelVariables(turbulenceModel.value);
@@ -611,14 +691,6 @@ async function fillFormsSolverVariables(solver){
             }
         }
     }
-    
-    // Once we have the data, we fill the form
-    if (variablesInputs != null) fillFormsSolverVariablesSections(variablesInputs, variables);
-    if (solverInputs != null) {
-        fillFormsSolverSection(solver, solverInputs);
-        fillFormsResidualControlSection(solverInputs, variables);
-    }
-    if (relaxationInputs != null) fillFormsRelaxationSection(relaxationInputs, variables);
 
 }
 

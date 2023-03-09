@@ -286,10 +286,10 @@ function buildJSON(data) {
 
     // Here we build a JSON object to be returned
     data.forEach( (row) => {
-        let inputJSON = row.trim().split(' ');
+        let inputJSON = row.trim().split('  ');
 
         if (inputJSON[0] !== '') {
-            solution[`${inputJSON[0]}`] = inputJSON.slice(-1)[0];
+            solution[`${inputJSON[0]}`] = inputJSON.slice(-1)[0] != null ? inputJSON.slice(-1)[0].trim() : null;
         }
     });
 

@@ -58,7 +58,7 @@ async function paginationAdvanced(direction) {
                 fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
             }
 
-            fillFormsSolverVariables(document.getElementById('solver').value);
+            fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
             
             changeSection('constant', 'zero', 'advanced');
         } else {
@@ -126,7 +126,7 @@ async function paginationSimple(direction) {
                 fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
             }
 
-            fillFormsSolverVariables(document.getElementById('solver').value);
+            fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
             
             changeSection('constant', 'zero', 'simple');
         } else {
