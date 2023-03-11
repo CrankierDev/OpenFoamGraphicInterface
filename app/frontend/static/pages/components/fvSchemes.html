@@ -9,13 +9,34 @@
 	</div>
 	<br>
 	<div class="input-data">
-		<label for="grad-schema">Esquema para los gradientes</label>
-		<select id="grad-schema"> 
-			<option value="gaussLinear">Gauss Lineal</option>
-			<option value="linear">Lineal</option>
-			<option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
-			<option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
-		</select>
+		<p class="schemes-title">Esquema para los gradientes</p>
+	</div>
+	<div class="schemes-data">
+		<div class="subinput-data">
+			<label for="default-grad-limiter">Límites</label>
+			<select id="default-grad-limiter"> 
+				<option value="default">Sin limitar</option>
+				<option value="cellLimited">Limitado en las celdas</option>
+				<option value="cellMDLimited">Limitado multidireccional en las celdas</option>
+				<option value="faceLimited">Limitado en las caras</option>
+				<option value="faceMDLimited">Limitado multidireccional en las caras</option>
+			</select>
+		</div>
+		<div class="subinput-data">
+			<label for="default-grad-schema">Esquema</label>
+			<select id="default-grad-schema"> 
+				<option value="Gauss">Gauss</option>
+				<option value="leastSquares">Mínimos cuadrados</option>
+			</select>
+		</div>
+		<div class="subinput-data">
+			<label for="default-grad-interpolation">Interpolación</label>
+			<select id="default-grad-interpolation"> 
+				<option value="linear">Lineal</option>
+				<option value="pointLinear">Lineal basado en los puntos</option>
+				<option value="leastSquares">Mínimos cuadrados</option>
+			</select>
+		</div>
 	</div>
 	<br>
 	<div class="input-data">

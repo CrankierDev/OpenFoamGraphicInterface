@@ -26,3 +26,23 @@ function parseVector(vector) {
     vector = vector.replaceAll("(", "").replaceAll(")", "");    
     return vector.split(" ");
 }
+
+/**
+ * Receive a string and give it the correct format to set 
+ * the value of a selector 
+ */
+function formatSelector(value) {
+    // console.log('formatting... ', value);
+    if (value == null) return 'default';
+    return value.replaceAll("-", "").replaceAll(" ", "").trim().toLowerCase();    
+}
+
+/**
+ * Receive a string and give it the correct format to set 
+ * the value of an input 
+ */
+function formatInput(value) {
+    // console.log('formatting... ', value);
+    if (value == null) return 0;
+    return value;    
+}

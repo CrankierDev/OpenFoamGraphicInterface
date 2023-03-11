@@ -36,8 +36,8 @@
 }
 
 .input-data>p {
-    width: 200px;
-    margin-left: 50px;
+    width: 350px;
+    margin-left: 30.3%;
     margin-right: auto;
 }
 
@@ -80,5 +80,47 @@
 .input-data>.checkbox {
     width: 30px;
     margin-left: 0;
+    margin-right: auto;
+}
+
+.input-data>.schemes-title {
+    width: 350px;
+    margin-left: 27.3%;
+    margin-right: auto;
+}
+
+.schemes-data {
+    display: inline-flex;
+    flex-direction: column;
+    width: 68%;
+    margin-left: 16%;
+    margin-right: 16%;
+    margin-bottom: 1em;
+    padding: 0 0em;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subinput-data {
+    display: inline-flex;
+    width: 55%;
+    margin-bottom: 0;
+    /* align-items: space-between; */
+}
+
+.subinput-data>label, .subinput-data>select, .subinput-data>input {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.subinput-data>label {
+    width: 150px;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.subinput-data>select {
+    width: 250px;
+    margin-left: 4px;
     margin-right: auto;
 }

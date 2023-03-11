@@ -235,14 +235,34 @@ async function fillFormsSchemesFields(variables, simulationID) {
             if ( variable.schemes.indexOf('grad') != -1 ) {
                 newHTML += `
                     <div class="input-data">
-                        <label for="${variable.variable}-grad-schema">Esquema para los gradientes</label>
-                        <select id="${variable.variable}-grad-schema">
-                            <option value="default">Predeterminado</option>
-                            <option value="linear">Lineal</option>
-                            <option value="gaussLinear">Gauss Lineal</option>
-                            <option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
-                            <option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
-                        </select>
+                        <p class="schemes-title">Esquema para los gradientes</p>
+                    </div>
+                    <div class="schemes-data">
+                        <div class="subinput-data">
+                            <label for="${variable.variable}-grad-limiter">Límites</label>
+                            <select id="${variable.variable}-grad-limiter"> 
+                                <option value="default">Sin limitar</option>
+                                <option value="cellLimited">Limitado en las celdas</option>
+                                <option value="cellMDLimited">Limitado multidireccional en las celdas</option>
+                                <option value="faceLimited">Limitado en las caras</option>
+                                <option value="faceMDLimited">Limitado multidireccional en las caras</option>
+                            </select>
+                        </div>
+                        <div class="subinput-data">
+                            <label for="${variable.variable}-grad-schema">Esquema</label>
+                            <select id="${variable.variable}-grad-schema"> 
+                                <option value="Gauss">Gauss</option>
+                                <option value="leastSquares">Mínimos cuadrados</option>
+                            </select>
+                        </div>
+                        <div class="subinput-data">
+                            <label for="${variable.variable}-grad-interpolation">Interpolación</label>
+                            <select id="${variable.variable}-grad-interpolation"> 
+                                <option value="linear">Lineal</option>
+                                <option value="pointLinear">Lineal basado en los puntos</option>
+                                <option value="leastSquares">Mínimos cuadrados</option>
+                            </select>
+                        </div>
                     </div>
                     <br>`;
             }
@@ -334,48 +354,70 @@ async function setSchemesDefaultData(simulationID, variables) {
     // Fill inputs with default data
     // Here predeteminated schemes are set
     document.getElementById('temporal-schema').value = schemesData.ddtSchemes.default;
-    document.getElementById('grad-schema').value = schemesData.gradSchemes.default;
+    setGradValues('default', schemesData.gradSchemes.default);
     document.getElementById('divergency-schema').value = schemesData.divSchemes.default;
     document.getElementById('laplacian-schema').value = schemesData.laplacianSchemes.default;
     document.getElementById('interpolation-schema').value = schemesData.interpolationSchemes.default;
     document.getElementById('secondGrad-schema').value = schemesData.snGradSchemes.default;
     document.getElementById('wall-schema').value = schemesData.wallDist.method;
 
-    for ( let variable of variables ) {
+    for ( let variableData of variables ) {
         // let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
-        if(variable.schemes != null && variable.schemes.length > 0) {            
-            if ( variable.schemes.indexOf('grad') != -1 ) {
-                document.getElementById(`${variable.variable}-grad-schema`).value = 
-                    schemesData.gradSchemes[`${variable.variable}`] != null ? 
-                    schemesData.gradSchemes[`${variable.variable}`] : 'default';
+        if(variableData.schemes != null && variableData.schemes.length > 0) {       
+            const variable = variableData.variable;
+
+            if ( variableData.schemes.indexOf('grad') != -1 ) {
+                setGradValues(variable, schemesData.gradSchemes[`${variable}`]);
             }
                 
-            if ( variable.schemes.indexOf('div') != -1 ) {
-                document.getElementById(`${variable.variable}-divergency-schema`).value = 
-                    schemesData.divSchemes[`${variable.variable}`] != null ? 
-                    schemesData.divSchemes[`${variable.variable}`] : 'default';
+            if ( variableData.schemes.indexOf('div') != -1 ) {
+                document.getElementById(`${variable}-divergency-schema`).value = 
+                    schemesData.divSchemes[`${variable}`] != null ? 
+                    schemesData.divSchemes[`${variable}`] : 'default';
             }
             
-            if ( variable.schemes.indexOf('lap') != -1 ) {
-                document.getElementById(`${variable.variable}-laplacian-schema`).value = 
-                    schemesData.laplacianSchemes[`${variable.variable}`] != null ? 
-                    schemesData.laplacianSchemes[`${variable.variable}`] : 'default';
+            if ( variableData.schemes.indexOf('lap') != -1 ) {
+                document.getElementById(`${variable}-laplacian-schema`).value = 
+                    schemesData.laplacianSchemes[`${variable}`] != null ? 
+                    schemesData.laplacianSchemes[`${variable}`] : 'default';
             }
             
-            if ( variable.schemes.indexOf('interp') != -1 ) {
-                document.getElementById(`${variable.variable}-interpolation-schema`).value = 
-                    schemesData.interpolationSchemes[`${variable.variable}`] != null ? 
-                    schemesData.interpolationSchemes[`${variable.variable}`] : 'default';
+            if ( variableData.schemes.indexOf('interp') != -1 ) {
+                document.getElementById(`${variable}-interpolation-schema`).value = 
+                    schemesData.interpolationSchemes[`${variable}`] != null ? 
+                    schemesData.interpolationSchemes[`${variable}`] : 'default';
             }
             
-            if ( variable.schemes.indexOf('secondGrad') != -1 ) {
-                document.getElementById(`${variable.variable}-secondGrad-schema`).value = 
-                    schemesData.snGradSchemes[`${variable.variable}`] != null ? 
-                    schemesData.snGradSchemes[`${variable.variable}`] : 'default';
+            if ( variableData.schemes.indexOf('secondGrad') != -1 ) {
+                document.getElementById(`${variable}-secondGrad-schema`).value = 
+                    schemesData.snGradSchemes[`${variable}`] != null ? 
+                    schemesData.snGradSchemes[`${variable}`] : 'default';
             }            
         }
     }
 }
+
+function setGradValues(variable, scheme) {
+    // TODO: control nullPointers at schema and comment this method
+    console.log(variable, scheme);
+    let schemeSplit = scheme.split(' ');
+    console.log(schemeSplit);
+
+    if (schemeSplit.length === 4) {
+        document.getElementById(`${variable}-grad-limiter`).value = schemeSplit[0];
+        document.getElementById(`${variable}-grad-schema`).value = schemeSplit[1];
+        document.getElementById(`${variable}-grad-interpolation`).value = schemeSplit[2];
+        document.getElementById(`${variable}-grad-coefficent`).value = schemeSplit[3];
+    } else if (schemeSplit.length === 2) {
+        document.getElementById(`${variable}-grad-schema`).value = schemeSplit[0];
+        document.getElementById(`${variable}-grad-interpolation`).value = schemeSplit[1];
+    } else if (schemeSplit.length === 1) {
+        document.getElementById(`${variable}-grad-schema`).value = schemeSplit[0];
+    }
+}
+// TODO: onchange method to deploy coefficent input
+
+
 
 /**
  * Fills the form with the necessary inputs to manage the conditions of the variables
@@ -400,11 +442,22 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                 <div class="input-data">
                                     <label for="${variable.variable}-data-${boundary.name}-type">Condición para ${variable.name}</label>
                                     <select id="${variable.variable}-data-${boundary.name}-type" >
-                                        <option>Valor libre</option>
-                                        <option>Valor fijo</option>
-                                        <option>Gradiente nulo</option>
-                                        <option>No-deslizamiento</option>
-                                        <option>Vacío</option>
+                                    `;
+
+                            if (variable.variable === 'p') {
+                                newText += `
+                                        <option value='freestreamPressure'>Valor libre de presión</option>`;
+                            } else if (variable.variable === 'U') {
+                                newText += `
+                                        <option value='freestreamVelocity'>Valor libre de velocidad</option>`;
+                            } else {
+                                newText += `
+                                        <option value='freestream'>Valor libre</option>`;
+                            }
+
+                            newText += `
+                                        <option value='fixedValue'>Valor fijo</option>
+                                        <option value='empty'>Vacío</option>
                                     </select>
                                 </div>
                                 <br>`;
@@ -425,10 +478,10 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                     <div class="input-data">
                                         <label for="${variable.variable}-data-${boundary.name}-type">Condición para ${variable.name}</label>
                                         <select id="${variable.variable}-data-${boundary.name}-type" >
-                                            <option>Valor fijo</option>
-                                            <option>Gradiente nulo</option>
-                                            <option>No-deslizamiento</option>
-                                            <option>Vacío</option>
+                                            <option value='fixedValue'>Valor fijo</option>
+                                            <option value='zeroGradient'>Gradiente nulo</option>
+                                            <option value='noSlip'>No-deslizamiento</option>
+                                            <option value='empty'>Vacío</option>
                                         </select>
                                     </div>
                                     <br>`;
@@ -438,8 +491,8 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                         <div class="input-data">
                                             <label for="${boundary.name}-wall">Funciones de pared para ${variable.name}</label>
                                             <select id="${boundary.name}-wall" >
-                                            <option>Sí</option>
-                                            <option>No</option>
+                                            <option value='1'>Sí</option>
+                                            <option value='0'>No</option>
                                             </select>
                                         </div>
                                         <br>`;
@@ -452,6 +505,9 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                 }
             }
         }
+
+        document.getElementById('p-data-walls-type').value = 'zeroGradient';
+        document.getElementById('U-data-walls-type').value = 'noSlip';
     }
 }
 
@@ -532,7 +588,7 @@ function fillFormsForcesFields() {
         extraInputs.innerHTML +=
             `<div class="input-data">
                 <label class="long-label">Direccion vector unitario de sustentación</label>
-                <select id="lift-option" class="short-selector" onchange="vectorDirections('lift', value)">
+                <select id="lift-option" class="short-selector" onchange="fillFormsvectorDirections('lift', value)">
                     <option value="X">Eje X</option>
                     <option value="Y">Eje Y</option>
                     <option value="Z">Eje Z</option>
@@ -542,7 +598,7 @@ function fillFormsForcesFields() {
             <div id="lift-vector" class="axis-data"></div>
             <div class="input-data">
                 <label class="long-label">Direccion vector unitario de resistencia aerodinámica</label>
-                <select id="drag-option" class="short-selector" onchange="vectorDirections('drag', value)">
+                <select id="drag-option" class="short-selector" onchange="fillFormsvectorDirections('drag', value)">
                     <option value="X">Eje X</option>
                     <option value="Y">Eje Y</option>
                     <option value="Z">Eje Z</option>
@@ -552,7 +608,7 @@ function fillFormsForcesFields() {
             <div id="drag-vector" class="axis-data"></div>
             <div class="input-data">
                 <label class="long-label">Direccion vector unitario de eje de cabeceo</label>
-                <select id="pitch-option" class="short-selector" onchange="vectorDirections('pitch', value)">
+                <select id="pitch-option" class="short-selector" onchange="fillFormsvectorDirections('pitch', value)">
                     <option value="X">Eje X</option>
                     <option value="Y">Eje Y</option>
                     <option value="Z">Eje Z</option>
@@ -596,8 +652,7 @@ function fillFormsForcesFields() {
 function fillFormsvectorDirections(vectorName, value) {
     let vector = document.getElementById(`${vectorName}-vector`);
 
-    if (value === 'unitVector') {
-        vector.style.display = "inline-flex";
+    if (vector.innerHTML === '') {
         vector.innerHTML = `
             <div>
                 <label for="${vectorName}X-data">Eje X</label>
@@ -611,9 +666,13 @@ function fillFormsvectorDirections(vectorName, value) {
                 <label for="${vectorName}Z-data">Eje Z</label>
                 <input class="axis-input" type="text" id="${vectorName}Z-data"/>
             </div>`;
+    }
+
+    if (value === 'unitVector') {
+        vector.style.display = "inline-flex";
     } else {
         vector.style.display = "none";
-        vector.innerHTML = '';
+        // vector.innerHTML = '';
     }
 }
 
@@ -666,20 +725,6 @@ async function fillFormsSolverVariables(solver, simulationID){
         
     // Prevents that a solver has been selected by the user
     if (solver === 'default') return ;
-    
-    // Once we have the data, we fill the form
-    if (variablesInputs != null) fillFormsSolverVariablesSections(variablesInputs, variables);
-    if (solverInputs != null) {
-        fillFormsSolverSection(solver, solverInputs);
-        fillFormsResidualControlSection(solverInputs, variables);
-    }
-    if (relaxationInputs != null) fillFormsRelaxationSection(relaxationInputs, variables);
-
-    // Looks for the simulation data to fill the inputs
-    let solutionData = await getSolutionData(simulationID);
-    console.log('solutionData', solutionData);
-
-    // TODO: Fill the form with the DB data
 
     // Looks for the variables the turbulence model needs
     if(turbulenceModel.value !== 'default') {
@@ -691,7 +736,88 @@ async function fillFormsSolverVariables(solver, simulationID){
             }
         }
     }
+    
+    // Once we have the data, we fill the form
+    fillFormsSolverVariablesSections(variablesInputs, variables);
+    fillFormsSolverSection(solverInputs, solver);
+    fillFormsResidualControlSection(solverInputs, variables);
+    fillFormsRelaxationSection(relaxationInputs, variables);
 
+    // When inputs are ready, we fill them with the data from simulation
+    let solutionData = await getSolutionData(simulationID);
+
+    // Fills the form with the DB data
+    if (variablesInputs.innerHTML != ''){
+        setSolverVariablesSection(variables, solutionData.solvers);
+    }
+    if (solverInputs.innerHTML != ''){
+        setSolverSection(solver, solutionData[`${solver}`]);
+        setResidualControlSection(variables, solutionData.residualControl);
+    }
+    if (relaxationInputs.innerHTML != '') {
+        setRelaxationSection(variables, solutionData.relaxationFactors);
+    }
+}
+
+function setSolverVariablesSection(variables, solversData) {
+    for ( let variableData of variables) {
+        if ( variableData.type == null ) continue ;
+
+        const variable = variableData.variable;
+
+        // Selectors
+        document.getElementById(`${variable}-solver-schema`).value =
+                formatSelector( solversData[`${variable}`].solver );
+        document.getElementById(`${variable}-preconditioner-schema`).value =
+                formatSelector( solversData[`${variable}`].preconditioner );
+        document.getElementById(`${variable}-smoother-data`).value =
+                formatSelector( solversData[`${variable}`].smoother );
+
+        // Simple inputs
+        document.getElementById(`${variable}-tolerance-data`).value =
+                formatInput(solversData[`${variable}`].tolerance);
+        document.getElementById(`${variable}-relTol-data`).value =
+                formatInput(solversData[`${variable}`].relTol);
+                
+        if ( variableData.type == 'symmetric' ) {
+            document.getElementById(`${variable}-sweeps-data`).value =
+                    formatInput(solversData[`${variable}`].nSweeps);
+        }
+    }
+}
+
+function setSolverSection(solver, solverData) {
+    // console.log('solver', solver, solverData);
+    document.getElementById('nNonOrthogonalCorrectors').value =
+            formatInput(solverData.nNonOrthogonalCorrectors);
+
+    if (solver === 'piso' || solver === 'pimple') {
+        document.getElementById('nCorrectors').value = formatInput(solverData.nCorrectors);
+    }
+
+    if (solver === 'pimple') {
+        document.getElementById('nOuterCorrectors').value = formatInput(solverData.nOuterCorrectors);
+    }
+
+    // TODO: manage icoFoam
+}
+
+function setResidualControlSection(variables, residualData) {
+    for ( let variableData of variables) {
+        const variable = variableData.variable;
+
+        document.getElementById(`${variable}-residual-control`).value =
+                formatInput(residualData[`${variable}`]);
+    }
+}
+
+function setRelaxationSection(variables, relaxationData) {
+    for ( let variableData of [...variables, { variable: 'fields'}, { variable: 'equations'}]) {
+        const variable = variableData.variable;
+
+        document.getElementById(`${variable}-relaxation`).value =
+                formatInput(relaxationData[`${variable}`]);
+    }
 }
 
 /**
@@ -711,12 +837,12 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                     <div class="input-data">
                         <label for="${variable.variable}-solver-schema">Solver</label>
                         <select id="${variable.variable}-solver-schema">
-                            <option value="GaussSeidel">Gauss-Seidel</option>
-                            <option value="smoothSolver">smoothSolver</option>
-                            <option value="DILU">DILU</option>
-                            <option value="PCG">PCG</option>
-                            <option value="PBiCG">PBiCG</option>
-                            <option value="PBiCGStab">PBiCGStab</option>
+                            <option value="gaussseidel">Gauss-Seidel</option>
+                            <option value="smoothsolver">smoothSolver</option>
+                            <option value="dilu">DILU</option>
+                            <option value="pcg">PCG</option>
+                            <option value="pbicg">PBiCG</option>
+                            <option value="pbicgstab">PBiCGStab</option>
                         </select>
                     </div>
                     <br>
@@ -724,16 +850,16 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                         <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
                         <select id="${variable.variable}-preconditioner-schema">
                             <option value="default">Sin precondicionador</option>
-                            <option value="symGaussSeidel">Gauss-Seidel</option>
-                            <option value="DILU">DILU</option>
+                            <option value="symgaussseidel">Gauss-Seidel</option>
+                            <option value="dilu">DILU</option>
                         </select>
                     </div>
                     <br>
                     <div class="input-data">
                         <label for="${variable.variable}-smoother-data">Smoother</label>
                         <select id="${variable.variable}-smoother-data">
-                            <option value="GaussSeidel">Gauss-Seidel</option>
-                            <option value="DIC">DILU</option>
+                            <option value="gaussseidel">Gauss-Seidel</option>
+                            <option value="dilu">DILU</option>
                         </select>
                     </div>
                     <br>
@@ -757,10 +883,10 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                     <div class="input-data">
                         <label for="${variable.variable}-solver-schema">Solver</label>
                         <select id="${variable.variable}-solver-schema"> 
-                            <option value="GAMG">GAMG</option>
-                            <option value="DIC">DIC</option>
-                            <option value="PCG">PCG</option>
-                            <option value="PBiCGStab">PBiCGStab</option>
+                            <option value="gamg">GAMG</option>
+                            <option value="dic">DIC</option>
+                            <option value="pcg">PCG</option>
+                            <option value="pbicgstab">PBiCGStab</option>
                         </select>
                     </div>
                     <br>
@@ -768,18 +894,18 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                         <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
                         <select id="${variable.variable}-preconditioner-schema"> 
                             <option value="default">Sin precondicionador</option>
-                            <option value="GaussSeidel">Gauss-Seidel</option>
-                            <option value="GAMG">GAMG</option>
-                            <option value="DIC">DIC</option>
+                            <option value="gaussseidel">Gauss-Seidel</option>
+                            <option value="gamg">GAMG</option>
+                            <option value="dic">DIC</option>
                         </select>
                     </div>
                     <br>
                     <div class="input-data">
                         <label for="${variable.variable}-smoother-data">Smoother</label>
                         <select id="${variable.variable}-smoother-data">
-                            <option value="GaussSeidel">Gauss-Seidel</option>
-                            <option value="GAMG">GAMG</option>
-                            <option value="DIC">DIC</option>
+                            <option value="gaussseidel">Gauss-Seidel</option>
+                            <option value="gamg">GAMG</option>
+                            <option value="dic">DIC</option>
                         </select>
                     </div>
                     <br>
@@ -804,28 +930,97 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
 /**
  * Fills form with inputs to define the solver OpenFOAM will use
  */
-function fillFormsSolverSection(solver, solverInputs){
+function fillFormsSolverSection(solverInputs, solver){
     let newHTML = '';
     // TODO: create fields for the other solvers (pimple, piso, ...)
-    if(solver === 'simpleFoam') {
+    if(solver === 'simple') {
         newHTML = `
             <p class="input-label">SIMPLE</p>
             <div class="data-container">
-            <div class="input-data">
-                <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
-                <input class="long-input" id="nNonOrthogonalCorrectors"/>
-            </div>
-            <br>
-            <div class="input-data">
-                <label for="consistent">Consistencia</label>
-                <select id="consistent">
-                    <option value="yes">Sí</option>
-                    <option value="no">No</option>
-                </select>
-            </div>
+                <div class="input-data">
+                    <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
+                    <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="consistent">Consistencia</label>
+                    <select id="consistent">
+                        <option value="1">Sí</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
             </div>`;
-    }
+    } else if(solver === 'piso') {
+        newHTML = `
+            <p class="input-label">PISO</p>
+            <div class="data-container">
+                <div class="input-data">
+                    <label for="nCorrectors">nCorrectors</label>
+                    <input class="long-input" id="nCorrectors"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
+                    <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="pRefCell">Presión de referencia en las celdas</label>
+                    <input class="long-input" id="pRefCell"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="pRefValue">Valor de la presión de referencia</label>
+                    <input class="long-input" id="pRefValue"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="consistent">Consistencia</label>
+                    <select id="consistent">
+                        <option value="1">Sí</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+            </div>`;
+    } else if(solver === 'pimple') {
+        newHTML = `
+            <p class="input-label">PIMPLE</p>
+            <div class="data-container">
+                <div class="input-data">
+                    <label for="nOuterCorrectors">nOuterCorrectors</label>
+                    <input class="long-input" id="nOuterCorrectors"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="nCorrectors">nCorrectors</label>
+                    <input class="long-input" id="nCorrectors"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
+                    <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="correctPhi">Corrección del flujo</label>
+                    <select id="correctPhi">
+                        <option value="1">Sí</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <br>
+                <div class="input-data">
+                    <label for="consistent">Consistencia</label>
+                    <select id="consistent">
+                        <option value="1">Sí</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+            </div>`;
+    } 
     
+    // TODO: manage icoFoam
+
     solverInputs.innerHTML += newHTML;
 }
 
@@ -858,8 +1053,13 @@ function fillFormsRelaxationSection(relaxationInputs, variables) {
         <p class="input-label">Factores de relajación</p>
         <div class="data-container">
             <div class="input-data">
-                <label for="general-relaxation">General</label>
-                <input class="long-input" id="general-relaxation" value="0.95"/>
+                <label for="fields-relaxation">Campos</label>
+                <input class="long-input" id="fields-relaxation"/>
+            </div>
+            <br>
+            <div class="input-data">
+                <label for="equations-relaxation">Ecuaciones</label>
+                <input class="long-input" id="equations-relaxation"/>
             </div>
             <br>`;
     
