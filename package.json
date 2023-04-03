@@ -1,14 +1,11 @@
 {
   "name": "openfoamgraphicinterface",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "This is a graphical interface to the CFD software OpenFOAM",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
-    "package-win": "electron-packager . openfoamgraphicinterface --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=\"Universidad de Cádiz\" --version-string.FileDescription=CE --version-string.ProductName=\"OpenFOAM GUI\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "package": "electron-forge package"
   },
   "keywords": [
     "OpenFOAM",

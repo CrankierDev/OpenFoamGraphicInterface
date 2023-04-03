@@ -2,7 +2,15 @@ const path = require('path');
 
 module.exports = {
   packagerConfig: {
-    icon: path.join(__dirname, "assets", "icons", "win", "icon")//'assets/icons/win/icon' // no file extension required
+    packageManager: "npm",
+    icon: path.join(__dirname, "assets", "icons", "win", "icon"), // no file extension required
+    asar:  true,
+    overwrite: true,
+    ignore: [
+        ".gitignore",
+        "db.sqlite",
+        "Compiler.iss"
+    ]
   },
   rebuildConfig: {},
   makers: [
@@ -11,6 +19,11 @@ module.exports = {
       config: {
         "setupIcon": path.join(__dirname, "assets", "icons", "win", "icon.ico"),
       },
+      asar:  true,
+      overwrite: true,
+      ignore: [
+          ".gitignore"
+      ]
     },
     {
       name: '@electron-forge/maker-zip',

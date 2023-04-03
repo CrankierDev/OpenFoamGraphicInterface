@@ -398,8 +398,11 @@ async function setSchemesDefaultData(simulationID, variables) {
 }
 
 function setGradValues(variable, scheme) {
-    // TODO: control nullPointers at schema and comment this method
+    // TODO: explain this method
     console.log(variable, scheme);
+    if ( scheme == null ) return;
+    // TODO: here we could set the value as predet
+
     let schemeSplit = scheme.split(' ');
     console.log(schemeSplit);
 
@@ -505,7 +508,7 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                 }
             }
         }
-
+        // FIX-ME: view boundaries and work with it
         document.getElementById('p-data-walls-type').value = 'zeroGradient';
         document.getElementById('U-data-walls-type').value = 'noSlip';
     }

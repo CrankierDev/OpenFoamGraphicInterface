@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenFOAM GUI"
-#define MyAppVersion "1.0"
+#define MyAppVersion "0.1.0"
 #define MyAppPublisher "UCA"
 #define MyAppExeName "openfoamgraphicinterface.exe"
 #define MyAppAssocName MyAppName + " File"
