@@ -60,7 +60,7 @@ function start() {
                 console.log('Table turbulence_models just created.');
                 db.run(TURBULENCE_MODELS_INSERT, ["kOmegaSST", "nut,k,omega"]);
                 db.run(TURBULENCE_MODELS_INSERT, ["kEpsilon", "nut,k,epsilon"]);
-                db.run(TURBULENCE_MODELS_INSERT, ["Spalart-Allmaras", "nut,nuTilda"]);
+                db.run(TURBULENCE_MODELS_INSERT, ["SpalartAllmaras", "nut,nuTilda"]);
             }
         }
     );  
@@ -396,7 +396,7 @@ async function getTurbulenceModelVariables(model) {
     return new Promise( (resolve, reject) => {
         db.get(`SELECT variables from turbulence_models
                 where model = (?)`,
-            model,
+                model,
             (err, variables) => {
                 if (err) {
                     console.log(err.message);

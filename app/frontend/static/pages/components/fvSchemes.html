@@ -1,16 +1,21 @@
 <h2 class="input-label">Esquemas predeterminados de la simulación</h2>
-<div class="data-container">
+<section class="data-container">
 	<div class="input-data">
 		<label for="temporal-schema">Esquema temporal</label>
-		<select id="temporal-schema"> 
-			<option value="steadyState">Estacionario</option>
-			<option value="transitory">Transitorio</option>
-		</select>
+		<div>
+			<select id="temporal-schema"> 
+				<option value="steadyState">Estacionario</option>
+				<option value="transitory">Transitorio</option>
+			</select>
+			<span class="material-symbols-rounded" onclick="showInfo('temporal-schema')">info</span>
+		</div>
 	</div>
-	<br>
+	<div id="temporal-schema-info" class="info-div info-div-border" style="display: none;"></div>
 	<div class="input-data">
 		<p class="schemes-title">Esquema para los gradientes</p>
+		<span class="material-symbols-rounded" onclick="showInfo('default-grad')">info</span>
 	</div>
+	<div id="default-grad-info" class="info-div info-div-border" style="display: none;"></div>
 	<div class="schemes-data">
 		<div class="subinput-data">
 			<label for="default-grad-limiter">Límites</label>
@@ -38,49 +43,71 @@
 			</select>
 		</div>
 	</div>
-	<br>
 	<div class="input-data">
-		<label for="divergency-schema">Esquema para las divergencias</label>
-		<select id="divergency-schema"> 
-			<option value="gaussLinear">Gauss Lineal</option>
-			<option value="linear">Lineal</option>
-			<option value="gaussLinearBounded">Gauss Lineal limitado</option>
-			<option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
-		</select>
+		<p class="schemes-title">Esquema para las divergencias</p>
+		<span class="material-symbols-rounded" onclick="showInfo('default-divergency')">info</span>
 	</div>
-	<br>
+	<div id="default-divergency-info" class="info-div info-div-border" style="display: none;"></div>
+	<div class="schemes-data">
+		<div class="subinput-data">
+			<label for="default-div-limiter">Delimitación</label>
+			<select id="default-div-limiter"> 
+				<option value="default">Sin delimitar</option>
+				<option value="bounded">Delimitado</option>
+			</select>
+		</div>
+		<div class="subinput-data">
+			<label for="default-div-interpolation">Interpolación</label>
+			<select id="default-div-interpolation"> 
+				<option value="linear">Lineal</option>
+				<option value="limitedLinear">Lineal limitado</option>
+				<option value="linearUpwind">Lineal aguas arriba</option>
+			</select>
+		</div>
+	</div>
 	<div class="input-data">
-		<label for="laplacian-schema">Esquema para los laplacianos</label>
-		<select id="laplacian-schema"> 
-			<option value="gaussLinear">Gauss Lineal</option>
-			<option value="linear">Lineal</option>
-			<option value="gaussLinearCell">Gauss Lineal limitado a las celdas</option>
-			<option value="gaussLinearFace">Gauss Lineal limitado a las caras</option>
-		</select>
+		<label for="default-laplacian">Esquema para los laplacianos</label>
+		<div>
+			<select id="default-laplacian"> 
+				<option value="corrected">Corregido</option>
+				<option value="orthogonal">Ortogonal</option>
+			</select>
+			<span class="material-symbols-rounded" onclick="showInfo('default-laplacian')">info</span>
+		</div>
 	</div>
-	<br>
+	<div id="default-laplacian-info" class="info-div info-div-border" style="display: none;"></div>
+	<!-- DUDA - QUITAR? -->
 	<div class="input-data">
-		<label for="interpolation-schema">Esquema de interpolación</label>
-		<select id="interpolation-schema">
-			<option value="linear">Lineal</option>
-			<option value="gaussLinear">Gauss Lineal</option>
-		</select>
+		<label for="default-interpolation-schema">Esquema de interpolación</label>
+		<div>
+			<select id="default-interpolation-schema">
+				<option value="linear">Lineal</option>
+			</select>
+			<span class="material-symbols-rounded" onclick="showInfo('default-interpolation-schema')">info</span>
+		</div>
 	</div>
-	<br>
+	<div id="default-interpolation-schema-info" class="info-div info-div-border" style="display: none;"></div>
 	<div class="input-data">
-		<label for="secondGrad-schema">Gradientes de segundo orden</label>
-		<select id="secondGrad-schema">
-			<option value="corrected">Corregido</option>
-			<option value="orthogonal">Ortogonal</option>
-		</select>
+		<label for="default-snGrad-schema">Gradientes normales a la superficie</label>
+		<div>
+			<select id="default-snGrad-schema">
+				<option value="corrected">Corregido</option>
+				<option value="orthogonal">Ortogonal</option>
+			</select>
+			<span class="material-symbols-rounded" onclick="showInfo('default-snGrad-schema')">info</span>
+		</div>
 	</div>
-	<br>
+	<div id="default-snGrad-schema-info" class="info-div info-div-border" style="display: none;"></div>
 	<div class="input-data">
-		<label for="wall-schema">Distribución de pared</label>
-		<select id="wall-schema"> 
-			<option value="meshWave">MeshWave</option>
-			<option value="cubic">Cubic</option>
-		</select>
+		<label for="default-wall-schema">Distribución de pared</label>
+		<div>
+			<select id="default-wall-schema"> 
+				<option value="cubic">Cubic</option>
+				<option value="meshWave">MeshWave</option>
+			</select>
+			<span class="material-symbols-rounded" onclick="showInfo('default-wall-schema')">info</span>
+		</div>
 	</div>
-</div>
+	<div id="default-wall-schema-info" class="info-div info-div-border" style="display: none;"></div>
+</section>
 <div id="fvSchemes-variables-inputs"></div>

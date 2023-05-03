@@ -1,0 +1,15 @@
+.material-symbols-rounded {
+	margin-top: 5px;
+	padding-left: 5px;
+	color: var(--blue-pallete);
+	font-variation-settings:
+		'FILL' 0,
+		'wght' 500,
+		'GRAD' -25,
+		'opsz' 30
+}
+
+.material-symbols-rounded:hover {
+	cursor: pointer;
+	color: var(--blue-pallete);
+}

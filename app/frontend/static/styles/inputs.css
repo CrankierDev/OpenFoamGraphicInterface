@@ -1,9 +1,13 @@
 /*--------------------------------- INPUTS STYLES ---------------------------------------------*/
 .data-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     color: var(--blacktext-pallete);
     width: 80%;
     margin: 0 auto;
-    margin-bottom: 0.5em;
+    margin-bottom: 1em;
     background-color: var(--whitetext-pallete);
     border: solid;
     border-radius: 20px;
@@ -12,81 +16,76 @@
     padding-bottom: 25px;
 }
 
-.input-label, .input-title {
-    width: 80%;
-    margin: 0 auto;
+#forces-extra-inputs {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .input-data {
     display: inline-flex;
-    width: 100%;
+    width: 60%;
+    margin: 0 auto;
     margin-bottom: 0;
+    justify-content: space-between;
     align-items: flex-end;
 }
 
-.input-data>label, .input-data>select, .input-data>input , .input-data>p {
+.input-data>div {
+    display: inline-flex;
+    margin-bottom: 0;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.input-data>label, .input-data>div>select, .input-data>select, .input-data>input , .input-data>p {
     margin-top: 20px;
     margin-bottom: 0;
 }
 
 .input-data>label {
     width: 228px;
-    margin-left: auto;
-    margin-right: 5px;
 }
 
 .input-data>p {
-    width: 350px;
-    margin-left: 30.3%;
-    margin-right: auto;
+    width: 349px;
+    margin-left: 1px;
+    margin-right: 187px;
 }
 
 .input-data>.long-label {
-    width: 350px;
-    margin-left: auto;
-    margin-right: 5px;
+    width: 400px;
+    margin-right: 28px;
 }
 
 .input-data>.checkbox-label {
-    width: 511px;
-    margin-left: auto;
-    margin-right: 5px;
+    width: 499px;
 }
 
-.input-data>.long-input {
+.input-data>div>.long-input, .input-data>.long-input {
     width: 300px;
-    margin-left: 5px;
-    margin-right: auto;
 }
 
-.input-data>.short-input {
+.input-data>div>.short-input, .input-data>.short-input {
     width: 100px;
-    margin-left: 5px;
-    margin-right: auto;
 }
 
-.input-data>select {
+.input-data>div>select, .input-data>select {
     width: 308px;
-    margin-left: 4px;
-    margin-right: auto;
 }
 
-.input-data>.short-selector {
+.input-data>div>.short-selector, .input-data>.short-selector {
     width: 108px;
-    margin-left: 4px;
-    margin-right: auto;
 }
 
-.input-data>.checkbox {
+.input-data>div>.checkbox {
     width: 30px;
-    margin-left: 0;
-    margin-right: auto;
 }
 
 .input-data>.schemes-title {
     width: 350px;
-    margin-left: 27.3%;
-    margin-right: auto;
 }
 
 .schemes-data {
@@ -105,7 +104,6 @@
     display: inline-flex;
     width: 55%;
     margin-bottom: 0;
-    /* align-items: space-between; */
 }
 
 .subinput-data>label, .subinput-data>select, .subinput-data>input {
@@ -115,12 +113,34 @@
 
 .subinput-data>label {
     width: 150px;
-    margin-left: auto;
-    margin-right: 5px;
 }
 
 .subinput-data>select {
     width: 250px;
-    margin-left: 4px;
-    margin-right: auto;
+}
+
+.subinput-data>input {
+    width: 242px;
+}
+
+.input-label {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.card-title {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.card-title>p, .card-title>h2 {
+    padding-bottom: 0;
+    width: fit-content;
+    margin-left: 0;
+    margin-right: 10px;
 }

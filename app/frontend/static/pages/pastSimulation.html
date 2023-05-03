@@ -1,8 +1,8 @@
 <head>
-    <link rel="stylesheet" href="./frontend/static/styles/advancedSimulation.css">
+    <link rel="stylesheet" href="./frontend/static/styles/pastSimulation.css">
     <script>
         $(document).ready(function(){
-            $('#firstContent-advanced-article').load("./frontend/static/pages/components/starterSection.html");
+            $('#constants-inputs-advanced').load("./frontend/static/pages/components/constants.html");
             $('#zero-inputs-advanced').load("./frontend/static/pages/components/zero.html");
             $('#controlDict-inputs-advanced').load("./frontend/static/pages/components/controlDict.html");
             $('#fvSchemes-inputs-advanced').load("./frontend/static/pages/components/fvSchemes.html");
@@ -13,14 +13,14 @@
 </head>
 <body>
     <main class="container">
-        <article id="firstContent-advanced">
-            <h1 class="sim-name">Simulación avanzada</h1>
-            <section id="firstContent-advanced-article"></section>
-        </article>
         <article id="secondContent-advanced">
-            <h1>Rellene los datos de los parámetros de simulación</h1>
+            <h1>Parámetros de simulación</h1>
 
             <nav class="balls-section">
+                <div id="constants-ball-advanced" class="ball active-ball" 
+                        onclick="clickPage('constants', 'advanced')">
+                    <p>Datos básicos</p>
+                </div>
                 <div id="zero-ball-advanced" class="ball" 
                         onclick="clickPage('zero', 'advanced')">
                     <p>Carpeta 0</p>
@@ -43,6 +43,7 @@
                 </div>
             </nav>
             
+            <section id="constants-inputs-advanced"></section>
             <section id="zero-inputs-advanced"></section>
             <section id="controlDict-inputs-advanced"></section>
             <section id="fvSchemes-inputs-advanced"></section>
@@ -54,10 +55,11 @@
         <article class="buttons-container">
             <button id="back-button" class="left-button buttons-style back-button"
                     onclick="pagination(false, 'advanced')">Atrás</button>
-            <button id="next-button" class="center-buttons buttons-style next-button"
-                    onclick="pagination(true, 'advanced')">Siguiente</button> <!-- CLEAN disabled -->
-            <button id="generator-button" class="right-button buttons-style generator-button"
-                    onclick="pagination(true, 'advanced')">Generar ficheros</button>
+            <button class="center-buttons buttons-style next-button"
+                    onclick="pagination(true, 'advanced')">
+                <span id="next-button">Siguiente</span>    
+                <span id="generator-button">Generar ficheros</span>    
+            </button>
         </article>
     </main>
 </body>

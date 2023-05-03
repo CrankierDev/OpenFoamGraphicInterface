@@ -1,20 +1,43 @@
-<article class="data-container">
+<section class="data-container">
 	<div class="input-data">
 		<label class="short-label" for="simulation-name">Nombre para la simulación</label>
 		<input class="long-input" id="simulation-name" onchange="isSecondContentAvailable()"/>
 	</div>
-	<br>
-	
 	<div class="input-data">
 		<label class="long-label" for="workspace">Ruta donde guardar los archivos</label>
 		<button class="right-button buttons-style folder-button" id="workspace"
 			type="button" onclick="selectFolder(id)">Seleccionar la carpeta</button>
 	</div>
-	<br>
-	
 	<div class="input-data">
 		<label class="long-label" for="mesh">Ruta de la malla</label>
 		<button class="right-button buttons-style folder-button" id="mesh"
 			type="button" onclick="selectFolder(id)">Seleccionar la carpeta</button>
 	</div>
+</section>
+<article id="flux-conditions" > <!-- CLEAN style="display: none;" -->
+	<h2 class="input-label">Condiciones de simulación</h2>
+	<section class="data-container">
+		<div class="input-data">
+			<label for="solver">Solver</label>
+			<div>
+				<select id="solver" onchange="solverChanges(value)">
+					<option value="default">Seleccione...</option>
+					<option value="icoFoam">icoFoam</option>
+					<option value="simpleFoam">simpleFoam</option>
+					<option value="pimpleFoam">pimpleFoam</option>
+					<option value="pisoFoam">pisoFoam</option>
+				</select>
+				<span class="material-symbols-rounded" onclick="showInfo('solver')">info</span>
+			</div>
+		</div>
+		<div id="solver-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="turbulence-model-div" class="input-data">
+			<label for="turbulence-model">Modelo de turbulencia</label>
+			<div>
+				<select id="turbulence-model"></select>
+				<span class="material-symbols-rounded" onclick="showInfo('turbulence-model')">info</span>
+			</div>
+		</div>
+		<div id="turbulence-model-info" class="info-div info-div-border" style="display: none;"></div>
+	</section>
 </article>

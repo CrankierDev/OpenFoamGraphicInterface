@@ -1,6 +1,8 @@
 function loadContent(id) {
 	const sectionID = `${id}-section`;
 	
+	showContent(sectionID);
+	
 	if( document.getElementById(sectionID).style.display === 'block' ){
 		return;
 	}
@@ -8,7 +10,6 @@ function loadContent(id) {
 	const htmlRoute = `./frontend/static/pages/${id}.html`;
 
 	$(`#${sectionID}`).load(htmlRoute);
-	showContent(sectionID)
 }
 
 function showContent(id) {

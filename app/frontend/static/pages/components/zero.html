@@ -1,28 +1,46 @@
-<div class="main-zero">
+<section class="main-zero">
 	<h2 class="input-label">Datos del flujo</h2>
 	<div class="data-container">
 		<div class="input-data">
 			<label for="flux-velocity">Velocidad de flujo</label>
-			<input class="long-input" id="flux-velocity" />
+			<div>
+				<input class="long-input" id="flux-velocity" />
+				<span class="material-symbols-rounded" onclick="showInfo('flux-velocity')">info</span>
+			</div>
 		</div>
-		<br>
+		<div id="flux-velocity-info" class="info-div info-div-border" style="display: none;"></div>
 		<div class="input-data">
 			<label for="flux-aoa">Ángulo de incidencia</label>
-			<input class="long-input" id="flux-aoa" type="number"/>
+			<div>
+				<input class="long-input" id="flux-aoa" type="number"/>
+				<span class="material-symbols-rounded" onclick="showInfo('flux-aoa')">info</span>
+			</div>
 		</div>
-		<br>
+		<div id="flux-aoa-info" class="info-div info-div-border" style="display: none;"></div>
 		<div class="input-data">
 			<label for="flux-pressure">Presión del flujo</label>
-			<input class="long-input" id="flux-pressure" type="number"/>
+			<div>
+				<input class="long-input" id="flux-pressure" type="number"/>
+				<span class="material-symbols-rounded" onclick="showInfo('flux-pressure')">info</span>
+			</div>
 		</div>
+		<div id="flux-pressure-info" class="info-div info-div-border" style="display: none;"></div>
 		<div class="input-data">
 			<label for="flux-density">Densidad de flujo</label>
-			<input class="long-input" id="flux-density" />
+			<div>
+				<input class="long-input" id="flux-density" />
+				<span class="material-symbols-rounded" onclick="showInfo('flux-density')">info</span>
+			</div>
 		</div>
+		<div id="flux-density-info" class="info-div info-div-border" style="display: none;"></div>
 		<div class="input-data">
 			<label for="flux-viscosity">Viscosidad de flujo</label>
-			<input class="long-input" id="flux-viscosity" />
+			<div>
+				<input class="long-input" id="flux-viscosity" />
+				<span class="material-symbols-rounded" onclick="showInfo('flux-viscosity')">info</span>
+			</div>
 		</div>
+		<div id="flux-viscosity-info" class="info-div info-div-border" style="display: none;"></div>
 	</div>
-</div>
+</section>
 <div id="boundary-conditions"></div>

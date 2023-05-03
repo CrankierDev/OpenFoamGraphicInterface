@@ -20,7 +20,7 @@ async function setLastSimulationsTable() {
         return ;
     }
     
-    // TODO: not show table if there is only 'default' simulation on the DB.
+    // TODO: not to show table if there is only 'default' simulation on the DB.
 
     // Writes the table with the DB data from past simulations
     let table = document.getElementById('last-simulations-table');
@@ -229,7 +229,9 @@ async function fillFormsSchemesFields(variables, simulationID) {
         let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
         if(schemes != null && schemes.length > 0) {
             let newHTML = `
-                <p class="input-label">Esquemas para ${variable.name.toLowerCase()}</p>
+                <div class="card-title">
+                    <p class="input-label">Esquemas para ${variable.name.toLowerCase()}</p>
+                </div>
                 <div class="data-container">`;
             
             if ( variable.schemes.indexOf('grad') != -1 ) {
@@ -263,36 +265,54 @@ async function fillFormsSchemesFields(variables, simulationID) {
                                 <option value="leastSquares">Mínimos cuadrados</option>
                             </select>
                         </div>
+                        <div class="subinput-data">
+                            <label for="${variable.variable}-grad-coeff">Coeficiente</label>
+                            <input id="${variable.variable}-grad-coeff"> 
+                        </div>
                     </div>
-                    <br>`;
+                    `;
             }
                 
             if ( variable.schemes.indexOf('div') != -1 ) {
                 newHTML += `
                     <div class="input-data">
-                        <label for="${variable.variable}-divergency-schema">Esquema para las divergencias</label>
-                        <select id="${variable.variable}-divergency-schema">
-                            <option value="default">Predeterminado</option>
-                            <option value="linear">Lineal</option>
-                            <option value="gaussLinear">Gauss Lineal</option>
-                            <option value="gaussLinearBounded">Gauss Lineal limitado</option>
-                            <option value="gaussLinearUpwind">Gauss Lineal aguas arriba</option>
-                        </select>
+                        <p class="schemes-title">Esquema para las divergencias</p>
                     </div>
-                    <br>`;
-            }
+                    <div class="schemes-data">
+                        <div class="subinput-data">
+                            <label for="${variable.variable}-div-limiter">Delimitación</label>
+                            <select id="${variable.variable}-div-limiter"> 
+                                <option value="default">Sin delimitar</option>
+                                <option value="bounded">Delimitado</option>
+                            </select>
+                        </div>
+                        <div class="subinput-data">
+                            <label for="${variable.variable}-div-interpolation">Interpolación</label>
+                            <select id="${variable.variable}-div-interpolation"> 
+                                <option value="linear">Lineal</option>
+                                <option value="limitedLinear">Lineal limitado</option>
+                                <option value="linearUpwind">Lineal aguas arriba</option>
+                            </select>
+                        </div>
+                    </div>
+                    `;
+                        // <div class="subinput-data">
+                        //     <label for="${variable.variable}-div-coeff">Coeficiente</label>
+                        //     <input id="${variable.variable}-div-coeff"> 
+                        // </div>
+                    }
             
             if ( variable.schemes.indexOf('lap') != -1 ) {
                 newHTML += `
                     <div class="input-data">
-                        <label for="${variable.variable}-laplacian-schema">Esquema para los laplacianos</label>
-                        <select id="${variable.variable}-laplacian-schema">
+                        <label for="${variable.variable}-laplacian-snGrad">Esquema para los laplacianos</label>
+                        <select id="${variable.variable}-laplacian-snGrad">
                             <option value="default">Predeterminado</option>
                             <option value="corrected">Corregido</option>
                             <option value="orthogonal">Ortogonal</option>
                         </select>
                     </div>
-                    <br>`;
+                    `;
             }
             
             if ( variable.schemes.indexOf('interp') != -1 ) {
@@ -302,23 +322,23 @@ async function fillFormsSchemesFields(variables, simulationID) {
                         <select id="${variable.variable}-interpolation-schema">
                             <option value="default">Predeterminado</option>
                             <option value="linear">Lineal</option>
-                            <option value="gaussLinear">Gauss Lineal</option>
+                            <option value="pointLinear">Lineal en un punto</option>
                         </select>
                     </div>
-                    <br>`;
+                    `;
             }
             
             if ( variable.schemes.indexOf('secondGrad') != -1 ) {
                 newHTML += `
                     <div class="input-data">
-                        <label for="${variable.variable}-secondGrad-schema">Gradientes de segundo orden</label>
-                        <select id="${variable.variable}-secondGrad-schema"> 
+                        <label for="${variable.variable}-snGrad-schema">Gradientes normales a la superficie</label>
+                        <select id="${variable.variable}-snGrad-schema"> 
                             <option value="default">Predeterminado</option>
                             <option value="corrected">Corregido</option>
                             <option value="orthogonal">Ortogonal</option>
                         </select>
                     </div>
-                    <br>`;
+                    `;
             }
             
             if ( variable.schemes.indexOf('wall') != -1 ) {
@@ -350,61 +370,72 @@ async function fillFormsSchemesFields(variables, simulationID) {
 async function setSchemesDefaultData(simulationID, variables) {
     // Gets schemes data from DB
     let schemesData = await getSchemasData(simulationID);
+    console.log(schemesData);
 
     // Fill inputs with default data
     // Here predeteminated schemes are set
     document.getElementById('temporal-schema').value = schemesData.ddtSchemes.default;
     setGradValues('default', schemesData.gradSchemes.default);
-    document.getElementById('divergency-schema').value = schemesData.divSchemes.default;
-    document.getElementById('laplacian-schema').value = schemesData.laplacianSchemes.default;
-    document.getElementById('interpolation-schema').value = schemesData.interpolationSchemes.default;
-    document.getElementById('secondGrad-schema').value = schemesData.snGradSchemes.default;
-    document.getElementById('wall-schema').value = schemesData.wallDist.method;
+    
+    if(schemesData.divSchemes.default !== 'none') {
+        setDivValues('default', schemesData.divSchemes.default);
+    }
+    
+    document.getElementById('default-laplacian').value =
+            schemesData.laplacianSchemes.default.split(' ')[2];
+    document.getElementById('default-interpolation-schema').value =
+            schemesData.interpolationSchemes.default;
+    document.getElementById('default-snGrad-schema').value =
+            schemesData.snGradSchemes.default;
+    document.getElementById('default-wall-schema').value =
+            schemesData.wallDist.method;
 
     for ( let variableData of variables ) {
         // let schemes = variable.schemes != null ? variable.schemes.split(',') : null;
         if(variableData.schemes != null && variableData.schemes.length > 0) {       
             const variable = variableData.variable;
 
+            if( variable == null ) {
+                continue;
+            }
+
             if ( variableData.schemes.indexOf('grad') != -1 ) {
                 setGradValues(variable, schemesData.gradSchemes[`${variable}`]);
             }
-                
+            
             if ( variableData.schemes.indexOf('div') != -1 ) {
-                document.getElementById(`${variable}-divergency-schema`).value = 
-                    schemesData.divSchemes[`${variable}`] != null ? 
-                    schemesData.divSchemes[`${variable}`] : 'default';
+                setDivValues(variable, schemesData.divSchemes[`div(phi,${variable.trim()})`]);
             }
             
-            if ( variableData.schemes.indexOf('lap') != -1 ) {
-                document.getElementById(`${variable}-laplacian-schema`).value = 
-                    schemesData.laplacianSchemes[`${variable}`] != null ? 
-                    schemesData.laplacianSchemes[`${variable}`] : 'default';
-            }
+            // DUDA - QUITAR?
+            // if ( variableData.schemes.indexOf('lap') != -1 ) {
+            //     document.getElementById(`${variable}-laplacian-schema`).value = 
+            //         schemesData.laplacianSchemes[`${variable}`] != null ? 
+            //         schemesData.laplacianSchemes[`${variable}`] : 'default';
+            // }
             
-            if ( variableData.schemes.indexOf('interp') != -1 ) {
-                document.getElementById(`${variable}-interpolation-schema`).value = 
-                    schemesData.interpolationSchemes[`${variable}`] != null ? 
-                    schemesData.interpolationSchemes[`${variable}`] : 'default';
-            }
+            // if ( variableData.schemes.indexOf('interp') != -1 ) {
+            //     document.getElementById(`${variable}-interpolation-schema`).value = 
+            //         schemesData.interpolationSchemes[`${variable}`] != null ? 
+            //         schemesData.interpolationSchemes[`${variable}`] : 'default';
+            // }
             
-            if ( variableData.schemes.indexOf('secondGrad') != -1 ) {
-                document.getElementById(`${variable}-secondGrad-schema`).value = 
-                    schemesData.snGradSchemes[`${variable}`] != null ? 
-                    schemesData.snGradSchemes[`${variable}`] : 'default';
-            }            
+            // if ( variableData.schemes.indexOf('secondGrad') != -1 ) {
+            //     document.getElementById(`${variable}-secondGrad-schema`).value = 
+            //         schemesData.snGradSchemes[`${variable}`] != null ? 
+            //         schemesData.snGradSchemes[`${variable}`] : 'default';
+            // }            
         }
     }
 }
 
+/**
+ * Fills gradient data of a variable with scheme data splitted by fields
+ */
 function setGradValues(variable, scheme) {
-    // TODO: explain this method
-    console.log(variable, scheme);
     if ( scheme == null ) return;
-    // TODO: here we could set the value as predet
 
     let schemeSplit = scheme.split(' ');
-    console.log(schemeSplit);
 
     if (schemeSplit.length === 4) {
         document.getElementById(`${variable}-grad-limiter`).value = schemeSplit[0];
@@ -420,7 +451,22 @@ function setGradValues(variable, scheme) {
 }
 // TODO: onchange method to deploy coefficent input
 
+/**
+ * Fills divergency data of a variable with scheme data splitted by fields
+ */
+function setDivValues(variable, scheme) {
+    if ( scheme == null ) return;
 
+    let schemeSplit = scheme.split(' ');
+
+    if (schemeSplit.length === 4) {
+        document.getElementById(`${variable}-div-limiter`).value = schemeSplit[0];
+        document.getElementById(`${variable}-div-interpolation`).value = schemeSplit[2];
+        // document.getElementById(`${variable}-div-coeff`).value = schemeSplit[3];
+    } else if (schemeSplit.length === 3) {
+        document.getElementById(`${variable}-div-interpolation`).value = schemeSplit[1];
+    }
+}
 
 /**
  * Fills the form with the necessary inputs to manage the conditions of the variables
@@ -428,7 +474,8 @@ function setGradValues(variable, scheme) {
  */
 function fillFormsBoundariesFields(boundariesData, variables) {
     if(boundariesData){
-        document.getElementById('boundary-conditions').innerHTML = 
+        const boundaryConditions = document.getElementById('boundary-conditions');
+        boundaryConditions.innerHTML = 
             '<h2 class="input-label">Condiciones de contorno</h2>';
 
         for (boundary of boundariesData) {
@@ -436,10 +483,15 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                 // Checks the type of the boundary to apply the correct inputs    
                 if( boundary.type === 'patch' ) {
                     let newText = `
-                        <div id="${boundary.name}-data" class="walls-zero">
-                            <h3 class="input-title">${capitalize(boundary.name)}</h3>
-                            <div class="data-container">`;
-                            
+                        <section id="${boundary.name}-data" class="walls-zero">
+                            <div class="card-title">
+                                <p class="input-label">${capitalize(boundary.name)} - Tipo ${boundary.type}</p>
+                                <span class="material-symbols-rounded" onclick="showInfo('${boundary.name}-data-${boundary.type}-type')">info</span>
+                            </div>
+                            <section class="data-container">
+                                <div id="${boundary.name}-data-${boundary.type}-type-info" class="info-div info-div-border" style="display: none;"></div>
+                        `;   
+
                         for(let variable of variables){
                             newText += `
                                 <div class="input-data">
@@ -462,19 +514,24 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                         <option value='fixedValue'>Valor fijo</option>
                                         <option value='empty'>Vacío</option>
                                     </select>
-                                </div>
-                                <br>`;
+                                </div>`;
                         }
                         
-                        newText += `</div>
-                                </div>`;
-                        document.getElementById('boundary-conditions').innerHTML += newText;
+                        newText += `</section>
+                                </section>`;
+
+                    boundaryConditions.innerHTML += newText;
 
                 } else if( boundary.type === 'wall' ) {
                     let newText =`
-                        <div id="${boundary.name}-data" class="walls-zero">
-                            <h3 class="input-title">${capitalize(boundary.name)}</h3>
-                            <div class="data-container">`;
+                        <section id="${boundary.name}-data" class="walls-zero">
+                            <div class="card-title">
+                                <p class="input-label">${capitalize(boundary.name)} - Tipo ${boundary.type}</p>
+                                <span class="material-symbols-rounded" onclick="showInfo('${boundary.name}-data-${boundary.type}-type')">info</span>
+                            </div>
+                            <section class="data-container">
+                                <div id="${boundary.name}-data-${boundary.type}-type-info" class="info-div info-div-border" style="display: none;"></div>
+                        `;
                             
                             for(let variable of variables){
                                 newText += `
@@ -487,24 +544,24 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                             <option value='empty'>Vacío</option>
                                         </select>
                                     </div>
-                                    <br>`;
+                                    `;
 
                                 if(variable.wallFunction == 1){
                                     newText += `
                                         <div class="input-data">
                                             <label for="${boundary.name}-wall">Funciones de pared para ${variable.name}</label>
                                             <select id="${boundary.name}-wall" >
-                                            <option value='1'>Sí</option>
-                                            <option value='0'>No</option>
+                                                <option value='1'>Sí</option>
+                                                <option value='0'>No</option>
                                             </select>
                                         </div>
-                                        <br>`;
+                                        `;
                                 }
                             }
                             
-                            newText += `</div>
-                                    </div>`;
-                    document.getElementById('boundary-conditions').innerHTML += newText;
+                            newText += `</section>
+                                    </section>`;
+                    boundaryConditions.innerHTML += newText;
                 }
             }
         }
@@ -536,7 +593,7 @@ function endTime(value) {
 function solverChanges(value) {
     let selector = document.getElementById('turbulence-model');
 
-    if(value === 'icoFoam') {
+    if(value === 'ico') {
         selector.disabled = true;
         selector.value = 'default';
 
@@ -555,11 +612,13 @@ function fillFormsForcesFields() {
 
     if ((forces || coeffs) && inputsOn.innerHTML == '') {
         inputsOn.innerHTML += 
-            `<h3 class="input-title">Datos para el cálculo de fuerzas</h3>
+            `<h3 class="card-title">Datos para el cálculo de fuerzas</h3>
             <div class="data-container">
                 <div class="input-data">
                     <p>Centro de rotación (m)</p>
+                    <span class="material-symbols-rounded" onclick="showInfo('CofR')">info</span>
                 </div>
+                <div id="CofR-info" class="info-div info-div-border" style="display: none;"></div>
                 <div class="axis-data">
                     <div>
                         <label for="CofRX-data" class="axis-label">Eje X</label>
@@ -576,8 +635,12 @@ function fillFormsForcesFields() {
                 </div>
                 <div class="input-data">
                     <label for="rhoInf-data" class="long-label">Densidad aguas arriba</label>
-                    <input class="short-input" type="text" id="rhoInf-data"/>
+                    <div>
+                        <input class="short-input" type="text" id="rhoInf-data"/>
+                        <span class="material-symbols-rounded" onclick="showInfo('rhoInf-data')">info</span>
+                    </div>
                 </div>
+                <div id="rhoInf-data-info" class="info-div info-div-border" style="display: none;"></div>
                 <div id="forces-extra-inputs"></div>
             </div>`;
 
@@ -587,56 +650,80 @@ function fillFormsForcesFields() {
 
     let extraInputs = document.getElementById("forces-extra-inputs");
 
-    if (coeffs && extraInputs.innerHTML == ''){ 
+    if (coeffs && extraInputs.innerHTML == '') { 
         extraInputs.innerHTML +=
             `<div class="input-data">
-                <label class="long-label">Direccion vector unitario de sustentación</label>
-                <select id="lift-option" class="short-selector" onchange="fillFormsvectorDirections('lift', value)">
-                    <option value="X">Eje X</option>
-                    <option value="Y">Eje Y</option>
-                    <option value="Z">Eje Z</option>
-                    <option value="unitVector">Definir vector</option>
-                </select>
+                <label for="lift-option" class="long-label">Direccion vector unitario de sustentación</label>
+                <div>
+                    <select id="lift-option" class="short-selector" onchange="fillFormsvectorDirections('lift', value)">
+                        <option value="X">Eje X</option>
+                        <option value="Y">Eje Y</option>
+                        <option value="Z">Eje Z</option>
+                        <option value="unitVector">Definir vector</option>
+                    </select>
+                    <span class="material-symbols-rounded" onclick="showInfo('lift-option')">info</span>
+                </div>
             </div>
+            <div id="lift-option-info" class="info-div info-div-border" style="display: none;"></div>
             <div id="lift-vector" class="axis-data"></div>
             <div class="input-data">
-                <label class="long-label">Direccion vector unitario de resistencia aerodinámica</label>
-                <select id="drag-option" class="short-selector" onchange="fillFormsvectorDirections('drag', value)">
-                    <option value="X">Eje X</option>
-                    <option value="Y">Eje Y</option>
-                    <option value="Z">Eje Z</option>
-                    <option value="unitVector">Definir vector</option>
-                </select>
+                <label for="drag-option" class="long-label">Direccion vector unitario de resistencia aerodinámica</label>
+                <div>
+                    <select id="drag-option" class="short-selector" onchange="fillFormsvectorDirections('drag', value)">
+                        <option value="X">Eje X</option>
+                        <option value="Y">Eje Y</option>
+                        <option value="Z">Eje Z</option>
+                        <option value="unitVector">Definir vector</option>
+                    </select>
+                    <span class="material-symbols-rounded" onclick="showInfo('drag-option')">info</span>
+                </div>
             </div>
+            <div id="drag-option-info" class="info-div info-div-border" style="display: none;"></div>
             <div id="drag-vector" class="axis-data"></div>
             <div class="input-data">
-                <label class="long-label">Direccion vector unitario de eje de cabeceo</label>
-                <select id="pitch-option" class="short-selector" onchange="fillFormsvectorDirections('pitch', value)">
-                    <option value="X">Eje X</option>
-                    <option value="Y">Eje Y</option>
-                    <option value="Z">Eje Z</option>
-                    <option value="unitVector">Definir vector</option>
-                </select>
+                <label for="pitch-option" class="long-label" for="pitch-option">Direccion vector unitario de eje de cabeceo</label>
+                <div>
+                    <select id="pitch-option" class="short-selector" onchange="fillFormsvectorDirections('pitch', value)">
+                        <option value="X">Eje X</option>
+                        <option value="Y">Eje Y</option>
+                        <option value="Z">Eje Z</option>
+                        <option value="unitVector">Definir vector</option>
+                    </select>
+                    <span class="material-symbols-rounded" onclick="showInfo('pitch-option')">info</span>
+                </div>
             </div>
+            <div id="pitch-option-info" class="info-div info-div-border" style="display: none;"></div>
             <div id="pitch-vector" class="axis-data"></div>
             <div class="input-data">
                 <label for="magUInf-data" class="long-label">Velocidad de flujo sin perturbar</label>
-                <input class="short-input" type="text" id="magUInf-data"/>
+                <div>
+                    <input class="short-input" type="text" id="magUInf-data"/>
+                    <span class="material-symbols-rounded" onclick="showInfo('magUInf-data')">info</span>
+                </div>
             </div>
+            <div id="magUInf-data-info" class="info-div info-div-border" style="display: none;"></div>
             <div class="input-data">
                 <label for="lRef-data" class="long-label">Longitud de referencia</label>
-                <input class="short-input" type="text" id="lRef-data"/>
+                <div>
+                    <input class="short-input" type="text" id="lRef-data"/>
+                    <span class="material-symbols-rounded" onclick="showInfo('lRef-data')">info</span>
+                </div>
             </div>
+            <div id="lRef-data-info" class="info-div info-div-border" style="display: none;"></div>
             <div class="input-data">
                 <label for="aRef-data" class="long-label">Área de referencia</label>
-                <input class="short-input" type="text" id="aRef-data"/>
+                <div>
+                    <input class="short-input" type="text" id="aRef-data"/>
+                    <span class="material-symbols-rounded" onclick="showInfo('aRef-data')">info</span>
+                </div>
             </div>
+            <div id="aRef-data-info" class="info-div info-div-border" style="display: none;"></div>
             `;
 
     } else if (coeffs && extraInputs.innerHTML !== '') {
         extraInputs.style.display = 'block';
 
-    } else if (!coeffs){
+    } else if (!coeffs) {
         extraInputs.style.display = 'none';
     }
 
@@ -683,9 +770,13 @@ function fillFormsvectorDirections(vectorName, value) {
  * Fills turbulence model selectior with the models found on DB
  * turbulenceModels is the list of models to work with
  */
-async function setModels(turbulenceModels) {
+async function setModels() {
+    //linker function
+    const turbulenceModels = await getTurbulenceModelsInfo();
+
     if (turbulenceModels) {
-        let turbulenceOptions = document.getElementById('turbulence-model');
+        const turbulenceOptions = document.getElementById('turbulence-model');
+        
         turbulenceOptions.innerHTML = `
             <option value="default">Flujo laminar</option>`;
 
@@ -749,12 +840,13 @@ async function fillFormsSolverVariables(solver, simulationID){
     // When inputs are ready, we fill them with the data from simulation
     let solutionData = await getSolutionData(simulationID);
 
+    console.log("solutionData", solutionData);
     // Fills the form with the DB data
     if (variablesInputs.innerHTML != ''){
         setSolverVariablesSection(variables, solutionData.solvers);
     }
     if (solverInputs.innerHTML != ''){
-        setSolverSection(solver, solutionData[`${solver}`]);
+        setSolverSection(solver, solutionData[`${solver.replaceAll('Foam','')}`]);
         setResidualControlSection(variables, solutionData.residualControl);
     }
     if (relaxationInputs.innerHTML != '') {
@@ -762,6 +854,9 @@ async function fillFormsSolverVariables(solver, simulationID){
     }
 }
 
+/**
+ * Fills the form with the solvers for each variable in the simulation
+ */
 function setSolverVariablesSection(variables, solversData) {
     for ( let variableData of variables) {
         if ( variableData.type == null ) continue ;
@@ -789,22 +884,27 @@ function setSolverVariablesSection(variables, solversData) {
     }
 }
 
+/**
+ * Fills the form with the necessary inputs for the selected solver
+ */
 function setSolverSection(solver, solverData) {
-    // console.log('solver', solver, solverData);
     document.getElementById('nNonOrthogonalCorrectors').value =
             formatInput(solverData.nNonOrthogonalCorrectors);
 
-    if (solver === 'piso' || solver === 'pimple') {
+    if (solver === 'pisoFoam' || solver === 'pimpleFoam') {
         document.getElementById('nCorrectors').value = formatInput(solverData.nCorrectors);
     }
 
-    if (solver === 'pimple') {
+    if (solver === 'pimpleFoam') {
         document.getElementById('nOuterCorrectors').value = formatInput(solverData.nOuterCorrectors);
     }
 
     // TODO: manage icoFoam
 }
 
+/**
+ * Fills the form with residual control data 
+ */
 function setResidualControlSection(variables, residualData) {
     for ( let variableData of variables) {
         const variable = variableData.variable;
@@ -814,6 +914,9 @@ function setResidualControlSection(variables, residualData) {
     }
 }
 
+/**
+ * Fills the form with relaxation factors data  
+ */
 function setRelaxationSection(variables, relaxationData) {
     for ( let variableData of [...variables, { variable: 'fields'}, { variable: 'equations'}]) {
         const variable = variableData.variable;
@@ -831,7 +934,9 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
     for ( let variable of variables ) {
         if(variable.type != null) {
             newHTML = `
-                <p class="input-label">Parámetros para el solver de ${variable.name.toLowerCase()}</p>
+                <div class="card-title">
+                    <p class="input-label">Parámetros para el solver de ${variable.name.toLowerCase()}</p>
+                </div>
                 <div class="data-container">`;
             
             // We distinguish betwwen symmetric and assymetric variables
@@ -848,7 +953,7 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                             <option value="pbicgstab">PBiCGStab</option>
                         </select>
                     </div>
-                    <br>
+                    
                     <div class="input-data">
                         <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
                         <select id="${variable.variable}-preconditioner-schema">
@@ -857,7 +962,7 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                             <option value="dilu">DILU</option>
                         </select>
                     </div>
-                    <br>
+                    
                     <div class="input-data">
                         <label for="${variable.variable}-smoother-data">Smoother</label>
                         <select id="${variable.variable}-smoother-data">
@@ -865,22 +970,22 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                             <option value="dilu">DILU</option>
                         </select>
                     </div>
-                    <br>
+                    
                     <div class="input-data">
                         <label for="${variable.variable}-sweeps-data">nSweeps</label>
                         <input class="long-input" type="text" id="${variable.variable}-sweeps-data"/>
                     </div>
-                    <br>
+                    
                     <div class="input-data">
                         <label for="${variable.variable}-tolerance-data">Tolerancia</label>
                         <input class="long-input" type="text" id="${variable.variable}-tolerance-data" />
                     </div>
-                    <br>
+                    
                     <div class="input-data">
                         <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
                         <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
                     </div>
-                    <br>`;
+                    `;
             } else if ( variable.type === 'asymmetric' ) {
                 newHTML += `
                     <div class="input-data">
@@ -892,7 +997,7 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                             <option value="pbicgstab">PBiCGStab</option>
                         </select>
                     </div>
-                    <br>
+                    
                     <div class="input-data">
                         <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
                         <select id="${variable.variable}-preconditioner-schema"> 
@@ -902,7 +1007,7 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                             <option value="dic">DIC</option>
                         </select>
                     </div>
-                    <br>
+                    
                     <div class="input-data">
                         <label for="${variable.variable}-smoother-data">Smoother</label>
                         <select id="${variable.variable}-smoother-data">
@@ -911,17 +1016,17 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                             <option value="dic">DIC</option>
                         </select>
                     </div>
-                    <br>
+                    
                     <div class="input-data">
                         <label for="${variable.variable}-tolerance-data">Tolerancia</label>
                         <input class="long-input" type="text" id="${variable.variable}-tolerance-data"/>
                     </div>
-                    <br>
+                    
                     <div class="input-data">
                         <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
                         <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
                     </div>
-                    <br>`;
+                    `;
             }
             
             newHTML += '</div>';
@@ -935,90 +1040,144 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
  */
 function fillFormsSolverSection(solverInputs, solver){
     let newHTML = '';
-    // TODO: create fields for the other solvers (pimple, piso, ...)
-    if(solver === 'simple') {
+    // TODO: check fields for pimple, piso and simple
+    if(solver === 'simpleFoam') {
         newHTML = `
-            <p class="input-label">SIMPLE</p>
+            <div class="card-title">
+                <p class="input-label">SIMPLE</p>
+            </div>
             <div class="data-container">
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
-                    <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                    <div>
+                        <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                        <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
+                    </div>
                 </div>
-                <br>
+                <div id="nNonOrthogonalCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                
                 <div class="input-data">
                     <label for="consistent">Consistencia</label>
-                    <select id="consistent">
-                        <option value="1">Sí</option>
-                        <option value="0">No</option>
-                    </select>
+                    <div>
+                        <select id="consistent">
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                        <span class="material-symbols-rounded" onclick="showInfo('consistent')">info</span>
+                    </div>
                 </div>
+                <div id="consistent-info" class="info-div info-div-border" style="display: none;"></div>
             </div>`;
-    } else if(solver === 'piso') {
+    } else if(solver === 'pisoFoam') {
         newHTML = `
-            <p class="input-label">PISO</p>
+            <div class="card-title">
+                <p class="input-label">PISO</p>
+            </div>
             <div class="data-container">
                 <div class="input-data">
                     <label for="nCorrectors">nCorrectors</label>
-                    <input class="long-input" id="nCorrectors"/>
+                    <div>
+                        <input class="long-input" id="nCorrectors"/>
+                        <span class="material-symbols-rounded" onclick="showInfo('nCorrectors')">info</span>
+                    </div>
                 </div>
-                <br>
+                <div id="nCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
-                    <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                    <div>
+                        <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                        <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
+                    </div>
                 </div>
-                <br>
+                <div id="nNonOrthogonalCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                
                 <div class="input-data">
                     <label for="pRefCell">Presión de referencia en las celdas</label>
-                    <input class="long-input" id="pRefCell"/>
+                    <div>
+                        <input class="long-input" id="pRefCell"/>
+                        <span class="material-symbols-rounded" onclick="showInfo('pRefCell')">info</span>
+                    </div>
                 </div>
-                <br>
+                <div id="pRefCell-info" class="info-div info-div-border" style="display: none;"></div>
+                
                 <div class="input-data">
                     <label for="pRefValue">Valor de la presión de referencia</label>
-                    <input class="long-input" id="pRefValue"/>
+                    <div>
+                        <input class="long-input" id="pRefValue"/>
+                        <span class="material-symbols-rounded" onclick="showInfo('pRefValue')">info</span>
+                    </div>
                 </div>
-                <br>
+                <div id="pRefValue-info" class="info-div info-div-border" style="display: none;"></div>
+                
                 <div class="input-data">
                     <label for="consistent">Consistencia</label>
-                    <select id="consistent">
-                        <option value="1">Sí</option>
-                        <option value="0">No</option>
-                    </select>
+                    <div>
+                        <select id="consistent">
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                        <span class="material-symbols-rounded" onclick="showInfo('consistent')">info</span>
+                    </div>
                 </div>
+                <div id="consistent-info" class="info-div info-div-border" style="display: none;"></div>
             </div>`;
-    } else if(solver === 'pimple') {
+    } else if(solver === 'pimpleFoam') {
         newHTML = `
-            <p class="input-label">PIMPLE</p>
+            <div class="card-title">
+                <p class="input-label">PIMPLE</p>
+            </div>
             <div class="data-container">
                 <div class="input-data">
                     <label for="nOuterCorrectors">nOuterCorrectors</label>
-                    <input class="long-input" id="nOuterCorrectors"/>
+                    <div>
+                        <input class="long-input" id="nOuterCorrectors"/>
+                        <span class="material-symbols-rounded" onclick="showInfo('nOuterCorrectors')">info</span>
+                    </div>
                 </div>
-                <br>
+                <div id="nOuterCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+
                 <div class="input-data">
                     <label for="nCorrectors">nCorrectors</label>
-                    <input class="long-input" id="nCorrectors"/>
+                    <div>
+                        <input class="long-input" id="nCorrectors"/>
+                        <span class="material-symbols-rounded" onclick="showInfo('nCorrectors')">info</span>
+                    </div>
                 </div>
-                <br>
+                <div id="nCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
-                    <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                    <div>
+                        <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                        <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
+                    </div>
                 </div>
-                <br>
+                <div id="nNonOrthogonalCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                
                 <div class="input-data">
                     <label for="correctPhi">Corrección del flujo</label>
-                    <select id="correctPhi">
-                        <option value="1">Sí</option>
-                        <option value="0">No</option>
-                    </select>
+                    <div>
+                        <select id="correctPhi">
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                        <span class="material-symbols-rounded" onclick="showInfo('correctPhi')">info</span>
+                    </div>
                 </div>
-                <br>
+                <div id="correctPhi-info" class="info-div info-div-border" style="display: none;"></div>
+                
                 <div class="input-data">
                     <label for="consistent">Consistencia</label>
-                    <select id="consistent">
-                        <option value="1">Sí</option>
-                        <option value="0">No</option>
-                    </select>
+                    <div>
+                        <select id="consistent">
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                        <span class="material-symbols-rounded" onclick="showInfo('consistent')">info</span>
+                    </div>
                 </div>
+                <div id="consistent-info" class="info-div info-div-border" style="display: none;"></div>
             </div>`;
     } 
     
@@ -1032,16 +1191,21 @@ function fillFormsSolverSection(solverInputs, solver){
  */
 function fillFormsResidualControlSection(solverInputs, variables) {
     let newHTML = `
-        <p class="input-label">Control residual</p>
-        <div class="data-container">`;
+        <div class="card-title">
+            <p class="input-label">Control residual</p>
+            <span class="material-symbols-rounded" onclick="showInfo('residual-control')">info</span>
+        </div>
+        <div class="data-container">
+            <div id="residual-control-info" class="info-div info-div-border" style="display: none;"></div>
+        `;
 
     for( let variable of variables ){
         newHTML += `
-            <div class="input-data">
-                <label for="${variable.variable}-residual-control">${capitalize(variable.name)}</label>
-                <input class="long-input" id="${variable.variable}-residual-control"/>
-            </div>
-            <br>`;
+                <div class="input-data">
+                    <label for="${variable.variable}-residual-control">${capitalize(variable.name)}</label>
+                    <input class="long-input" id="${variable.variable}-residual-control"/>
+                </div>
+            `;
     }
 
     newHTML += '</div>';
@@ -1053,18 +1217,23 @@ function fillFormsResidualControlSection(solverInputs, variables) {
  */
 function fillFormsRelaxationSection(relaxationInputs, variables) {
     let newHTML = `
-        <p class="input-label">Factores de relajación</p>
+        <div class="card-title">
+            <p class="input-label">Factores de relajación</p>
+            <span class="material-symbols-rounded" onclick="showInfo('relaxation-factors')">info</span>
+        </div> 
+        
         <div class="data-container">
+            <div id="relaxation-factors-info" class="info-div info-div-border" style="display: none;"></div>
             <div class="input-data">
                 <label for="fields-relaxation">Campos</label>
                 <input class="long-input" id="fields-relaxation"/>
             </div>
-            <br>
+            
             <div class="input-data">
                 <label for="equations-relaxation">Ecuaciones</label>
                 <input class="long-input" id="equations-relaxation"/>
             </div>
-            <br>`;
+            `;
     
     for ( let variable of variables ) {
         newHTML += `
@@ -1072,9 +1241,51 @@ function fillFormsRelaxationSection(relaxationInputs, variables) {
                 <label for="${variable.variable}-relaxation">${capitalize(variable.name)}</label>
                 <input class="long-input" id="${variable.variable}-relaxation"/>
             </div>
-            <br>`;    
+            `;    
     }
 
     newHTML += '</div>';
     relaxationInputs.innerHTML += newHTML;
+}
+
+/**
+ * 
+ */
+async function shorSolverInfo() {
+    const element = document.getElementById('container-solvers-info');
+
+    if( await showInfo('solvers') ){
+        element.style.display = 'block';
+    } else {
+        element.style.display = 'none';
+    }  
+}
+
+/**
+ * Fills in and displays info requested by the user
+ */
+async function showInfo(id) {
+    const infoID = `${id}-info`;
+    const element = document.getElementById(infoID);
+
+    const text = await loadInfo(id);
+
+    if( element.innerHTML == '' && text != null) {
+        let info = '';
+        
+        for( paragraph of text.split('\n')) {
+            if(paragraph == '') continue;
+
+            info += `<p>${paragraph}</p>`;    
+        }
+        
+        element.innerHTML = info;
+        element.style.display = 'block';
+        return true;
+
+    } else {
+        element.innerHTML = '';
+        element.style.display = 'none';
+        return false;
+    }
 }

@@ -3,7 +3,6 @@
     <script>
         $(document).ready(function(){
             $('#firstContent-simple-article').load("./frontend/static/pages/components/starterSection.html");
-            $('#constant-inputs-simple').load("./frontend/static/pages/components/constants.html");
             $('#zero-inputs-simple').load("./frontend/static/pages/components/zero.html");
             $('#controlDict-inputs-simple').load("./frontend/static/pages/components/controlDict.html");
             $('#generator-inputs-simple').load("./frontend/static/pages/components/executioner.html");
@@ -11,33 +10,46 @@
     </script>
 </head>
 <body>
-    <section id="firstContent-simple">
+    <main class="container">
+        <article id="firstContent-simple">
             <h1 class="sim-name">Simulación simple</h1>
-            <article id="firstContent-simple-article"></article>
-    </section>
-    <section id="secondContent-simple">
-        <h1>Rellene los datos de los parámetros de simulación</h1>
 
-        <nav class="balls-section">
-            <div id="constant-ball-simple" class="ball"><p>1</p></div>            
-            <div class="ball-separator"><hr></div>
-            <div id="zero-ball-simple" class="ball"><p>2</p></div>
-            <div class="ball-separator"><hr></div>
-            <div id="controlDict-ball-simple" class="ball"><p>3</p></div>           
-            <div class="ball-separator"><hr></div>
-            <div id="generator-ball-simple" class="ball"><p>4</p></div>
-        </nav>
-        
-        <article id="constant-inputs-simple"></article>
-        <article id="zero-inputs-simple"></article>
-        <article id="controlDict-inputs-simple"></article>
-        <article id="generator-inputs-simple"></article>
-        
-    </section>
+            <section id="firstContent-simple-article"></section>
+        </article>
+        <article id="secondContent-simple">
+            <h1>Rellene los datos de los parámetros de simulación</h1>
 
-    <div class="buttons-container">
-        <button id="back-button" class="left-button buttons-style back-button" onclick="pagination(false, 'simple')">Atrás</button>
-        <button id="next-button" class="center-buttons buttons-style next-button" onclick="pagination(true, 'simple')">Siguiente</button>
-        <button id="generator-button" class="right-button buttons-style generator-button" onclick="pagination(true, 'simple')">Generar ficheros</button>
-    </div> 
+            <nav class="balls-section">                
+                <div id="firstContent-ball-simple" class="ball" 
+                        onclick="clickPage('firstContent', 'simple')">
+                    <p>Inicio</p>
+                </div>                
+                <div id="zero-ball-simple" class="ball" 
+                        onclick="clickPage('zero', 'simple')">
+                    <p>Carpeta 0</p>
+                </div>
+                <div id="controlDict-ball-simple" class="ball"
+                        onclick="clickPage('controlDict', 'simple')">
+                    <p>controlDict</p>
+                </div>
+                <div id="generator-ball-simple" class="ball"
+                        onclick="clickPage('generator', 'simple')">
+                    <p>Generador</p>
+                </div>
+            </nav>
+            
+            <section id="zero-inputs-simple"></section>
+            <section id="controlDict-inputs-simple"></section>
+            <section id="generator-inputs-simple"></article>
+            
+        </article>
+        <article class="buttons-container">
+            <button id="back-button" class="left-button buttons-style back-button" 
+            onclick="pagination(false, 'simple')">Atrás</button>
+            <button id="next-button" class="center-buttons buttons-style next-button"
+            onclick="pagination(true, 'simple')">Siguiente</button> <!-- CLEAN disabled -->
+            <button id="generator-button" class="right-button buttons-style generator-button"
+            onclick="pagination(true, 'simple')">Generar ficheros</button>
+        </article> 
+    </main>
 </body>

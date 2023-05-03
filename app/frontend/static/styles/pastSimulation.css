@@ -27,23 +27,15 @@ h2 {
     padding-bottom: 1rem;
 }
 
-#firstContent-simple, #firstContent-advanced, #next-button {
+#secondContent-advanced, #constants-inputs-advanced, #next-button {
     display: block;
-}
-
-#secondContent-simple, #zero-inputs-simple, #secondContent-advanced, #zero-inputs-advanced {
-    display: none;
-}
-
-#constant-inputs-simple, #controlDict-inputs-simple, #constant-inputs-advanced, #controlDict-inputs-advanced {
-    display: none;
 } 
 
-#fvSchemes-inputs-simple, #fvSolution-inputs-simple, #fvSchemes-inputs-advanced, #fvSolution-inputs-advanced {
+#zero-inputs-advanced, #controlDict-inputs-advanced, #fvSchemes-inputs-advanced {
     display: none;
 }
 
-#generator-inputs-simple, #generator-inputs-advanced {
+#fvSolution-inputs-advanced, #generator-inputs-advanced {
     display: none;
 }
 

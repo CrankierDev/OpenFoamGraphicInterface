@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="./frontend/static/styles/index.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script>
         $(document).ready(function(){
             getFooter();
@@ -22,7 +23,7 @@
             <a href="https://esingenieria.uca.es/" target="blank">
                 <img src="./frontend/static/images/ESI-color.png" title="Escuela Superior de Ingeniería">
             </a>
-            <section>
+            <article>
                 <ul>
                     <li onclick="showStart()">Inicio</li>
                     <li onclick="loadContent('simpleSimulation')">Simulación simple</li>
@@ -30,14 +31,15 @@
                     <li onclick="loadContent('postprocess')">Post-procesado</li>
                 </ul>
                 <footer id="footer"></footer>
-            </section>
+            </article>
         </aside>
         <section class="content-container">
-            <article id="start-section" class="hideShow"></article>
-            <article id="simpleSimulation-section" class="hideShow"></article>
-            <article id="advancedSimulation-section" class="hideShow"></article>
-            <article id="postprocess-section" class="hideShow"></article>
-        </section>
+            <section id="start-section" class="hideShow"></section>
+            <section id="simpleSimulation-section" class="hideShow"></section>
+            <section id="advancedSimulation-section" class="hideShow"></section>
+            <section id="pastSimulation-section" class="hideShow"></section>
+            <section id="postprocess-section" class="hideShow"></section>
+        </article>
     </main>
     
     <!-- FrontEnd scripts -->

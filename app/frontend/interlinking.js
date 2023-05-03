@@ -2,7 +2,7 @@ function firstPage(method) {
     document.getElementById(`firstContent-${method}`).style.display = "block";
     document.getElementById(`secondContent-${method}`).style.display = "none";
 
-    document.getElementById(`constant-inputs-${method}`).style.display = "block";
+    document.getElementById(`zero-inputs-${method}`).style.display = "block";
 
     document.getElementById(`back-button`).style.display = "none";
     document.getElementById(`generator-button`).style.display = "none";
@@ -18,12 +18,6 @@ async function secondPage(method) {
     document.getElementById(`next-button`).classList.remove('center-buttons');
     document.getElementById(`next-button`).classList.add('right-button');
     document.getElementById(`back-button`).style.display = "block";
-
-    //linker function
-    let turbulenceModels = await getTurbulenceModelsInfo();
-
-    //formatter function
-    setModels(turbulenceModels);
 }
 
 function changeSection(actualContent, nextContent, method) {
@@ -51,24 +45,21 @@ async function paginationAdvanced(direction) {
         console.log('Where are at the first page');
     }
     
-    if( activeId == 'constant-ball-advanced' ) {
+    if( activeId == 'constants-ball-advanced' ) {
         if (direction){
-            if(document.getElementById('mesh').value) {
-                let boundariesData = await pathsData();
-                fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
-            }
-
-            fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
-            
-            changeSection('constant', 'zero', 'advanced');
-        } else {
-            firstPage('advanced');
+            changeSection('constants', 'zero', 'advanced');
+            document.getElementById('back-button').style.display = "block";
         }
     } else if( activeId == 'zero-ball-advanced' ) {
         if (direction){
             changeSection('zero', 'fvSolution', 'advanced');
         } else {
-            changeSection('zero', 'constant', 'advanced');
+            try {
+                firstPage('advanced');
+            } catch(err) {
+                changeSection('zero', 'constants', 'advanced');
+                document.getElementById('back-button').style.display = "none";
+            }            
         }
     } else if( activeId == 'fvSolution-ball-advanced' ) {
         if (direction){
@@ -87,16 +78,18 @@ async function paginationAdvanced(direction) {
             changeSection('controlDict', 'generator', 'advanced');
 
             document.getElementById('generator-button').style.display = "block";
-            document.getElementById('generator2-button').style.display = "block";
-            document.getElementById('generator3-button').style.display = "block";
             document.getElementById('next-button').style.display = "none";
         } else {
             changeSection('controlDict', 'fvSchemes', 'advanced');
         }
     } else if( activeId == 'generator-ball-advanced' ) {
         if (direction){
-            document.getElementById('generator-inputs-advanced').style.display = "none";
-            firstPage('advanced');
+            try {
+                document.getElementById('generator-inputs-advanced').style.display = "none";
+                firstPage('advanced');
+            } catch(err) {
+                changeSection('zero', 'constants', 'advanced');
+            } 
         } else {
             changeSection('generator', 'controlDict', 'advanced');
 
@@ -105,8 +98,11 @@ async function paginationAdvanced(direction) {
         }
     } else {
         secondPage('advanced');
-        document.getElementById('constant-ball-advanced').classList.add('active-ball');
-        document.getElementById('constant-inputs-advanced').style.display = 'block';
+        let boundariesData = await pathsData();
+        fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
+        fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
+        document.getElementById('zero-ball-advanced').classList.add('active-ball');
+        document.getElementById('zero-inputs-advanced').style.display = 'block';
     }
 }
 
@@ -119,32 +115,17 @@ async function paginationSimple(direction) {
         console.log('Where are at the first page');
     }
     
-    if( activeId == 'constant-ball-simple' ) {
-        if (direction){
-            if(document.getElementById('mesh').value) {
-                let boundariesData = await pathsData();
-                fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
-            }
-
-            fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
-            
-            changeSection('constant', 'zero', 'simple');
-        } else {
-            firstPage('simple');
-        }
-    } else if( activeId == 'zero-ball-simple' ) {
+    if( activeId == 'zero-ball-simple' ) {
         if (direction){
             changeSection('zero', 'controlDict', 'simple');
         } else {
-            changeSection('zero', 'constant', 'simple');
+            firstPage('simple');
         }
     } else if( activeId == 'controlDict-ball-simple' ) {
         if (direction){
             changeSection('controlDict', 'generator', 'simple');
 
             document.getElementById('generator-button').style.display = "block";
-            document.getElementById('generator2-button').style.display = "block";
-            document.getElementById('generator3-button').style.display = "block";
             document.getElementById('next-button').style.display = "none";
         } else {
             changeSection('controlDict', 'zero', 'simple');
@@ -161,8 +142,10 @@ async function paginationSimple(direction) {
         }
     } else {
         secondPage('simple');
-        document.getElementById('constant-ball-simple').classList.add('active-ball');
-        document.getElementById('constant-inputs-simple').style.display = 'block';
+        let boundariesData = await pathsData();
+        fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
+        document.getElementById('zero-ball-simple').classList.add('active-ball');
+        document.getElementById('zero-inputs-simple').style.display = 'block';
     }
 }
 
@@ -178,12 +161,63 @@ function isSecondContentAvailable() {
 
     console.log('valors', meshValue, workspaceValue);
 
-    if(name && mesh && workspace) {
+    if( name && mesh && workspace ) {
         button.disabled = false;
     } else {
         button.disabled = true;
     }
     
-    // Clean
+    // CLEAN
     button.disabled = false;
+
+    if( button.disabled == false ){
+        setModels();
+        document.getElementById('flux-conditions').style.display = 'block';
+    }
+
+}
+
+function clickPage(nextContent, method) {
+    let activeId = null;
+    activeId = document.getElementsByClassName('active-ball')[0].id;
+    document.getElementById(activeId).classList.remove('active-ball');
+
+    activeId = activeId.replaceAll(`-ball-${method}`,'');
+
+    if(nextContent == 'firstContent'){
+        firstPage(method);
+    } else {
+        changeSection(activeId, nextContent, method);
+    }    
+
+    if( nextContent == 'generator' ) {
+        document.getElementById('next-button').style.display = "none";
+        document.getElementById('back-button').style.display = "block";
+        document.getElementById('generator-button').style.display = "block";
+
+    } else if( nextContent == 'constants' )  {
+        document.getElementById('back-button').style.display = "none";
+    } else {
+        document.getElementById('generator-button').style.display = "none";
+        document.getElementById('back-button').style.display = "block";
+        document.getElementById('next-button').style.display = "block";
+    }
+}
+
+async function loadSimulationData(simulationID) {
+    console.log('Buscamos la info de:', simulationID);
+
+    loadContent('pastSimulation');
+
+    await setModels();
+    
+    const boundariesData = await getSimulationBoundariesData(simulationID);
+    const controlDictData = await getControlDictData(simulationID);
+    const constantData = await getConstantData(simulationID);
+    
+    document.getElementById('solver').value = controlDictData.application;
+    document.getElementById('turbulence-model').value = constantData.turbulenceModel;
+
+    fillFormsBasicFields(boundariesData, constantData.turbulenceModel, simulationID);
+    fillFormsSolverVariables(controlDictData.application, simulationID);
 }

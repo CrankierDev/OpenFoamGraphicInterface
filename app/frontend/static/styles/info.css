@@ -1,0 +1,21 @@
+.info-div {
+    width: 80%;
+	margin-top: 20px;
+	margin-bottom: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 50px;
+	padding-right: 50px;
+	text-align: justify;
+}
+
+.info-div-border {
+	border-color: var(--blue-pallete);
+	border-style: solid;
+	border-radius: 20px;
+	border-width: 2px;
+}
+
+.info-div-solo {
+	padding-top: 5px;
+}

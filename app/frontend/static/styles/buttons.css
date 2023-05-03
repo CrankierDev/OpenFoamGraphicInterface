@@ -1,24 +1,15 @@
 /*------------------ BUTTONS STYLES --------------------*/
 .buttons-container {
     display: inline-flex;
-    width: 100%;
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
     margin-top: 20px;
     margin-bottom: 0;
-}
-
-.center-buttons {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.right-button {
-    margin-left: 5px;
-    margin-right: auto;
-}
-
-.left-button {
-    margin-left: auto;
-    margin-right: 5px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: nowrap;
 }
 
 .buttons-style {
@@ -37,7 +28,6 @@
     background-color: var(--orange-pallete);
     color: var(--background-pallete);
 }
-
 
 .next-button, .folder-button, .generator-button {
     margin-top: 0;

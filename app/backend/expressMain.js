@@ -152,6 +152,18 @@ function start() {
             "data": response
         });
     });
+
+    app.post('/getSimulationBoundariesData', async (req, res) => {
+        console.log('Getting schemes data for simulation: ', req.body.simulation_id);
+
+        let response = await getSimulationBoundariesData(req.body.simulation_id);
+
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
+
 }
 
 async function getAllSimulationsInfo() {
@@ -184,6 +196,8 @@ async function getZeroData(simulationID) {
 
 async function getSimulationBoundariesData(simulationID) {
     let data = await db.getSimulationBoundariesData(simulationID);
+
+    console.log(data)
 
     if(data != null) {
         data.forEach( (row) => {
