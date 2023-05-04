@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="./frontend/static/styles/advancedSimulation.css">
     <script>
         $(document).ready(function(){
-            $('#firstContent-simple-article').load("./frontend/static/pages/components/starterSection.html");
+            $('#firstContent-input-simple').load("./frontend/static/pages/components/starterSection.html");
             $('#zero-inputs-simple').load("./frontend/static/pages/components/zero.html");
             $('#controlDict-inputs-simple').load("./frontend/static/pages/components/controlDict.html");
             $('#generator-inputs-simple').load("./frontend/static/pages/components/executioner.html");
@@ -11,16 +11,11 @@
 </head>
 <body>
     <main class="container">
-        <article id="firstContent-simple">
+        <article>
             <h1 class="sim-name">Simulación simple</h1>
 
-            <section id="firstContent-simple-article"></section>
-        </article>
-        <article id="secondContent-simple">
-            <h1>Rellene los datos de los parámetros de simulación</h1>
-
             <nav class="balls-section">                
-                <div id="firstContent-ball-simple" class="ball" 
+                <div id="firstContent-ball-simple" class="ball active-ball" 
                         onclick="clickPage('firstContent', 'simple')">
                     <p>Inicio</p>
                 </div>                
@@ -37,7 +32,8 @@
                     <p>Generador</p>
                 </div>
             </nav>
-            
+
+            <section id="firstContent-input-simple"></section>
             <section id="zero-inputs-simple"></section>
             <section id="controlDict-inputs-simple"></section>
             <section id="generator-inputs-simple"></article>
@@ -48,7 +44,7 @@
             onclick="pagination(false, 'simple')">Atrás</button>
             <button id="next-button" class="center-buttons buttons-style next-button"
             onclick="pagination(true, 'simple')">Siguiente</button> <!-- CLEAN disabled -->
-            <button id="generator-button" class="right-button buttons-style generator-button"
+            <button id="firstContent-input-simple" class="right-button buttons-style firstContent-input-simple"
             onclick="pagination(true, 'simple')">Generar ficheros</button>
         </article> 
     </main>

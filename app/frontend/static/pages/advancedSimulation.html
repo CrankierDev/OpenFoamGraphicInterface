@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="./frontend/static/styles/advancedSimulation.css">
     <script>
         $(document).ready(function(){
-            $('#firstContent-advanced-article').load("./frontend/static/pages/components/starterSection.html");
+            $('#firstContent-input-advanced').load("./frontend/static/pages/components/starterSection.html");
             $('#zero-inputs-advanced').load("./frontend/static/pages/components/zero.html");
             $('#controlDict-inputs-advanced').load("./frontend/static/pages/components/controlDict.html");
             $('#fvSchemes-inputs-advanced').load("./frontend/static/pages/components/fvSchemes.html");
@@ -15,7 +15,7 @@
     <main class="container">
         <article id="firstContent-advanced">
             <h1 class="sim-name">Simulación avanzada</h1>
-            <section id="firstContent-advanced-article"></section>
+            <section id="firstContent-input-advanced"></section>
         </article>
         <article id="secondContent-advanced">
             <h1>Rellene los datos de los parámetros de simulación</h1>
@@ -56,7 +56,7 @@
                     onclick="pagination(false, 'advanced')">Atrás</button>
             <button id="next-button" class="center-buttons buttons-style next-button"
                     onclick="pagination(true, 'advanced')">Siguiente</button> <!-- CLEAN disabled -->
-            <button id="generator-button" class="right-button buttons-style generator-button"
+            <button id="firstContent-input-simple" class="right-button buttons-style firstContent-input-simple"
                     onclick="pagination(true, 'advanced')">Generar ficheros</button>
         </article>
     </main>

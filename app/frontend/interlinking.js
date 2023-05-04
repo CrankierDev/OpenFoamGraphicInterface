@@ -5,7 +5,7 @@ function firstPage(method) {
     document.getElementById(`zero-inputs-${method}`).style.display = "block";
 
     document.getElementById(`back-button`).style.display = "none";
-    document.getElementById(`generator-button`).style.display = "none";
+    document.getElementById(`firstContent-input-simple`).style.display = "none";
     document.getElementById(`next-button`).style.display = "block";
     document.getElementById(`next-button`).classList.add('center-buttons');
     document.getElementById(`next-button`).classList.remove('right-button');
@@ -77,7 +77,7 @@ async function paginationAdvanced(direction) {
         if (direction){
             changeSection('controlDict', 'generator', 'advanced');
 
-            document.getElementById('generator-button').style.display = "block";
+            document.getElementById('firstContent-input-simple').style.display = "block";
             document.getElementById('next-button').style.display = "none";
         } else {
             changeSection('controlDict', 'fvSchemes', 'advanced');
@@ -93,7 +93,7 @@ async function paginationAdvanced(direction) {
         } else {
             changeSection('generator', 'controlDict', 'advanced');
 
-            document.getElementById('generator-button').style.display = "none";
+            document.getElementById('firstContent-input-simple').style.display = "none";
             document.getElementById('next-button').style.display = "block";
         }
     } else {
@@ -125,7 +125,7 @@ async function paginationSimple(direction) {
         if (direction){
             changeSection('controlDict', 'generator', 'simple');
 
-            document.getElementById('generator-button').style.display = "block";
+            document.getElementById('firstContent-input-simple').style.display = "block";
             document.getElementById('next-button').style.display = "none";
         } else {
             changeSection('controlDict', 'zero', 'simple');
@@ -137,7 +137,7 @@ async function paginationSimple(direction) {
         } else {
             changeSection('generator', 'controlDict', 'simple');
 
-            document.getElementById('generator-button').style.display = "none";
+            document.getElementById('firstContent-input-simple').style.display = "none";
             document.getElementById('next-button').style.display = "block";
         }
     } else {
@@ -193,12 +193,12 @@ function clickPage(nextContent, method) {
     if( nextContent == 'generator' ) {
         document.getElementById('next-button').style.display = "none";
         document.getElementById('back-button').style.display = "block";
-        document.getElementById('generator-button').style.display = "block";
+        document.getElementById('firstContent-input-simple').style.display = "block";
 
     } else if( nextContent == 'constants' )  {
         document.getElementById('back-button').style.display = "none";
     } else {
-        document.getElementById('generator-button').style.display = "none";
+        document.getElementById('firstContent-input-simple').style.display = "none";
         document.getElementById('back-button').style.display = "block";
         document.getElementById('next-button').style.display = "block";
     }
