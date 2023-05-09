@@ -370,7 +370,6 @@ async function fillFormsSchemesFields(variables, simulationID) {
 async function setSchemesDefaultData(simulationID, variables) {
     // Gets schemes data from DB
     let schemesData = await getSchemasData(simulationID);
-    console.log(schemesData);
 
     // Fill inputs with default data
     // Here predeteminated schemes are set
@@ -449,7 +448,7 @@ function setGradValues(variable, scheme) {
         document.getElementById(`${variable}-grad-schema`).value = schemeSplit[0];
     }
 }
-// TODO: onchange method to deploy coefficent input
+// TODO: onchange method to deploy coefficent input?
 
 /**
  * Fills divergency data of a variable with scheme data splitted by fields
@@ -840,7 +839,6 @@ async function fillFormsSolverVariables(solver, simulationID){
     // When inputs are ready, we fill them with the data from simulation
     let solutionData = await getSolutionData(simulationID);
 
-    console.log("solutionData", solutionData);
     // Fills the form with the DB data
     if (variablesInputs.innerHTML != ''){
         setSolverVariablesSection(variables, solutionData.solvers);
@@ -1249,9 +1247,9 @@ function fillFormsRelaxationSection(relaxationInputs, variables) {
 }
 
 /**
- * 
+ * Fills in and displays solvers info
  */
-async function shorSolverInfo() {
+async function showSolverInfo() {
     const element = document.getElementById('container-solvers-info');
 
     if( await showInfo('solvers') ){

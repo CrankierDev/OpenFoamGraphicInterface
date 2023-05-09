@@ -5,7 +5,6 @@ function firstPage(method) {
     document.getElementById(`zero-inputs-${method}`).style.display = "block";
 
     document.getElementById(`back-button`).style.display = "none";
-    document.getElementById(`firstContent-input-simple`).style.display = "none";
     document.getElementById(`next-button`).style.display = "block";
     document.getElementById(`next-button`).classList.add('center-buttons');
     document.getElementById(`next-button`).classList.remove('right-button');
@@ -56,6 +55,7 @@ async function paginationAdvanced(direction) {
         } else {
             try {
                 firstPage('advanced');
+
             } catch(err) {
                 changeSection('zero', 'constants', 'advanced');
                 document.getElementById('back-button').style.display = "none";
@@ -64,21 +64,22 @@ async function paginationAdvanced(direction) {
     } else if( activeId == 'fvSolution-ball-advanced' ) {
         if (direction){
             changeSection('fvSolution', 'fvSchemes', 'advanced');
+
         } else {
             changeSection('fvSolution', 'zero', 'advanced');
         }
     } else if( activeId == 'fvSchemes-ball-advanced' ) {
         if (direction){
             changeSection('fvSchemes', 'controlDict', 'advanced');
+
         } else {
             changeSection('fvSchemes', 'fvSolution', 'advanced');
         }
     } else if( activeId == 'controlDict-ball-advanced' ) {
         if (direction){
             changeSection('controlDict', 'generator', 'advanced');
-
-            document.getElementById('firstContent-input-simple').style.display = "block";
             document.getElementById('next-button').style.display = "none";
+
         } else {
             changeSection('controlDict', 'fvSchemes', 'advanced');
         }
@@ -92,9 +93,8 @@ async function paginationAdvanced(direction) {
             } 
         } else {
             changeSection('generator', 'controlDict', 'advanced');
-
-            document.getElementById('firstContent-input-simple').style.display = "none";
             document.getElementById('next-button').style.display = "block";
+
         }
     } else {
         secondPage('advanced');
@@ -125,19 +125,17 @@ async function paginationSimple(direction) {
         if (direction){
             changeSection('controlDict', 'generator', 'simple');
 
-            document.getElementById('firstContent-input-simple').style.display = "block";
             document.getElementById('next-button').style.display = "none";
         } else {
             changeSection('controlDict', 'zero', 'simple');
         }
     } else if( activeId == 'generator-ball-simple' ) {
         if (direction){
-            document.getElementById('generator-inputs-simple').style.display = "none";
-            firstPage('simple');
+            generateFiles('simple');
+            // firstPage('simple');
         } else {
             changeSection('generator', 'controlDict', 'simple');
 
-            document.getElementById('firstContent-input-simple').style.display = "none";
             document.getElementById('next-button').style.display = "block";
         }
     } else {
@@ -184,7 +182,7 @@ function clickPage(nextContent, method) {
 
     activeId = activeId.replaceAll(`-ball-${method}`,'');
 
-    if(nextContent == 'firstContent'){
+    if( nextContent == 'firstContent' ){
         firstPage(method);
     } else {
         changeSection(activeId, nextContent, method);
@@ -193,12 +191,10 @@ function clickPage(nextContent, method) {
     if( nextContent == 'generator' ) {
         document.getElementById('next-button').style.display = "none";
         document.getElementById('back-button').style.display = "block";
-        document.getElementById('firstContent-input-simple').style.display = "block";
 
     } else if( nextContent == 'constants' )  {
         document.getElementById('back-button').style.display = "none";
     } else {
-        document.getElementById('firstContent-input-simple').style.display = "none";
         document.getElementById('back-button').style.display = "block";
         document.getElementById('next-button').style.display = "block";
     }
@@ -220,4 +216,8 @@ async function loadSimulationData(simulationID) {
 
     fillFormsBasicFields(boundariesData, constantData.turbulenceModel, simulationID);
     fillFormsSolverVariables(controlDictData.application, simulationID);
+}
+
+async function generateFiles() {
+    generateSimulationInfo();
 }

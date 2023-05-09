@@ -87,7 +87,7 @@ FoamFile
 
 dimensions      :dimensions;
 
-internalField   :internalField;
+internalField   uniform :internalField;
 
 boundaryField   :boundaryField
                 `]);

@@ -29,7 +29,7 @@
     color: var(--background-pallete);
 }
 
-.next-button, .folder-button, .firstContent-input-simple {
+.next-button, .folder-button, .generator-button {
     margin-top: 0;
     background-color: var(--blue-pallete);
     color: var(--whitetext-pallete);
