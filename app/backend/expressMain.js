@@ -164,6 +164,20 @@ function start() {
         });
     });
 
+    app.post('/getSimulationFiles', async (req, res) => {
+        console.log('Creating simulation files at', req.body.simFolderPath);
+
+        createFiles(req.body.simFolderPath, req.body.data);
+
+        res.json({
+            "message": 'Success processing. All files have been saved on the specified route.'
+        });
+    });
+
+}
+
+async function createFiles(simFolderPath, data) {
+    fw.createAllFiles(simFolderPath, data);
 }
 
 async function getAllSimulationsInfo() {
@@ -340,5 +354,6 @@ function buildMultipleJSON(solversData) {
 }
 
 const db = require("./database.js");
+const fw = require("./fileWriter.js");
 
 module.exports.start = start;
