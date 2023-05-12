@@ -30,11 +30,10 @@ function showContent(id) {
 			}
 		}
 		
-		if( id !== 'start' ) {
+		if( id !== 'pastSimulation-section' ) {
 			document.getElementsByClassName('active-option')[0].classList.remove('active-option');
+			document.getElementById(`${id.replaceAll('-section', '')}-option-aside`).classList.add('active-option');
 		}
-		document.getElementById(`${id.replaceAll('-section', '')}-option-aside`).classList.add('active-option');
-
 	}, 300);
 }
 

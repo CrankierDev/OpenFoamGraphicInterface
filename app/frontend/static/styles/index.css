@@ -40,7 +40,7 @@ aside>article {
 }
 
 .option {
-    width: 70%;
+    width: 75%;
     text-align: start;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -48,7 +48,6 @@ aside>article {
     padding-left: 5px;
     margin-bottom: 10px;
     font-size: 20px;
-    cursor: pointer;
     background: 
         linear-gradient(
             220deg,
@@ -56,6 +55,10 @@ aside>article {
             rgba(210,112,26, 0.2) 40%, 
             rgb(210,112,26, 1) 100%
         );
+}
+
+.option>span {
+    cursor: pointer;
 }
 
 .active-option {
