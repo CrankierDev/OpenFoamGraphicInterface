@@ -1,5 +1,5 @@
-/*--------------------------------- BALLS STYLES ---------------------------------------------*/
-.balls-section {
+/*--------------------------------- nav STYLES ---------------------------------------------*/
+.nav-section {
     color: var(--blacktext-pallete);
     font-weight: bold;
     width: 100%;
@@ -7,53 +7,53 @@
     margin-bottom: 20px;
 }
 
-.ball {
+.nav-options-list{
+    width: 80%;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.nav-options-sublist {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.nav-option {
     display: inline-block;
     width: 100px;
     height: 40px;
     border-radius: 5px;
-    border: solid;
-    border-width: 1px;
-    border-color: var(--grey-pallete);
+    border: none;
     text-align: center;
-    background-color: var(--grey-pallete);
+    background-color: var(--whitetext-pallete);
     padding: 5px 40px;
-    margin: 0 auto;
     cursor: pointer;
 }
 
-.ball:hover {
+.nav-option:hover {
     padding-bottom: 0px;
     color: var(--blacktext-pallete);
     border-bottom: 5px solid var(--orange-pallete);
 }
 
-.ball>p {
+.nav-option>p {
     margin-top: 10px;
     margin-bottom: 10px;
     height: 20px;
 }
 
-.active-ball {
+.active-nav {
     background-color: var(--orange-pallete);
     border-color: var(--orange-pallete);
 }
 
-.active-ball>p {
+.active-nav>p {
     color: var(--whitetext-pallete);
-}
-
-.ball-separator {
-    display: inline-block;
-    width: 80px;
-    height: 40px;
-    text-align: center;
-    margin-left: -4px;
-    margin-right: -4px;
-}
-
-.ball-separator>hr {
-    width: 100%;
-    border: 0.5px solid var(--grey-pallete);
-    margin-bottom: 4px;
 }

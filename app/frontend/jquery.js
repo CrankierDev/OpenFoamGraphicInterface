@@ -29,6 +29,12 @@ function showContent(id) {
 				element.style.display = 'block';
 			}
 		}
+		
+		if( id !== 'start' ) {
+			document.getElementsByClassName('active-option')[0].classList.remove('active-option');
+		}
+		document.getElementById(`${id.replaceAll('-section', '')}-option-aside`).classList.add('active-option');
+
 	}, 300);
 }
 

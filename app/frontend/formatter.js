@@ -1,10 +1,9 @@
 /**
  * Updates copyright year and fills with it on footer
  */
-function getFooter() {
-	const currentYear = new Date().getFullYear();
-	let footer = document.getElementById('footer');
-	footer.innerHTML = `&copy; Copyright ${currentYear}, <a href="https://www.uca.es/" target="blank">Universidad de Cádiz</a>`;
+async function getVersion() {
+	let version = document.getElementById('version');
+	version.innerHTML = await window.variablesAPI.getVersion();
 }
 
 /**
@@ -19,7 +18,6 @@ async function setLastSimulationsTable() {
     if( info[0].length === 0 ){
         return ;
     }
-    
     // TODO: not to show table if there is only 'default' simulation on the DB.
 
     // Writes the table with the DB data from past simulations

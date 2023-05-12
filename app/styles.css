@@ -1,8 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
 :root {
-    --disabled-text-color: white;
-    
     /* --------------------------- TEXTS ------------------------- */
+    --disabled-text-color: white;
     --whitetext-pallete: rgb(236, 236, 236);
     --blacktext-pallete: #0F0C0C;
     

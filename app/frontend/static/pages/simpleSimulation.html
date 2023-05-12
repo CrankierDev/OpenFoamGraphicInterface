@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="./frontend/static/styles/advancedSimulation.css">
     <script>
         $(document).ready(function(){
-            $('#firstContent-input-simple').load("./frontend/static/pages/components/starterSection.html");
+            $('#basics-inputs-simple').load("./frontend/static/pages/components/starterSection.html");
             $('#zero-inputs-simple').load("./frontend/static/pages/components/zero.html");
             $('#controlDict-inputs-simple').load("./frontend/static/pages/components/controlDict.html");
             $('#generator-inputs-simple').load("./frontend/static/pages/components/executioner.html");
@@ -12,28 +12,36 @@
 <body>
     <main class="container">
         <article>
-            <h1 class="sim-name">Simulación simple</h1>
+            <section class="sim-header">
+                <h1 class="sim-name">Configuración - Simulación simple</h1>
+                
+                <nav class="nav-section">
+                    <ul class="nav-options-list">
+                        <li>
+                            <ul class="nav-options-sublist">
+                                <li id="basics-nav-simple" class="nav-option active-nav" 
+                                        onclick="clickPage('basics', 'simple')">
+                                    <p>Datos</p>
+                                </li>                
+                                <li id="zero-nav-simple" class="nav-option" 
+                                        onclick="clickPage('zero', 'simple')">
+                                    <p>Física</p>
+                                </li>
+                                <li id="controlDict-nav-simple" class="nav-option"
+                                        onclick="clickPage('controlDict', 'simple')">
+                                    <p>Control</p>
+                                </li>
+                            </ul>
+                        </li>
+                        <li id="generator-nav-simple" class="nav-option"
+                                onclick="clickPage('generator', 'simple')">
+                            <p>Generador</p>
+                        </li>
+                    </ul>              
+                </nav>
+            </section>
 
-            <nav class="balls-section">                
-                <div id="firstContent-ball-simple" class="ball active-ball" 
-                        onclick="clickPage('firstContent', 'simple')">
-                    <p>Inicio</p>
-                </div>                
-                <div id="zero-ball-simple" class="ball" 
-                        onclick="clickPage('zero', 'simple')">
-                    <p>Carpeta 0</p>
-                </div>
-                <div id="controlDict-ball-simple" class="ball"
-                        onclick="clickPage('controlDict', 'simple')">
-                    <p>controlDict</p>
-                </div>
-                <div id="generator-ball-simple" class="ball"
-                        onclick="clickPage('generator', 'simple')">
-                    <p>Generador</p>
-                </div>
-            </nav>
-
-            <section id="firstContent-input-simple"></section>
+            <section id="basics-inputs-simple"></section>
             <section id="zero-inputs-simple"></section>
             <section id="controlDict-inputs-simple"></section>
             <section id="generator-inputs-simple"></article>
@@ -44,9 +52,7 @@
                 onclick="pagination(false, 'simple')">Atrás</button>
             <!-- CLEAN disabled -->
             <button id="next-button" class="center-buttons buttons-style next-button"
-                    onclick="pagination(true, 'advanced')">
-                Siguiente
-            </button>
+                onclick="pagination(true, 'simple')">Siguiente</button>
         </article> 
     </main>
 </body>

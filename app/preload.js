@@ -2,7 +2,11 @@ const {contextBridge, ipcRenderer} = require('electron');
 
 contextBridge.exposeInMainWorld('fileAPI', {
     selectFolder: () => ipcRenderer.invoke('dialog:openDirectory')
-})
+});
+
+contextBridge.exposeInMainWorld('variablesAPI', {
+    getVersion: () => ipcRenderer.invoke('versionNumber')
+});
 
 window.addEventListener('DOMContentLoaded', () => {
     const replaceText = (selector, text) => {

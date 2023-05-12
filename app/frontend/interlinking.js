@@ -1,27 +1,6 @@
-function firstPage(method) {
-    document.getElementById(`firstContent-${method}`).style.display = "block";
-    document.getElementById(`secondContent-${method}`).style.display = "none";
-
-    document.getElementById(`zero-inputs-${method}`).style.display = "block";
-
-    document.getElementById(`back-button`).style.display = "none";
-    document.getElementById(`next-button`).style.display = "block";
-    document.getElementById(`next-button`).classList.add('center-buttons');
-    document.getElementById(`next-button`).classList.remove('right-button');
-}
-
-async function secondPage(method) {
-    document.getElementById(`firstContent-${method}`).style.display = "none";
-    document.getElementById(`secondContent-${method}`).style.display = "block";
-
-    document.getElementById(`next-button`).classList.remove('center-buttons');
-    document.getElementById(`next-button`).classList.add('right-button');
-    document.getElementById(`back-button`).style.display = "block";
-}
-
 function changeSection(actualContent, nextContent, method) {
     document.getElementById(`${actualContent}-inputs-${method}`).style.display = "none";
-    document.getElementById(`${nextContent}-ball-${method}`).classList.add('active-ball');
+    document.getElementById(`${nextContent}-nav-${method}`).classList.add('active-nav');
     document.getElementById(`${nextContent}-inputs-${method}`).style.display = "block";
 
     window.scrollTo(0, 0);
@@ -37,19 +16,24 @@ function pagination(direction, method) {
 
 async function paginationAdvanced(direction) {
     let activeId = null;
-    try{
-        activeId = document.getElementsByClassName('active-ball')[0].id;
-        document.getElementById(activeId).classList.remove('active-ball');
-    } catch {
-        console.log('Where are at the first page');
-    }
+    activeId = document.getElementsByClassName('active-nav')[0].id;
+    document.getElementById(activeId).classList.remove('active-nav');
     
-    if( activeId == 'constants-ball-advanced' ) {
+    if( activeId == 'basics-nav-advanced' ) {
+        if (direction){
+            changeSection('basics', 'zero', 'advanced');
+
+            let boundariesData = await pathsData();
+            fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
+            
+            document.getElementById(`back-button`).style.display = "block";
+        }
+    } else if( activeId == 'constants-nav-advanced' ) {
         if (direction){
             changeSection('constants', 'zero', 'advanced');
             document.getElementById('back-button').style.display = "block";
         }
-    } else if( activeId == 'zero-ball-advanced' ) {
+    } else if( activeId == 'zero-nav-advanced' ) {
         if (direction){
             changeSection('zero', 'fvSolution', 'advanced');
         } else {
@@ -61,21 +45,21 @@ async function paginationAdvanced(direction) {
                 document.getElementById('back-button').style.display = "none";
             }            
         }
-    } else if( activeId == 'fvSolution-ball-advanced' ) {
+    } else if( activeId == 'fvSolution-nav-advanced' ) {
         if (direction){
             changeSection('fvSolution', 'fvSchemes', 'advanced');
 
         } else {
             changeSection('fvSolution', 'zero', 'advanced');
         }
-    } else if( activeId == 'fvSchemes-ball-advanced' ) {
+    } else if( activeId == 'fvSchemes-nav-advanced' ) {
         if (direction){
             changeSection('fvSchemes', 'controlDict', 'advanced');
 
         } else {
             changeSection('fvSchemes', 'fvSolution', 'advanced');
         }
-    } else if( activeId == 'controlDict-ball-advanced' ) {
+    } else if( activeId == 'controlDict-nav-advanced' ) {
         if (direction){
             changeSection('controlDict', 'generator', 'advanced');
             document.getElementById('next-button').style.display = "none";
@@ -83,7 +67,7 @@ async function paginationAdvanced(direction) {
         } else {
             changeSection('controlDict', 'fvSchemes', 'advanced');
         }
-    } else if( activeId == 'generator-ball-advanced' ) {
+    } else if( activeId == 'generator-nav-advanced' ) {
         if (direction){
             try {
                 document.getElementById('generator-inputs-advanced').style.display = "none";
@@ -101,27 +85,34 @@ async function paginationAdvanced(direction) {
         let boundariesData = await pathsData();
         fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
         fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
-        document.getElementById('zero-ball-advanced').classList.add('active-ball');
+        document.getElementById('zero-nav-advanced').classList.add('active-nav');
         document.getElementById('zero-inputs-advanced').style.display = 'block';
     }
 }
 
 async function paginationSimple(direction) {
-    let activeId = null;
-    try{
-        activeId = document.getElementsByClassName('active-ball')[0].id;
-        document.getElementById(activeId).classList.remove('active-ball');
-    } catch {
-        console.log('Where are at the first page');
-    }
+    let activeId = null;    
+    activeId = document.getElementsByClassName('active-nav')[0].id;
+    document.getElementById(activeId).classList.remove('active-nav');
     
-    if( activeId == 'zero-ball-simple' ) {
+    if( activeId == 'basics-nav-simple' ) {
+        if (direction){
+            changeSection('basics', 'zero', 'simple');
+
+            let boundariesData = await pathsData();
+            fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
+            
+            // document.getElementById('zero-inputs-simple').style.display = 'block';
+            document.getElementById(`back-button`).style.display = "block";
+        }
+    } else if( activeId == 'zero-nav-simple' ) {
         if (direction){
             changeSection('zero', 'controlDict', 'simple');
         } else {
-            firstPage('simple');
+            changeSection('zero', 'basics', 'simple');
+            document.getElementById(`back-button`).style.display = "none";
         }
-    } else if( activeId == 'controlDict-ball-simple' ) {
+    } else if( activeId == 'controlDict-nav-simple' ) {
         if (direction){
             changeSection('controlDict', 'generator', 'simple');
 
@@ -129,7 +120,7 @@ async function paginationSimple(direction) {
         } else {
             changeSection('controlDict', 'zero', 'simple');
         }
-    } else if( activeId == 'generator-ball-simple' ) {
+    } else if( activeId == 'generator-nav-simple' ) {
         if (direction){
             generateFiles('simple');
             // firstPage('simple');
@@ -138,12 +129,6 @@ async function paginationSimple(direction) {
 
             document.getElementById('next-button').style.display = "block";
         }
-    } else {
-        secondPage('simple');
-        let boundariesData = await pathsData();
-        fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
-        document.getElementById('zero-ball-simple').classList.add('active-ball');
-        document.getElementById('zero-inputs-simple').style.display = 'block';
     }
 }
 
@@ -177,23 +162,20 @@ function isSecondContentAvailable() {
 
 function clickPage(nextContent, method) {
     let activeId = null;
-    activeId = document.getElementsByClassName('active-ball')[0].id;
-    document.getElementById(activeId).classList.remove('active-ball');
+    activeId = document.getElementsByClassName('active-nav')[0].id;
+    document.getElementById(activeId).classList.remove('active-nav');
 
-    activeId = activeId.replaceAll(`-ball-${method}`,'');
-
-    if( nextContent == 'firstContent' ){
-        firstPage(method);
-    } else {
-        changeSection(activeId, nextContent, method);
-    }    
+    activeId = activeId.replaceAll(`-nav-${method}`,'');
+    changeSection(activeId, nextContent, method);   
 
     if( nextContent == 'generator' ) {
         document.getElementById('next-button').style.display = "none";
         document.getElementById('back-button').style.display = "block";
 
-    } else if( nextContent == 'constants' )  {
+    } else if( nextContent == 'constants' || nextContent == 'basics' )  {
         document.getElementById('back-button').style.display = "none";
+        document.getElementById('next-button').style.display = "block";
+    
     } else {
         document.getElementById('back-button').style.display = "block";
         document.getElementById('next-button').style.display = "block";

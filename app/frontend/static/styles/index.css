@@ -32,14 +32,15 @@ aside>article {
     width: 100%;
 }
 
-ul {
+.options-list {
     list-style-type: none;
     width: 100%;
     margin: 0;
     padding: 0;
 }
 
-li {
+.option {
+    width: 70%;
     text-align: start;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -47,6 +48,7 @@ li {
     padding-left: 5px;
     margin-bottom: 10px;
     font-size: 20px;
+    cursor: pointer;
     background: 
         linear-gradient(
             220deg,
@@ -56,13 +58,13 @@ li {
         );
 }
 
-li:hover {
-    cursor: pointer;
+.active-option {
+    width: 100%;
 }
 
 footer{
     padding-left: 5px;
-    height: 25px;
+    height: fit-content;
     text-decoration: none;
 }
 

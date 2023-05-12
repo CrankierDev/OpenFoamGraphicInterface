@@ -13,36 +13,44 @@
 </head>
 <body>
     <main class="container">
-        <article id="secondContent-advanced">
-            <h1>Parámetros de simulación</h1>
+        <article>
+            <section class="sim-header">
+                <h1 class="sim-name">Configuración - Simulación anterior</h1>
 
-            <nav class="balls-section">
-                <div id="constants-ball-advanced" class="ball active-ball" 
-                        onclick="clickPage('constants', 'advanced')">
-                    <p>Datos básicos</p>
-                </div>
-                <div id="zero-ball-advanced" class="ball" 
-                        onclick="clickPage('zero', 'advanced')">
-                    <p>Carpeta 0</p>
-                </div>
-                <div id="fvSolution-ball-advanced" class="ball"
-                        onclick="clickPage('fvSolution', 'advanced')">
-                    <p>fvSolution</p>
-                </div>
-                <div id="fvSchemes-ball-advanced" class="ball"
-                        onclick="clickPage('fvSchemes', 'advanced')">
-                    <p>fvSchemes</p>
-                </div>
-                <div id="controlDict-ball-advanced" class="ball"
-                        onclick="clickPage('controlDict', 'advanced')">
-                    <p>controlDict</p>
-                </div>
-                <div id="generator-ball-advanced" class="ball"
-                        onclick="clickPage('generator', 'advanced')">
-                    <p>Generador</p>
-                </div>
-            </nav>
-            
+                <nav class="nav-section">
+                    <ul class="nav-options-list">
+                        <li>
+                            <ul class="nav-options-sublist">
+                                <li id="constants-nav-advanced" class="nav-option active-nav" 
+                                        onclick="clickPage('constants', 'advanced')">
+                                    <p>Datos</p>
+                                </li>
+                                <li id="zero-nav-advanced" class="nav-option" 
+                                        onclick="clickPage('zero', 'advanced')">
+                                    <p>Física</p>
+                                </li>
+                                <li id="fvSolution-nav-advanced" class="nav-option"
+                                        onclick="clickPage('fvSolution', 'advanced')">
+                                    <p>Simulación</p>
+                                </li>
+                                <li id="fvSchemes-nav-advanced" class="nav-option"
+                                        onclick="clickPage('fvSchemes', 'advanced')">
+                                    <p>Esquemas</p>
+                                </li>
+                                <li id="controlDict-nav-advanced" class="nav-option"
+                                        onclick="clickPage('controlDict', 'advanced')">
+                                    <p>Control</p>
+                                </li>
+                            </ul>                        
+                        </li>
+                        <li id="generator-nav-advanced" class="nav-option"
+                                onclick="clickPage('generator', 'advanced')">
+                            <p>Generador</p>
+                        </li>
+                    </ul>
+                </nav>
+            </section>
+
             <section id="constants-inputs-advanced"></section>
             <section id="zero-inputs-advanced"></section>
             <section id="controlDict-inputs-advanced"></section>

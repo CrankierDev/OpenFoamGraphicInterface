@@ -1,18 +1,11 @@
-const { app, BrowserWindow, dialog, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const backEndApp = require('./app/backend/expressMain');
+const api = require('./app/backend/api');
 
-async function handleFileOpen() {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-        properties: ['openDirectory']
-    });
-    if (canceled) {
-        return null;
-    } else {
-        return filePaths[0] != null ? filePaths[0] : null;
-    }
-}
-
+/**
+ * Creates the sandbox for the main windows of the app
+ */
 function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 800,
@@ -25,7 +18,9 @@ function createWindow() {
         }
     });
 
-    ipcMain.handle('dialog:openDirectory', handleFileOpen);
+    // Handling APIs
+    ipcMain.handle('dialog:openDirectory', api.handleFileOpen);
+    ipcMain.handle('versionNumber', api.getVersion);
 
     mainWindow.loadFile('app/index.html');
     mainWindow.webContents.openDevTools();
@@ -36,11 +31,15 @@ function createWindow() {
         return { action: 'deny' };
     });
     mainWindow.maximize();
+
     require('electron-reload')(__dirname, {
         electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
     });
 }
 
+/**
+ * Invokes the app
+ */
 app.whenReady().then( () => {
     // Start the express back end app
     backEndApp.start();
@@ -53,7 +52,11 @@ app.whenReady().then( () => {
     })
 });
 
+/**
+ * Ensure the app closes completely when we close the windows
+ */
 app.on('window-all-closed', () => {
+    // In a macOS (darwin) is prefereable not to completely quit the app
     if( process.platform !== 'darwin') {
         app.quit();
     }
