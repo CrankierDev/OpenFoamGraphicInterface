@@ -484,6 +484,33 @@ relaxationFactors :relaxationFactors
                         tolerance       1e-08;
                         relTol          0.1;
                     }
+                
+                    k
+                    {
+                        solver          smoothSolver;
+                        smoother        GaussSeidel;
+                        nSweeps         2;
+                        tolerance       1e-08;
+                        relTol          0.1;
+                    }
+                
+                    epsilon
+                    {
+                        solver          smoothSolver;
+                        smoother        GaussSeidel;
+                        nSweeps         2;
+                        tolerance       1e-08;
+                        relTol          0.1;
+                    }
+                
+                    omega
+                    {
+                        solver          smoothSolver;
+                        smoother        GaussSeidel;
+                        nSweeps         2;
+                        tolerance       1e-08;
+                        relTol          0.1;
+                    }
                 }`, `{
                     nNonOrthogonalCorrectors    0;
                 

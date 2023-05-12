@@ -25,8 +25,10 @@ async function paginationAdvanced(direction) {
 
             let boundariesData = await pathsData();
             fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
+            fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
             
             document.getElementById(`back-button`).style.display = "block";
+            // TODO: enable menu nav options and next-button
         }
     } else if( activeId == 'constants-nav-advanced' ) {
         if (direction){
@@ -80,14 +82,14 @@ async function paginationAdvanced(direction) {
             document.getElementById('next-button').style.display = "block";
 
         }
-    } else {
-        secondPage('advanced');
-        let boundariesData = await pathsData();
-        fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
-        fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
-        document.getElementById('zero-nav-advanced').classList.add('active-nav');
-        document.getElementById('zero-inputs-advanced').style.display = 'block';
-    }
+    } 
+    // else {
+    //     secondPage('advanced');
+    //     let boundariesData = await pathsData();
+    //     fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
+    //     document.getElementById('zero-nav-advanced').classList.add('active-nav');
+    //     document.getElementById('zero-inputs-advanced').style.display = 'block';
+    // }
 }
 
 async function paginationSimple(direction) {
@@ -102,7 +104,6 @@ async function paginationSimple(direction) {
             let boundariesData = await pathsData();
             fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
             
-            // document.getElementById('zero-inputs-simple').style.display = 'block';
             document.getElementById(`back-button`).style.display = "block";
         }
     } else if( activeId == 'zero-nav-simple' ) {
