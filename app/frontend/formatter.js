@@ -534,7 +534,7 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                 newText += `
                                     <div class="input-data">
                                         <label for="${variable.variable}-data-${boundary.name}-type">Condición para ${variable.name}</label>
-                                        <select id="${variable.variable}-data-${boundary.name}-type" >
+                                        <select id="${variable.variable}-data-${boundary.name}-type">
                                             <option value='fixedValue'>Valor fijo</option>
                                             <option value='zeroGradient'>Gradiente nulo</option>
                                             <option value='noSlip'>No-deslizamiento</option>
@@ -547,7 +547,7 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                     newText += `
                                         <div class="input-data">
                                             <label for="${boundary.name}-wall">Funciones de pared para ${variable.name}</label>
-                                            <select id="${boundary.name}-wall" >
+                                            <select id="${boundary.name}-wall">
                                                 <option value='1'>Sí</option>
                                                 <option value='0'>No</option>
                                             </select>

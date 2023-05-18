@@ -188,6 +188,8 @@ async function loadSimulationData(simulationID) {
 
     loadContent('pastSimulation');
 
+    window.simulationID = simulationID;
+
     await setModels();
     
     const boundariesData = await getSimulationBoundariesData(simulationID);

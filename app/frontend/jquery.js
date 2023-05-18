@@ -1,5 +1,7 @@
 function loadContent(id) {
 	const sectionID = `${id}-section`;
+
+	window.simulationType = id;
 	
 	showContent(sectionID);
 	
