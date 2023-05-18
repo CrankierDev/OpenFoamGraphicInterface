@@ -111,22 +111,21 @@ function buildBoundaryField(variable, boundariesData) {
 			console.log('patch', patchType);
 			
 			boundaryField += `
-			${boundary.name} {`;
+			${boundary.name} {
+				type				${patchType};`;
 
 			if ( patchType === 'freestreamPressure'
 					|| patchType === 'freestreamVelocity'
 					|| patchType === 'freestream') {
 
 				boundaryField += `
-				type				${patchType};
 				freestreamValue		$internalField;
 			}
 			`;
 
 			} else {
 				boundaryField += `
-				type				${patchType};
-				value		$internalField;
+				value				$internalField;
 			}
 			`;
 			}
@@ -168,5 +167,4 @@ function buildConstant() {
 	}
 
 	return constant;
-
 }
