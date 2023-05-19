@@ -102,10 +102,8 @@ async function setControlDictDefaultData(simulation) {
         if( fillFormsForcesFields() ){
             // Fill inputs with default data
             setCofR(forcesData.cofR);
-            document.getElementById('rhoInf-data').value = forcesData.rhoInf;
             
             if(forcesData.forceCoeffs === 1){
-                document.getElementById('magUInf-data').value = forcesData.magUInf;
                 document.getElementById('lRef-data').value = forcesData.lRef;
                 document.getElementById('aRef-data').value = forcesData.aRef;
                     
@@ -236,18 +234,14 @@ async function fillFormsSchemesFields(variables, simulationID) {
                 newHTML += `
                     <div class="input-data">
                         <p class="schemes-title">Esquema para los gradientes</p>
-                    </div>
-                    <div class="schemes-data">
-                        <div class="subinput-data">
-                            <label for="${variable.variable}-grad-limiter">Límites</label>
-                            <select id="${variable.variable}-grad-limiter"> 
-                                <option value="default">Sin limitar</option>
-                                <option value="cellLimited">Limitado en las celdas</option>
-                                <option value="cellMDLimited">Limitado multidireccional en las celdas</option>
-                                <option value="faceLimited">Limitado en las caras</option>
-                                <option value="faceMDLimited">Limitado multidireccional en las caras</option>
-                            </select>
+                        <div class="long-input">
+                            <label>¿Gradientes por defecto?</label>
+                            <input type="checkbox" checked
+                                onclick="showNonDefaultSchemes('grad', '${variable.variable}', checked)"
+                                id="check-default-grad-${variable.variable}"/>
                         </div>
+                    </div>
+                    <div class="schemes-data" style="display: none" id="nondefault-grad-${variable.variable}">
                         <div class="subinput-data">
                             <label for="${variable.variable}-grad-schema">Esquema</label>
                             <select id="${variable.variable}-grad-schema"> 
@@ -263,20 +257,37 @@ async function fillFormsSchemesFields(variables, simulationID) {
                                 <option value="leastSquares">Mínimos cuadrados</option>
                             </select>
                         </div>
-                        <div class="subinput-data">
-                            <label for="${variable.variable}-grad-coeff">Coeficiente</label>
-                            <input id="${variable.variable}-grad-coeff"> 
-                        </div>
+                        
                     </div>
                     `;
+                    // <div class="subinput-data">
+                    //     <label for="${variable.variable}-grad-limiter">Límites</label>
+                    //     <select id="${variable.variable}-grad-limiter"> 
+                    //         <option value="default">Sin limitar</option>
+                    //         <option value="cellLimited">Limitado en las celdas</option>
+                    //         <option value="cellMDLimited">Limitado multidireccional en las celdas</option>
+                    //         <option value="faceLimited">Limitado en las caras</option>
+                    //         <option value="faceMDLimited">Limitado multidireccional en las caras</option>
+                    //     </select>
+                    // </div>
+                    // <div class="subinput-data">
+                    //     <label for="${variable.variable}-grad-coeff">Coeficiente</label>
+                    //     <input id="${variable.variable}-grad-coeff" type="number"> 
+                    // </div>
             }
                 
             if ( variable.schemes.indexOf('div') != -1 ) {
                 newHTML += `
                     <div class="input-data">
                         <p class="schemes-title">Esquema para las divergencias</p>
+                        <div class="long-input">
+                            <label>¿Divergencias por defecto?</label>
+                            <input type="checkbox" checked
+                                onclick="showNonDefaultSchemes('div', '${variable.variable}', checked)"
+                                id="check-default-div-${variable.variable}"/>
+                        </div>
                     </div>
-                    <div class="schemes-data">
+                    <div class="schemes-data" style="display: none" id="nondefault-div-${variable.variable}">
                         <div class="subinput-data">
                             <label for="${variable.variable}-div-limiter">Delimitación</label>
                             <select id="${variable.variable}-div-limiter"> 
@@ -288,68 +299,64 @@ async function fillFormsSchemesFields(variables, simulationID) {
                             <label for="${variable.variable}-div-interpolation">Interpolación</label>
                             <select id="${variable.variable}-div-interpolation"> 
                                 <option value="linear">Lineal</option>
-                                <option value="limitedLinear">Lineal limitado</option>
+                                <option value="limitedLinear 1">Lineal limitado</option>
                                 <option value="linearUpwind">Lineal aguas arriba</option>
                             </select>
                         </div>
                     </div>
                     `;
-                        // <div class="subinput-data">
-                        //     <label for="${variable.variable}-div-coeff">Coeficiente</label>
-                        //     <input id="${variable.variable}-div-coeff"> 
-                        // </div>
                     }
             
-            if ( variable.schemes.indexOf('lap') != -1 ) {
-                newHTML += `
-                    <div class="input-data">
-                        <label for="${variable.variable}-laplacian-snGrad">Esquema para los laplacianos</label>
-                        <select id="${variable.variable}-laplacian-snGrad">
-                            <option value="default">Predeterminado</option>
-                            <option value="corrected">Corregido</option>
-                            <option value="orthogonal">Ortogonal</option>
-                        </select>
-                    </div>
-                    `;
-            }
+            // if ( variable.schemes.indexOf('lap') != -1 ) {
+            //     newHTML += `
+            //         <div class="input-data">
+            //             <label for="${variable.variable}-laplacian-snGrad">Esquema para los laplacianos</label>
+            //             <select id="${variable.variable}-laplacian-snGrad">
+            //                 <option value="default">Predeterminado</option>
+            //                 <option value="corrected">Corregido</option>
+            //                 <option value="orthogonal">Ortogonal</option>
+            //             </select>
+            //         </div>
+            //         `;
+            // }
             
-            if ( variable.schemes.indexOf('interp') != -1 ) {
-                newHTML += `
-                    <div class="input-data">
-                        <label for="${variable.variable}-interpolation-schema">Esquema de interpolación</label>
-                        <select id="${variable.variable}-interpolation-schema">
-                            <option value="default">Predeterminado</option>
-                            <option value="linear">Lineal</option>
-                            <option value="pointLinear">Lineal en un punto</option>
-                        </select>
-                    </div>
-                    `;
-            }
+            // if ( variable.schemes.indexOf('interp') != -1 ) {
+            //     newHTML += `
+            //         <div class="input-data">
+            //             <label for="${variable.variable}-interpolation-schema">Esquema de interpolación</label>
+            //             <select id="${variable.variable}-interpolation-schema">
+            //                 <option value="default">Predeterminado</option>
+            //                 <option value="linear">Lineal</option>
+            //                 <option value="pointLinear">Lineal en un punto</option>
+            //             </select>
+            //         </div>
+            //         `;
+            // }
             
-            if ( variable.schemes.indexOf('secondGrad') != -1 ) {
-                newHTML += `
-                    <div class="input-data">
-                        <label for="${variable.variable}-snGrad-schema">Gradientes normales a la superficie</label>
-                        <select id="${variable.variable}-snGrad-schema"> 
-                            <option value="default">Predeterminado</option>
-                            <option value="corrected">Corregido</option>
-                            <option value="orthogonal">Ortogonal</option>
-                        </select>
-                    </div>
-                    `;
-            }
+            // if ( variable.schemes.indexOf('secondGrad') != -1 ) {
+            //     newHTML += `
+            //         <div class="input-data">
+            //             <label for="${variable.variable}-snGrad-schema">Gradientes normales a la superficie</label>
+            //             <select id="${variable.variable}-snGrad-schema"> 
+            //                 <option value="default">Predeterminado</option>
+            //                 <option value="corrected">Corregido</option>
+            //                 <option value="orthogonal">Ortogonal</option>
+            //             </select>
+            //         </div>
+            //         `;
+            // }
             
-            if ( variable.schemes.indexOf('wall') != -1 ) {
-                newHTML += `
-                    <div class="input-data">
-                        <label for="${variable.variable}-wall-schema">Distribución de pared</label>
-                        <select id="${variable.variable}-wall-schema">
-                            <option value="default">Predeterminado</option>
-                            <option value="meshWave">MeshWave</option>
-                            <option value="cubic">Cubic</option>
-                        </select>
-                    </div>`;
-            }
+            // if ( variable.schemes.indexOf('wall') != -1 ) {
+            //     newHTML += `
+            //         <div class="input-data">
+            //             <label for="${variable.variable}-wall-schema">Distribución de pared</label>
+            //             <select id="${variable.variable}-wall-schema">
+            //                 <option value="default">Predeterminado</option>
+            //                 <option value="meshWave">MeshWave</option>
+            //                 <option value="cubic">Cubic</option>
+            //             </select>
+            //         </div>`;
+            // }
             
             newHTML += '</div>';
 
@@ -359,6 +366,14 @@ async function fillFormsSchemesFields(variables, simulationID) {
 
     // Once we have the fields, we'll fill them with simulation data
     await setSchemesDefaultData(simulationID, variables);
+}
+
+/**
+ * Method to hide non default schemes for variables
+ */
+function showNonDefaultSchemes(schema, variable, checked) {
+    document.getElementById(`nondefault-${schema}-${variable}`).style.display =
+            checked ? 'none' : 'inline-flex';
 }
 
 
@@ -562,6 +577,7 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                 }
             }
         }
+
         // FIX-ME: view boundaries and work with it
         document.getElementById('p-data-walls-type').value = 'zeroGradient';
         document.getElementById('U-data-walls-type').value = 'noSlip';
@@ -619,27 +635,29 @@ function fillFormsForcesFields() {
                 <div class="axis-data">
                     <div>
                         <label for="CofRX-data" class="axis-label">Eje X</label>
-                        <input class="axis-input" type="text" id="CofRX-data"/>
+                        <input class="axis-input" type="text" id="CofRX-data" type="number"/>
                     </div>
                     <div>
                         <label for="CofRY-data" class="axis-label">Eje Y</label>
-                        <input class="axis-input" type="text" id="CofRY-data"/>
+                        <input class="axis-input" type="text" id="CofRY-data" type="number"/>
                     </div>
                     <div>
                         <label for="CofRZ-data" class="axis-label">Eje Z</label>
-                        <input class="axis-input" type="text" id="CofRZ-data"/>
+                        <input class="axis-input" type="text" id="CofRZ-data" type="number"/>
                     </div>
                 </div>
-                <div class="input-data">
-                    <label for="rhoInf-data" class="long-label">Densidad aguas arriba</label>
-                    <div>
-                        <input class="short-input" type="text" id="rhoInf-data"/>
-                        <span class="material-symbols-rounded" onclick="showInfo('rhoInf-data')">info</span>
-                    </div>
-                </div>
+                
                 <div id="rhoInf-data-info" class="info-div info-div-border" style="display: none;"></div>
                 <div id="forces-extra-inputs"></div>
             </div>`;
+
+            //      <div class="input-data">
+            //          <label for="rhoInf-data" class="long-label">Densidad aguas arriba</label>
+            //          <div>
+            //              <input class="short-input" type="text" id="rhoInf-data" type="number"/>
+            //              <span class="material-symbols-rounded" onclick="showInfo('rhoInf-data')">info</span>
+            //          </div>
+            //      </div>
 
     } else if (forces || coeffs) {
         inputsOn.style.display = 'block';
@@ -692,17 +710,9 @@ function fillFormsForcesFields() {
             <div id="pitch-option-info" class="info-div info-div-border" style="display: none;"></div>
             <div id="pitch-vector" class="axis-data"></div>
             <div class="input-data">
-                <label for="magUInf-data" class="long-label">Velocidad de flujo sin perturbar</label>
-                <div>
-                    <input class="short-input" type="text" id="magUInf-data"/>
-                    <span class="material-symbols-rounded" onclick="showInfo('magUInf-data')">info</span>
-                </div>
-            </div>
-            <div id="magUInf-data-info" class="info-div info-div-border" style="display: none;"></div>
-            <div class="input-data">
                 <label for="lRef-data" class="long-label">Longitud de referencia</label>
                 <div>
-                    <input class="short-input" type="text" id="lRef-data"/>
+                    <input class="short-input" type="text" id="lRef-data" type="number"/>
                     <span class="material-symbols-rounded" onclick="showInfo('lRef-data')">info</span>
                 </div>
             </div>
@@ -710,12 +720,21 @@ function fillFormsForcesFields() {
             <div class="input-data">
                 <label for="aRef-data" class="long-label">Área de referencia</label>
                 <div>
-                    <input class="short-input" type="text" id="aRef-data"/>
+                    <input class="short-input" type="text" id="aRef-data" type="number"/>
                     <span class="material-symbols-rounded" onclick="showInfo('aRef-data')">info</span>
                 </div>
             </div>
             <div id="aRef-data-info" class="info-div info-div-border" style="display: none;"></div>
             `;
+
+            // <div class="input-data">
+            //     <label for="magUInf-data" class="long-label">Velocidad de flujo sin perturbar</label>
+            //     <div>
+            //         <input class="short-input" type="text" id="magUInf-data"/>
+            //         <span class="material-symbols-rounded" onclick="showInfo('magUInf-data')">info</span>
+            //     </div>
+            // </div>
+            // <div id="magUInf-data-info" class="info-div info-div-border" style="display: none;"></div>
 
     } else if (coeffs && extraInputs.innerHTML !== '') {
         extraInputs.style.display = 'block';
@@ -743,15 +762,15 @@ function fillFormsvectorDirections(vectorName, value) {
         vector.innerHTML = `
             <div>
                 <label for="${vectorName}X-data">Eje X</label>
-                <input class="axis-input" type="text" id="${vectorName}X-data"/>
+                <input class="axis-input" type="text" id="${vectorName}X-data" type="number"/>
             </div>
             <div>
                 <label for="${vectorName}Y-data">Eje Y</label>
-                <input class="axis-input" type="text" id="${vectorName}Y-data"/>
+                <input class="axis-input" type="text" id="${vectorName}Y-data" type="number"/>
             </div>
             <div>
                 <label for="${vectorName}Z-data">Eje Z</label>
-                <input class="axis-input" type="text" id="${vectorName}Z-data"/>
+                <input class="axis-input" type="text" id="${vectorName}Z-data" type="number"/>
             </div>`;
     }
 
@@ -759,7 +778,6 @@ function fillFormsvectorDirections(vectorName, value) {
         vector.style.display = "inline-flex";
     } else {
         vector.style.display = "none";
-        // vector.innerHTML = '';
     }
 }
 
@@ -969,17 +987,17 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                     
                     <div class="input-data">
                         <label for="${variable.variable}-sweeps-data">nSweeps</label>
-                        <input class="long-input" type="text" id="${variable.variable}-sweeps-data"/>
+                        <input class="long-input" type="number" id="${variable.variable}-sweeps-data"/>
                     </div>
                     
                     <div class="input-data">
                         <label for="${variable.variable}-tolerance-data">Tolerancia</label>
-                        <input class="long-input" type="text" id="${variable.variable}-tolerance-data" />
+                        <input class="long-input" type="number" id="${variable.variable}-tolerance-data" />
                     </div>
                     
                     <div class="input-data">
                         <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
-                        <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
+                        <input class="long-input" type="number" id="${variable.variable}-relTol-data"/>
                     </div>
                     `;
             } else if ( variable.type === 'asymmetric' ) {
@@ -1015,12 +1033,12 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                     
                     <div class="input-data">
                         <label for="${variable.variable}-tolerance-data">Tolerancia</label>
-                        <input class="long-input" type="text" id="${variable.variable}-tolerance-data"/>
+                        <input class="long-input" type="number" id="${variable.variable}-tolerance-data"/>
                     </div>
                     
                     <div class="input-data">
                         <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
-                        <input class="long-input" type="text" id="${variable.variable}-relTol-data"/>
+                        <input class="long-input" type="number" id="${variable.variable}-relTol-data"/>
                     </div>
                     `;
             }
@@ -1046,7 +1064,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
                     <div>
-                        <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                        <input class="long-input" id="nNonOrthogonalCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
                     </div>
                 </div>
@@ -1056,8 +1074,8 @@ function fillFormsSolverSection(solverInputs, solver){
                     <label for="consistent">Consistencia</label>
                     <div>
                         <select id="consistent">
-                            <option value="1">Sí</option>
-                            <option value="0">No</option>
+                            <option value="yes">Sí</option>
+                            <option value="no">No</option>
                         </select>
                         <span class="material-symbols-rounded" onclick="showInfo('consistent')">info</span>
                     </div>
@@ -1073,7 +1091,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nCorrectors">nCorrectors</label>
                     <div>
-                        <input class="long-input" id="nCorrectors"/>
+                        <input class="long-input" id="nCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nCorrectors')">info</span>
                     </div>
                 </div>
@@ -1082,7 +1100,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
                     <div>
-                        <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                        <input class="long-input" id="nNonOrthogonalCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
                     </div>
                 </div>
@@ -1091,7 +1109,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="pRefCell">Presión de referencia en las celdas</label>
                     <div>
-                        <input class="long-input" id="pRefCell"/>
+                        <input class="long-input" id="pRefCell" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('pRefCell')">info</span>
                     </div>
                 </div>
@@ -1100,7 +1118,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="pRefValue">Valor de la presión de referencia</label>
                     <div>
-                        <input class="long-input" id="pRefValue"/>
+                        <input class="long-input" id="pRefValue" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('pRefValue')">info</span>
                     </div>
                 </div>
@@ -1110,8 +1128,8 @@ function fillFormsSolverSection(solverInputs, solver){
                     <label for="consistent">Consistencia</label>
                     <div>
                         <select id="consistent">
-                            <option value="1">Sí</option>
-                            <option value="0">No</option>
+                            <option value="yes">Sí</option>
+                            <option value="no">No</option>
                         </select>
                         <span class="material-symbols-rounded" onclick="showInfo('consistent')">info</span>
                     </div>
@@ -1127,7 +1145,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nOuterCorrectors">nOuterCorrectors</label>
                     <div>
-                        <input class="long-input" id="nOuterCorrectors"/>
+                        <input class="long-input" id="nOuterCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nOuterCorrectors')">info</span>
                     </div>
                 </div>
@@ -1136,7 +1154,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nCorrectors">nCorrectors</label>
                     <div>
-                        <input class="long-input" id="nCorrectors"/>
+                        <input class="long-input" id="nCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nCorrectors')">info</span>
                     </div>
                 </div>
@@ -1145,7 +1163,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
                     <div>
-                        <input class="long-input" id="nNonOrthogonalCorrectors"/>
+                        <input class="long-input" id="nNonOrthogonalCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
                     </div>
                 </div>
@@ -1155,8 +1173,8 @@ function fillFormsSolverSection(solverInputs, solver){
                     <label for="correctPhi">Corrección del flujo</label>
                     <div>
                         <select id="correctPhi">
-                            <option value="1">Sí</option>
-                            <option value="0">No</option>
+                            <option value="yes">Sí</option>
+                            <option value="no">No</option>
                         </select>
                         <span class="material-symbols-rounded" onclick="showInfo('correctPhi')">info</span>
                     </div>
@@ -1167,8 +1185,8 @@ function fillFormsSolverSection(solverInputs, solver){
                     <label for="consistent">Consistencia</label>
                     <div>
                         <select id="consistent">
-                            <option value="1">Sí</option>
-                            <option value="0">No</option>
+                            <option value="yes">Sí</option>
+                            <option value="no">No</option>
                         </select>
                         <span class="material-symbols-rounded" onclick="showInfo('consistent')">info</span>
                     </div>
@@ -1199,7 +1217,7 @@ function fillFormsResidualControlSection(solverInputs, variables) {
         newHTML += `
                 <div class="input-data">
                     <label for="${variable.variable}-residual-control">${capitalize(variable.name)}</label>
-                    <input class="long-input" id="${variable.variable}-residual-control"/>
+                    <input class="long-input" id="${variable.variable}-residual-control" type="number"/>
                 </div>
             `;
     }
@@ -1222,12 +1240,12 @@ function fillFormsRelaxationSection(relaxationInputs, variables) {
             <div id="relaxation-factors-info" class="info-div info-div-border" style="display: none;"></div>
             <div class="input-data">
                 <label for="fields-relaxation">Campos</label>
-                <input class="long-input" id="fields-relaxation"/>
+                <input class="long-input" id="fields-relaxation" type="number"/>
             </div>
             
             <div class="input-data">
                 <label for="equations-relaxation">Ecuaciones</label>
-                <input class="long-input" id="equations-relaxation"/>
+                <input class="long-input" id="equations-relaxation" type="number"/>
             </div>
             `;
     
@@ -1235,7 +1253,7 @@ function fillFormsRelaxationSection(relaxationInputs, variables) {
         newHTML += `
             <div class="input-data">
                 <label for="${variable.variable}-relaxation">${capitalize(variable.name)}</label>
-                <input class="long-input" id="${variable.variable}-relaxation"/>
+                <input class="long-input" id="${variable.variable}-relaxation" type="number"/>
             </div>
             `;    
     }

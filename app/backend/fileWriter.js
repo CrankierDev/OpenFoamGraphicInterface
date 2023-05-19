@@ -50,6 +50,7 @@ function createFile (filePath, model, filename, data) {
 	const dataKeys = Object.keys(data);
 
 	dataKeys.forEach( (subKey) => {
+		// TODO: manage internalField and AOA
 		model = model.replaceAll(`:${subKey}`, data[`${subKey}`]);
 	});
 
