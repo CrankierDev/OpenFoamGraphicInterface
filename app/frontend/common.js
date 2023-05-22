@@ -31,7 +31,7 @@ function parseVector(vector) {
  */
 function formatSelector(value) {
     if (value == null) return 'default';
-    return value.replaceAll("-", "").replaceAll(" ", "").trim().toLowerCase();    
+    return value.replaceAll("-", "").replaceAll(" ", "").trim();    
 }
 
 /**

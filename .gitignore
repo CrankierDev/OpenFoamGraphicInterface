@@ -4,3 +4,5 @@
 /release-builds
 /out
 /Output
+ficheros/
+db.sqlite

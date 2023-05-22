@@ -52,6 +52,23 @@ async function getConstantData(simulationID) {
     });
 }
 
+async function getZeroData(simulationID) {
+    return await fetch('http://localhost:9876/getZeroData', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: `{
+            "simulation_id": "${simulationID}"
+        }`,
+    })
+    .then( response => response.json() )
+    .then( data => {
+        return data.data;
+    });
+}
+
 async function getControlDictData(simulationID) {
     return await fetch('http://localhost:9876/getControlDictData', {
         method: 'POST',
@@ -150,6 +167,23 @@ async function getTurbulenceModelVariables(model) {
     });
 }
 
+async function getSimulationInfo(simulationID) {
+    return await fetch('http://localhost:9876/getSimulationInfo', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: `{
+            "simulation_id": "${simulationID}"
+        }`,
+    })
+    .then( response => response.json() )
+    .then( data => {
+        return data.data;
+    });
+}
+
 async function getSimulationBoundariesData(simulationID) {
     return await fetch('http://localhost:9876/getSimulationBoundariesData', {
         method: 'POST',
@@ -160,6 +194,26 @@ async function getSimulationBoundariesData(simulationID) {
         body: `{
             "simulation_id": "${simulationID}"
         }`,
+    })
+    .then( response => response.json() )
+    .then( data => {
+        return data.data;
+    });
+}
+
+async function getSimulationFiles(simInfo, data) {
+    const body = {
+        simInfo: simInfo,
+        data: data
+    };
+    
+    return await fetch('http://localhost:9876/getSimulationFiles', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body),
     })
     .then( response => response.json() )
     .then( data => {

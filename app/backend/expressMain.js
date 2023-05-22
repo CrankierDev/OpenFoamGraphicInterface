@@ -87,6 +87,18 @@ function start() {
         });
     });
     
+    app.post('/getSimulationInfo', async (req, res) => {
+        let simulationID = req.body.simulation_id;
+        console.log('Getting simulation info for simulation: ', simulationID);
+
+        let response = await getSimulationInfo(simulationID);
+
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
+    
     app.get('/getAllSimulationsInfo', async (req, res) => {
         console.log('Getting old simulations data');
 
@@ -102,6 +114,17 @@ function start() {
         console.log('Getting constant data for simulation: ', req.body.simulation_id);
 
         let response = await getConstantData(req.body.simulation_id);
+
+        res.json({
+            "message": 'Success processing',
+            "data": response
+        });
+    });
+
+    app.post('/getZeroData', async (req, res) => {
+        console.log('Getting constant data for simulation: ', req.body.simulation_id);
+
+        let response = await getZeroData(req.body.simulation_id);
 
         res.json({
             "message": 'Success processing',
@@ -165,9 +188,9 @@ function start() {
     });
 
     app.post('/getSimulationFiles', async (req, res) => {
-        console.log('Creating simulation files at', req.body.simFolderPath);
+        console.log('Creating simulation files at', req.body.simInfo.simFolderPath);
 
-        createFiles(req.body.simFolderPath, req.body.data);
+        createFiles(req.body.simInfo, req.body.data);
 
         res.json({
             "message": 'Success processing. All files have been saved on the specified route.'
@@ -210,8 +233,6 @@ async function getZeroData(simulationID) {
 
 async function getSimulationBoundariesData(simulationID) {
     let data = await db.getSimulationBoundariesData(simulationID);
-
-    console.log(data)
 
     if(data != null) {
         data.forEach( (row) => {
@@ -284,25 +305,31 @@ async function getSolutionData(simulationID) {
         
     if(response != null) {
         responseParsed.solvers = buildMultipleJSON( response.solvers.replaceAll('\n', '').split('{') );
-        responseParsed.simple = buildJSON( response.simple.replaceAll('\n', '')
-                                            .replaceAll('{', '')
-                                            .replaceAll('}', '')
-                                            .split(';') );
-        responseParsed.pimple = buildJSON( response.pimple.replaceAll('\n', '')
-                                            .replaceAll('{', '')
-                                            .replaceAll('}', '')
-                                            .split(';') );
-        responseParsed.piso = buildJSON( response.piso.replaceAll('\n', '')
-                                            .replaceAll('{', '')
-                                            .replaceAll('}', '')
-                                            .split(';') );
+        responseParsed.simple = response.simple != null ?
+                                        buildJSON( response.simple.replaceAll('\n', '')
+                                                    .replaceAll('{', '')
+                                                    .replaceAll('}', '')
+                                                    .split(';') ) :
+                                        null;
+        responseParsed.pimple = response.pimple != null ?
+                                        buildJSON( response.pimple.replaceAll('\n', '')
+                                                    .replaceAll('{', '')
+                                                    .replaceAll('}', '')
+                                                    .split(';') ) :
+                                        null;
+        responseParsed.piso = response.piso != null ?
+                                        buildJSON( response.piso.replaceAll('\n', '')
+                                                    .replaceAll('{', '')
+                                                    .replaceAll('}', '')
+                                                    .split(';') ) :
+                                        null;
         responseParsed.residualControl = buildJSON( response.residualControl.replaceAll('\n', '')
                                             .replaceAll('{', '')
                                             .replaceAll('}', '')
                                             .split(';') );
         responseParsed.relaxationFactors = buildJSON( response.relaxationFactors.replaceAll('\n', '')
-                                            .replaceAll('{', '')
-                                            .replaceAll('}', '')
+                                            .replace('fields','').replace('equations','')
+                                            .replaceAll('{', '').replaceAll('}', '')
                                             .split(';') );
     }
 
@@ -315,6 +342,7 @@ function buildJSON(data) {
     // Here we build a JSON object to be returned
     data.forEach( (row) => {
         let inputJSON = row.trim().split('  ');
+        if(inputJSON.length <= 1) inputJSON = inputJSON[0].split('\t');
 
         if (inputJSON[0] !== '') {
             solution[`${inputJSON[0]}`] = inputJSON.slice(-1)[0] != null ? inputJSON.slice(-1)[0].trim() : null;

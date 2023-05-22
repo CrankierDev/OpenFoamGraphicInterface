@@ -138,12 +138,7 @@ function isSecondContentAvailable() {
     const mesh = document.getElementById('mesh').value !== 'false' ? true : false;
     const workspace = document.getElementById('workspace').value !== 'false' ? true : false;
 
-    const meshValue = document.getElementById('mesh').value ;
-    const workspaceValue = document.getElementById('workspace').value;
-
     let button = document.getElementById('next-button');
-
-    console.log('valors', meshValue, workspaceValue);
 
     if( name && mesh && workspace ) {
         button.disabled = false;
@@ -152,7 +147,7 @@ function isSecondContentAvailable() {
     }
     
     // CLEAN
-    button.disabled = false;
+    // button.disabled = false;
 
     if( button.disabled == false ){
         setModels();
@@ -187,9 +182,10 @@ async function loadSimulationData(simulationID) {
     console.log('Buscamos la info de:', simulationID);
 
     loadContent('pastSimulation');
-
+    await setSimulationInfo(simulationID);
     window.simulationID = simulationID;
-
+    
+    isSecondContentAvailable();
     await setModels();
     
     const boundariesData = await getSimulationBoundariesData(simulationID);

@@ -45,7 +45,16 @@ async function generateSimulationInfo() {
 	data['0'] = await buildZero(boundariesData, variables);
 	data.system = buildSystem(boundariesData, variables);
 
-	console.log('data', data);
+	// CLEAN
+	let simInfo = {
+		simName: document.getElementById('simulation-name').value,
+        simFolderPath: './ficheros', //document.getElementById('workspace').value,
+        mesh: './ficheros/constant/polyMesh', //document.getElementById('mesh').value
+		boundariesData: boundariesData
+	}
+
+	console.log(data);
+	getSimulationFiles(simInfo, data);
 }
 
 async function buildZero(boundariesData, variables) {
@@ -55,11 +64,12 @@ async function buildZero(boundariesData, variables) {
 		let newParameter = {
 			class: variable.class,
 			dimensions: variable.dimensions,
-			internalField: '',
+			internalField: 'calculate',
 			boundaryField: buildBoundaryField(variable, boundariesData)
 		}
 
-		if(variable.variable ==='U') newParameter.aoa = document.getElementById('flux-aoa').value;
+		newParameter.aoa = document.getElementById('flux-aoa').value;
+
 		if( variable.variable === 'p' || variable.variable === 'U' ) {
 			newParameter.internalField = document.getElementById(`flux-${variable.variable}`).value;
 		}
@@ -72,65 +82,65 @@ async function buildZero(boundariesData, variables) {
 
 function buildBoundaryField(variable, boundariesData) {
 	let boundaryField = `
-	{`;
+{`;
 
 	for( let boundary of boundariesData ) {
 		if( boundary.type === 'empty' ) {
 			boundaryField += `
-			${boundary.name} {
-				type	empty;
-			}
+	${boundary.name} {
+		type	empty;
+	}
 			`;
 
 			continue;
 
 		} else if( boundary.type === 'wall' ) {
 			boundaryField += `
-			${boundary.name} {`;
+	${boundary.name} {`;
 
 			if( variable.wallFunction == 1 &&
 					document.getElementById(`${boundary.name}-wall`).value == 1 ) {
 
 				boundaryField += `
-				type	:wallFunction;
-				value	uniform 0;
-			}
+		type	wallFunction;
+		value	uniform 0;
+	}
 			`;
 
 			} else {
 				const patchType = document.getElementById(`${variable.variable}-data-${boundary.name}-type`).value;
 
 				boundaryField += `
-				type	${patchType};`;
+		type	${patchType};`;
 
 				if( patchType === 'fixedValue' ) {
 					boundaryField += `
-				value	uniform 0;`;
+		value	uniform 0;`;
 
 				}
 				boundaryField += `
-			}
+	}
 		`;
 			}
 		} else if( boundary.type === 'patch' ) {
 			const patchType = document.getElementById(`${variable.variable}-data-${boundary.name}-type`).value;
 
 			boundaryField += `
-			${boundary.name} {
-				type				${patchType};`;
+	${boundary.name} {
+		type				${patchType};`;
 
 			if ( patchType === 'freestreamPressure'
 					|| patchType === 'freestreamVelocity'
 					|| patchType === 'freestream') {
 
 				boundaryField += `
-				freestreamValue		$internalField;
-			}
+		freestreamValue		$internalField;
+	}
 			`;
 
 			} else {
 				boundaryField += `
-				value				$internalField;
+		value				$internalField;
 			}
 			`;
 			}
@@ -138,9 +148,7 @@ function buildBoundaryField(variable, boundariesData) {
 	}
 
 	boundaryField += `
-	}`;
-
-	// console.log(boundaryField);
+}`;
 
 	return boundaryField;
 }
@@ -167,18 +175,19 @@ function buildConstant() {
 }
 
 function buildSystem(boundariesData, variables) {
+	let solver = document.getElementById('solver').value;
+
 	let system = {
-		controlDict: buildControlDict(),
+		controlDict: buildControlDict(solver),
 		fvSchemes: buildFvSchemes(variables),
-		fvSolution: buildFvSolution()
+		fvSolution: buildFvSolution(variables, solver)
 	}
 
 	if( document.getElementById('forces-data').checked 
 			|| document.getElementById('forcesCoeffs-data').checked) {
-		system.forces = buildForces();
-	}
-
-	if( document.getElementById('forcesCoeffs-data').checked ) {
+		
+		const genForcesCoeffs =	document.getElementById('forcesCoeffs-data').checked;
+			
 		let walls = boundariesData.filter( (boundary) => {
 			if( boundary.type === 'wall' ) return boundary;
 		});
@@ -186,20 +195,22 @@ function buildSystem(boundariesData, variables) {
 		if( walls.length > 1) {
 			let i = 0;
 			for( let wall of walls ) {
-				system[`forceCoeffs${i}`] = buildForceCoeffs(system.forces, wall.name);
+				system[`forces${i}`] = buildForces(wall.name);
+				if(genForcesCoeffs) system[`forceCoeffs${i}`] = buildForceCoeffs(system.forces);
 			}
 
 		} else {
-			system.forceCoeffs = buildForceCoeffs(system.forces, walls[0].name);
+			system.forces = buildForces(walls[0].name);
+			if(genForcesCoeffs) system.forceCoeffs = buildForceCoeffs(system.forces);
 		}
 	}
 
 	return system;
 }
 
-function buildControlDict() {
+function buildControlDict(solver) {
 	const controlDict = {
-		application: document.getElementById('solver').value,
+		application: solver,
 		startFrom: document.getElementById('simulation-begin').value,
 		startTime: document.getElementById('simulation-begin-time').value,
 		stopAt: document.getElementById('simulation-end').value,
@@ -234,8 +245,9 @@ function buildFunctions() {
 	return functions
 }
 
-function buildForces() {
+function buildForces(wallName) {
 	const forces = {
+		patches: wallName,
 		cofR: buildVectorValue('CofR'),
 		rhoInf: document.getElementById('flux-density').value
 	}
@@ -243,9 +255,9 @@ function buildForces() {
 	return forces;
 }
 
-function buildForceCoeffs(forces, wallName) {
+function buildForceCoeffs(forces) {
 	const forceCoeffs = {
-		patches: wallName,
+		patches: forces.patches,
 		cofR: forces.cofR,
 		rhoInf: forces.rhoInf,
 		liftDir: parseVectorValue('lift'),
@@ -334,27 +346,27 @@ function buildFvSchemes(variables) {
 
 function buildDdtSchemes() {
 	return `
-	{
-		default		${document.getElementById('temporal-schema').value};
-	}`
+{
+	default		${document.getElementById('temporal-schema').value};
+}`
 }
 
 function buildGradSchemes(variables) {
 	let grads = `
-	{
-		default		${gradBuilder('default')};`;
+{
+	default		${gradBuilder('default')};`;
 
 	for( let variable of variables ) {
 		if( variable.schemes != null && variable.schemes.indexOf('grad') != -1 &&
 				!document.getElementById(`check-default-grad-${variable.variable}`).checked ){
 					
 			grads += `
-		grad(${variable.variable})	${gradBuilder(variable.variable)})`;
+	grad(${variable.variable})	${gradBuilder(variable.variable)})`;
 		}
 	}
 
 	grads += `
-	}`;
+}`;
 
 	return grads;
 }
@@ -366,24 +378,23 @@ function gradBuilder(grad) {
 
 function buildDivSchemes(variables) {
 	let divs = `
-	{
-		default		${divBuilder('default')};`;
+{
+	default		${divBuilder('default')};`;
 
 	for( let variable of variables ) {
 		if( variable.schemes != null && variable.schemes.indexOf('div') != -1 &&
 				!document.getElementById(`check-default-div-${variable.variable}`).checked ){
 					
 			divs += `
-		div(phi,${variable.variable})	${divBuilder(variable.variable)})`;
+	div(phi,${variable.variable})	${divBuilder(variable.variable)})`;
 		}
 	}
 
 	divs += `
-	}`;
+}`;
 
 	return divs;
 }
-
 
 function divBuilder(div) {
 	let defaultDiv;
@@ -405,35 +416,156 @@ function divBuilder(div) {
 	return defaultDiv;
 }
 
-
 function buildLaplacianSchemes() {
 	return `
-	{
-		default		${document.getElementById('default-laplacian').value};
-	}`;
+{
+	default		${document.getElementById('default-laplacian').value};
+}`;
 }
 
 function buildInterpolationSchemes() {
 	return `
-	{
-		default		${document.getElementById('default-interpolation-schema').value};
-	}`;
+{
+	default		${document.getElementById('default-interpolation-schema').value};
+}`;
 }
 
 function buildSnGradSchemes() {
 	return `
-	{
-		default		${document.getElementById('default-snGrad-schema').value};
-	}`;
+{
+	default		${document.getElementById('default-snGrad-schema').value};
+}`;
 }
 
 function buildWallDist() {
 	return `
-	{
-		default		${document.getElementById('default-wall-schema').value};
-	}`;
+{
+	default		${document.getElementById('default-wall-schema').value};
+}`;
 }
 
-function buildFvSolution() {
+function buildFvSolution(variables, solver) {
+	let fvSolution = {
+		relaxationFactors: buildRelaxation(variables),
+		solvers: buildSolver(variables),
+		mainSolver: solver.toUpperCase().replaceAll('FOAM', ''),
+		solverBody: buildMainSolver(variables, solver),
+		residualControl: buildResidualControl(variables)
+	}
+
+	return fvSolution;
+}
+
+function buildRelaxation(variables) {
+	let relaxation = `
+{
+	fields
+	{
+		p		${document.getElementById('p-relaxation').value};
+	}
 	
+	equations
+	{`;
+
+	for( let variable of variables ) {
+		if( variable.variable !== 'p' && 
+				document.getElementById(`${variable.variable}-relaxation`).value != 0 ) {
+			relaxation += `
+		${variable.variable}		${document.getElementById(`${variable.variable}-relaxation`).value};`;
+		}
+	}
+
+	relaxation += `
+	}
+}`;
+
+	return relaxation;
+}
+
+function buildSolver(variables) {
+	let solvers = `
+{`;
+
+	for( let variable of variables ) {
+		if( variable.type != null ) solvers += buildSolverVariable(variable);
+	}
+
+	solvers += `
+}`;
+
+	return solvers;
+}
+
+function buildSolverVariable(variable) {
+	let solver = `
+	${variable.variable}
+	{
+		solver		${document.getElementById(`${variable.variable}-solver-schema`).value};
+		tolerance	${document.getElementById(`${variable.variable}-tolerance-data`).value};
+		relTol		${document.getElementById(`${variable.variable}-relTol-data`).value};
+		smoother	${document.getElementById(`${variable.variable}-smoother-data`).value};
+		`;
+
+	if( variable.type === 'symmetric' ){
+		solver += `nSweeps		${document.getElementById(`${variable.variable}-sweeps-data`).value};`
+	}
+
+	if( document.getElementById(`${variable.variable}-preconditioner-schema`).value !== 'default' ){
+		solver += `preconditioner		${document.getElementById(`${variable.variable}-preconditioner-schema`).value};`
+	}
+	
+	solver += `
+	}
+	`;
+
+	return solver;
+}
+
+function buildMainSolver(variables, solver) {
+	let mainSolver = `
+{
+	nNonOrthogonalCorrectors	${document.getElementById('nNonOrthogonalCorrectors').value};`;
+
+	if( solver === 'pisoFoam' || solver === 'pimpleFoam' ) {
+		mainSolver += `
+	nCorrectors					${document.getElementById('nCorrectors').value}; `;
+	}
+
+	if( solver === 'pisoFoam' ) {
+		mainSolver += `
+	pRefCell					${document.getElementById('pRefCell').value}; 
+	pRefValue					${document.getElementById('pRefValue').value}; `;
+	}
+	
+	if( solver === 'pimpleFoam' ) {
+		mainSolver += `
+	nOuterCorrectors			${document.getElementById('nOuterCorrectors').value};
+	correctPhi					${document.getElementById('correctPhi').value}; `;
+	}
+
+	mainSolver += `
+	consistent					${document.getElementById('consistent').value};
+
+	residualControl		:residualControl
+}`;
+
+	return mainSolver;
+}
+
+function buildResidualControl(variables) {
+	let residuals = `
+	{`;
+
+	for( let variable of variables ) {
+		if( variable.type != null && 
+				document.getElementById(`${variable.variable}-residual-control`).value != 0 ) {
+			residuals += `
+		${variable.variable}		${document.getElementById(`${variable.variable}-residual-control`).value};`;
+		}
+	}
+
+	residuals += `
+	} `;
+
+	return residuals;
 }

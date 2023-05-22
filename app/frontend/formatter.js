@@ -28,7 +28,7 @@ async function setLastSimulationsTable() {
         <th>Nombre</th>
         <th>Fecha de creación</th>
         <th>Ruta de la simulación</th>
-        <th>Último trabajo</th>`;
+        <th>Eliminar</th>`;
 
     tblBody.appendChild(tblHeader);
     
@@ -40,8 +40,8 @@ async function setLastSimulationsTable() {
                 ${row.name}
             </td>
             <td>${row.creationDate}</td>
-            <td>${row.simulationRoute}</td>
-            <td>${row.lastGenerationDate}</td>`;
+            <td>${row.simRoute}</td>
+            <td>Eliminar</td>`;
         
         tblBody.appendChild(newRow);
     }
@@ -61,10 +61,20 @@ async function setFluxDefaultData(simulation) {
     // TODO: add flux data from zero_data table and fill form
 
     // Gets flux data from DB
+    let zeroData = await getZeroData(simulation);
+
+    for( let data of zeroData ) {
+        document.getElementById(`flux-${data.variable}`).value = data.value;
+        if(data.variable === 'U') document.getElementById('flux-aoa').value = data.AOAValue;
+    }
+
+
     let constantData = await getConstantData(simulation);
 
     document.getElementById('flux-density').value = constantData.rho;
     document.getElementById('flux-viscosity').value = constantData.nu;
+
+
 }
 
 /**
@@ -84,8 +94,6 @@ async function setControlDictDefaultData(simulation) {
     // Check boxes with default data
     document.getElementById('deltat-adjust').checked
         = controlDictData.adjustTimeStep === 1 ? true : false;
-    document.getElementById('save-data').checked
-        = controlDictData.writeData === 1 ? true : false;
     document.getElementById('run-time-modifiable').checked
         = controlDictData.runTimeModifiable === 1 ? true : false;
 
@@ -785,6 +793,21 @@ function fillFormsvectorDirections(vectorName, value) {
  * Fills turbulence model selectior with the models found on DB
  * turbulenceModels is the list of models to work with
  */
+async function setSimulationInfo(simulationID) {
+    //linker function
+    const simInfo = await getSimulationInfo(simulationID);
+
+    if (simInfo) {
+        document.getElementById('simulation-name').value = simInfo.name;
+        document.getElementById('workspace').value = simInfo.simRoute;
+        document.getElementById('mesh').value = simInfo.simRoute + 'constant/polyMesh/';
+    }
+}
+
+/**
+ * Fills turbulence model selectior with the models found on DB
+ * turbulenceModels is the list of models to work with
+ */
 async function setModels() {
     //linker function
     const turbulenceModels = await getTurbulenceModelsInfo();
@@ -932,7 +955,7 @@ function setResidualControlSection(variables, residualData) {
  * Fills the form with relaxation factors data  
  */
 function setRelaxationSection(variables, relaxationData) {
-    for ( let variableData of [...variables, { variable: 'fields'}, { variable: 'equations'}]) {
+    for ( let variableData of variables ) {
         const variable = variableData.variable;
 
         document.getElementById(`${variable}-relaxation`).value =
@@ -959,12 +982,12 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                     <div class="input-data">
                         <label for="${variable.variable}-solver-schema">Solver</label>
                         <select id="${variable.variable}-solver-schema">
-                            <option value="gaussseidel">Gauss-Seidel</option>
-                            <option value="smoothsolver">smoothSolver</option>
-                            <option value="dilu">DILU</option>
-                            <option value="pcg">PCG</option>
-                            <option value="pbicg">PBiCG</option>
-                            <option value="pbicgstab">PBiCGStab</option>
+                            <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="smoothSolver">smoothSolver</option>
+                            <option value="DILU">DILU</option>
+                            <option value="PCG">PCG</option>
+                            <option value="PBiCG">PBiCG</option>
+                            <option value="PBiCGStab">PBiCGStab</option>
                         </select>
                     </div>
                     
@@ -972,16 +995,16 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                         <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
                         <select id="${variable.variable}-preconditioner-schema">
                             <option value="default">Sin precondicionador</option>
-                            <option value="symgaussseidel">Gauss-Seidel</option>
-                            <option value="dilu">DILU</option>
+                            <option value="symGaussSeidel">Gauss-Seidel</option>
+                            <option value="DILU">DILU</option>
                         </select>
                     </div>
                     
                     <div class="input-data">
                         <label for="${variable.variable}-smoother-data">Smoother</label>
                         <select id="${variable.variable}-smoother-data">
-                            <option value="gaussseidel">Gauss-Seidel</option>
-                            <option value="dilu">DILU</option>
+                            <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="DILU">DILU</option>
                         </select>
                     </div>
                     
@@ -1005,10 +1028,10 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                     <div class="input-data">
                         <label for="${variable.variable}-solver-schema">Solver</label>
                         <select id="${variable.variable}-solver-schema"> 
-                            <option value="gamg">GAMG</option>
-                            <option value="dic">DIC</option>
-                            <option value="pcg">PCG</option>
-                            <option value="pbicgstab">PBiCGStab</option>
+                            <option value="GAMG">GAMG</option>
+                            <option value="DIC">DIC</option>
+                            <option value="PCG">PCG</option>
+                            <option value="PBiCGStab">PBiCGStab</option>
                         </select>
                     </div>
                     
@@ -1016,18 +1039,19 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                         <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
                         <select id="${variable.variable}-preconditioner-schema"> 
                             <option value="default">Sin precondicionador</option>
-                            <option value="gaussseidel">Gauss-Seidel</option>
-                            <option value="gamg">GAMG</option>
-                            <option value="dic">DIC</option>
+                            <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="GAMG">GAMG</option>
+                            <option value="DIC">DIC</option>
                         </select>
                     </div>
                     
                     <div class="input-data">
                         <label for="${variable.variable}-smoother-data">Smoother</label>
                         <select id="${variable.variable}-smoother-data">
-                            <option value="gaussseidel">Gauss-Seidel</option>
-                            <option value="gamg">GAMG</option>
-                            <option value="dic">DIC</option>
+                            <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="GAMG">GAMG</option>
+                            <option value="DIC">DIC</option>
+                            <option value="DICGaussSeidel">DICGaussSeidel</option>
                         </select>
                     </div>
                     
@@ -1238,15 +1262,6 @@ function fillFormsRelaxationSection(relaxationInputs, variables) {
         
         <div class="data-container">
             <div id="relaxation-factors-info" class="info-div info-div-border" style="display: none;"></div>
-            <div class="input-data">
-                <label for="fields-relaxation">Campos</label>
-                <input class="long-input" id="fields-relaxation" type="number"/>
-            </div>
-            
-            <div class="input-data">
-                <label for="equations-relaxation">Ecuaciones</label>
-                <input class="long-input" id="equations-relaxation" type="number"/>
-            </div>
             `;
     
     for ( let variable of variables ) {
