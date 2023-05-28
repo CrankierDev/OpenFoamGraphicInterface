@@ -24,11 +24,18 @@ table {
 
 th, td {
 	color: var(--blacktext-pallete);
-	border: 1px solid var(--whitetext-pallete);
-	background-color: var(--grey-pallete);
+	border: 1px solid  var(--blacktext-pallete);
+	background-color: rgb(209, 209, 209);
 }
 
 .clickable-td:hover {
 	cursor: pointer;
 	text-decoration: underline;
+}
+
+.icon {
+    padding-bottom: 5px;
+    padding-top: 10px;
+    max-height: 25px;
+	filter: invert(13%) sepia(76%) saturate(2160%) hue-rotate(344deg) brightness(103%) contrast(94%);
 }

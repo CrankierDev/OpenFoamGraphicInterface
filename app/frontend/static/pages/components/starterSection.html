@@ -5,13 +5,22 @@
 	</div>
 	<div class="input-data">
 		<label class="long-label" for="workspace">Ruta donde guardar los archivos</label>
-		<button class="right-button buttons-style folder-button" id="workspace"
+		<button class="buttons-style folder-button" id="workspace"
 			type="button" onclick="selectFolder(id)">Seleccionar la carpeta</button>
+	</div>
+	<div class="input-data" id="info-workspace">
+		<div></div>
+		<span id="route-workspace"></span>
 	</div>
 	<div class="input-data">
 		<label class="long-label" for="mesh">Ruta de la malla</label>
-		<button class="right-button buttons-style folder-button" id="mesh"
+		<button class="buttons-style folder-button" id="mesh"
 			type="button" onclick="selectFolder(id)">Seleccionar la carpeta</button>
+	</div>
+	<div class="input-data" id="info-mesh">
+		<button class="buttons-style folder-button" id="checkMesh"
+			type="button" onclick="checkMeshFormat()">Checkeo de malla</button>
+		<span id="route-mesh"></span>
 	</div>
 </section>
 <article id="flux-conditions" style="display: none;" >

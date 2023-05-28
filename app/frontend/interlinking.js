@@ -20,7 +20,7 @@ async function paginationAdvanced(direction) {
     document.getElementById(activeId).classList.remove('active-nav');
     
     if( activeId == 'basics-nav-advanced' ) {
-        if (direction){
+        if(direction){
             changeSection('basics', 'zero', 'advanced');
 
             let boundariesData = await pathsData();
@@ -28,41 +28,36 @@ async function paginationAdvanced(direction) {
             fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
             
             document.getElementById(`back-button`).style.display = "block";
-            // TODO: enable menu nav options and next-button
+            showPages();
         }
     } else if( activeId == 'constants-nav-advanced' ) {
-        if (direction){
+        if(direction){
             changeSection('constants', 'zero', 'advanced');
             document.getElementById('back-button').style.display = "block";
         }
     } else if( activeId == 'zero-nav-advanced' ) {
-        if (direction){
+        if(direction){
             changeSection('zero', 'fvSolution', 'advanced');
         } else {
-            try {
-                firstPage('advanced');
-
-            } catch(err) {
-                changeSection('zero', 'constants', 'advanced');
-                document.getElementById('back-button').style.display = "none";
-            }            
+            changeSection('zero', 'constants', 'advanced');
+            document.getElementById('back-button').style.display = "none";        
         }
     } else if( activeId == 'fvSolution-nav-advanced' ) {
-        if (direction){
+        if(direction){
             changeSection('fvSolution', 'fvSchemes', 'advanced');
 
         } else {
             changeSection('fvSolution', 'zero', 'advanced');
         }
     } else if( activeId == 'fvSchemes-nav-advanced' ) {
-        if (direction){
+        if(direction){
             changeSection('fvSchemes', 'controlDict', 'advanced');
 
         } else {
             changeSection('fvSchemes', 'fvSolution', 'advanced');
         }
     } else if( activeId == 'controlDict-nav-advanced' ) {
-        if (direction){
+        if(direction){
             changeSection('controlDict', 'generator', 'advanced');
             document.getElementById('next-button').style.display = "none";
 
@@ -70,26 +65,11 @@ async function paginationAdvanced(direction) {
             changeSection('controlDict', 'fvSchemes', 'advanced');
         }
     } else if( activeId == 'generator-nav-advanced' ) {
-        if (direction){
-            try {
-                document.getElementById('generator-inputs-advanced').style.display = "none";
-                firstPage('advanced');
-            } catch(err) {
-                changeSection('zero', 'constants', 'advanced');
-            } 
-        } else {
+        if(!direction) {
             changeSection('generator', 'controlDict', 'advanced');
             document.getElementById('next-button').style.display = "block";
-
         }
-    } 
-    // else {
-    //     secondPage('advanced');
-    //     let boundariesData = await pathsData();
-    //     fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
-    //     document.getElementById('zero-nav-advanced').classList.add('active-nav');
-    //     document.getElementById('zero-inputs-advanced').style.display = 'block';
-    // }
+    }
 }
 
 async function paginationSimple(direction) {
@@ -98,62 +78,91 @@ async function paginationSimple(direction) {
     document.getElementById(activeId).classList.remove('active-nav');
     
     if( activeId == 'basics-nav-simple' ) {
-        if (direction){
+        if(direction){
             changeSection('basics', 'zero', 'simple');
 
             let boundariesData = await pathsData();
             fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
             
             document.getElementById(`back-button`).style.display = "block";
+            showPages();
         }
     } else if( activeId == 'zero-nav-simple' ) {
-        if (direction){
+        if(direction){
             changeSection('zero', 'controlDict', 'simple');
         } else {
             changeSection('zero', 'basics', 'simple');
             document.getElementById(`back-button`).style.display = "none";
         }
     } else if( activeId == 'controlDict-nav-simple' ) {
-        if (direction){
+        if(direction){
             changeSection('controlDict', 'generator', 'simple');
-
             document.getElementById('next-button').style.display = "none";
         } else {
             changeSection('controlDict', 'zero', 'simple');
         }
     } else if( activeId == 'generator-nav-simple' ) {
-        if (direction){
-            generateFiles('simple');
-            // firstPage('simple');
-        } else {
+        if(!direction) {
             changeSection('generator', 'controlDict', 'simple');
-
             document.getElementById('next-button').style.display = "block";
         }
     }
 }
 
 function isSecondContentAvailable() {
-    const name = document.getElementById('simulation-name').value ? true : false;
-    const mesh = document.getElementById('mesh').value !== 'false' ? true : false;
-    const workspace = document.getElementById('workspace').value !== 'false' ? true : false;
+    const nameOK = document.getElementById('simulation-name').value ? true : false;
 
-    let button = document.getElementById('next-button');
-
-    if( name && mesh && workspace ) {
-        button.disabled = false;
-    } else {
-        button.disabled = true;
-    }
+    const meshRoute = document.getElementById('mesh').value;
+    let meshOK = false;
     
-    // CLEAN
-    // button.disabled = false;
+    if( meshRoute != null && meshRoute !== '' && meshRoute !== 'false' ) {
+        meshOK = true;
+        document.getElementById('route-mesh').innerText = meshRoute;
+        document.getElementById('info-mesh').style.display = 'inline-flex';
+        document.getElementById('mesh').classList.add('folder-selected');
 
-    if( button.disabled == false ){
+    } else {
+        document.getElementById('route-mesh').value = '';
+        document.getElementById('info-mesh').style.display = 'none';
+        document.getElementById('mesh').classList.remove('folder-selected');
+
+        const checkButton = document.getElementById('checkMesh');
+        checkButton.style = '';
+        checkButton.innerText = 'Checkeo de malla';
+    }
+
+    const workspaceRoute = document.getElementById('workspace').value;
+    let workspaceOK = false;
+    
+    if( workspaceRoute != null && workspaceRoute !== '' && workspaceRoute !== 'false' ) {
+        workspaceOK = true;
+        document.getElementById('route-workspace').innerText = workspaceRoute;
+        document.getElementById('info-workspace').style.display = 'inline-flex';
+        document.getElementById('workspace').classList.add('folder-selected');
+
+    } else {
+        document.getElementById('route-workspace').value = '';
+        document.getElementById('info-workspace').style.display = 'none';
+        document.getElementById('workspace').classList.remove('folder-selected');
+    }
+
+    const turbulenceModel = document.getElementById('turbulence-model');
+    const solver = document.getElementById('solver').value;
+
+    if( nameOK && meshOK && workspaceOK 
+            && solver === 'default' && turbulenceModel.innerHTML === '' ) {
         setModels();
         document.getElementById('flux-conditions').style.display = 'block';
     }
+}
 
+function showPages() {
+    const hiddenPages = document.getElementsByClassName('nav-option-hidden');
+    const initialLength = hiddenPages.length;
+
+    for( let i = 0; i < initialLength; i++ ) {
+        hiddenPages[0].classList.remove('nav-option-hidden');
+    };
 }
 
 function clickPage(nextContent, method) {
@@ -179,26 +188,32 @@ function clickPage(nextContent, method) {
 }
 
 async function loadSimulationData(simulationID) {
-    console.log('Buscamos la info de:', simulationID);
-
     loadContent('pastSimulation');
-    await setSimulationInfo(simulationID);
-    window.simulationID = simulationID;
-    
-    isSecondContentAvailable();
-    await setModels();
-    
-    const boundariesData = await getSimulationBoundariesData(simulationID);
-    const controlDictData = await getControlDictData(simulationID);
-    const constantData = await getConstantData(simulationID);
-    
-    document.getElementById('solver').value = controlDictData.application;
-    document.getElementById('turbulence-model').value = constantData.turbulenceModel;
 
-    fillFormsBasicFields(boundariesData, constantData.turbulenceModel, simulationID);
-    fillFormsSolverVariables(controlDictData.application, simulationID);
+    setTimeout( async () => {
+        window.simulationID = simulationID;
+        await setSimulationInfo(simulationID);
+        
+        isSecondContentAvailable();
+        await setModels();
+    
+        const boundariesData = await getSimulationBoundariesData(simulationID);
+        const controlDictData = await getControlDictData(simulationID);
+        const constantData = await getConstantData(simulationID);
+        
+        document.getElementById('solver').value = controlDictData.application;
+        document.getElementById('turbulence-model').value = constantData.turbulenceModel;
+
+        fillFormsBasicFields(boundariesData, constantData.turbulenceModel, simulationID);
+        fillFormsSolverVariables(controlDictData.application, simulationID);
+    }, 100 );
 }
 
 async function generateFiles() {
     generateSimulationInfo();
+}
+
+async function generateAndExecute() {
+    const response = await generateSimulationInfo();
+    executeSimulation(response.simID);
 }

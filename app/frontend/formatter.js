@@ -13,15 +13,17 @@ async function setLastSimulationsTable() {
     // Looks for past simulations on DB
     let info = await getAllSimulationsInfo();
 
-    // Checks how many simulations there are
-    // TODO: increase this 0 to 1 in order to not show 'default' simulation
-    if( info[0].length === 0 ){
-        return ;
-    }
-    // TODO: not to show table if there is only 'default' simulation on the DB.
-
     // Writes the table with the DB data from past simulations
     let table = document.getElementById('last-simulations-table');
+
+    if( table.innerHTML !== '' ) table.innerHTML = '';
+
+    // Checks how many simulations there are
+    if( info.length === 1 ){
+        document.getElementById('table-title').style.display = 'none';
+        return ;
+    }
+    
     const tblBody = document.createElement("tbody");
     let tblHeader = document.createElement("tr");
     tblHeader.innerHTML = `
@@ -33,15 +35,22 @@ async function setLastSimulationsTable() {
     tblBody.appendChild(tblHeader);
     
     for( row of info ) {
+        if( row.id === 'default_sim' ) continue;
+
         const newRow = document.createElement("tr");
         newRow.innerHTML += `
             <td onclick="loadSimulationData('${row.id}')"
-                class="clickable-td">
+                    class="clickable-td">
                 ${row.name}
             </td>
             <td>${row.creationDate}</td>
             <td>${row.simRoute}</td>
-            <td>Eliminar</td>`;
+            <td onclick="deleteSimulation('${row.id}')"
+                    class="clickable-td">
+                <img src="./frontend/static/images/trash_icon.svg"
+                    class="icon"
+                    title="Eliminar simulación">
+            </td>`;
         
         tblBody.appendChild(newRow);
     }
@@ -51,15 +60,12 @@ async function setLastSimulationsTable() {
     // Sets visibility on to the table
     document.getElementById('table-title').style.display = 'block';
     table.style.display = 'table';
-    
 }
 
 /**
  * Fills basic flux data from DB
  */
 async function setFluxDefaultData(simulation) {
-    // TODO: add flux data from zero_data table and fill form
-
     // Gets flux data from DB
     let zeroData = await getZeroData(simulation);
 
@@ -73,8 +79,6 @@ async function setFluxDefaultData(simulation) {
 
     document.getElementById('flux-density').value = constantData.rho;
     document.getElementById('flux-viscosity').value = constantData.nu;
-
-
 }
 
 /**
@@ -268,20 +272,6 @@ async function fillFormsSchemesFields(variables, simulationID) {
                         
                     </div>
                     `;
-                    // <div class="subinput-data">
-                    //     <label for="${variable.variable}-grad-limiter">Límites</label>
-                    //     <select id="${variable.variable}-grad-limiter"> 
-                    //         <option value="default">Sin limitar</option>
-                    //         <option value="cellLimited">Limitado en las celdas</option>
-                    //         <option value="cellMDLimited">Limitado multidireccional en las celdas</option>
-                    //         <option value="faceLimited">Limitado en las caras</option>
-                    //         <option value="faceMDLimited">Limitado multidireccional en las caras</option>
-                    //     </select>
-                    // </div>
-                    // <div class="subinput-data">
-                    //     <label for="${variable.variable}-grad-coeff">Coeficiente</label>
-                    //     <input id="${variable.variable}-grad-coeff" type="number"> 
-                    // </div>
             }
                 
             if ( variable.schemes.indexOf('div') != -1 ) {
@@ -314,57 +304,6 @@ async function fillFormsSchemesFields(variables, simulationID) {
                     </div>
                     `;
                     }
-            
-            // if ( variable.schemes.indexOf('lap') != -1 ) {
-            //     newHTML += `
-            //         <div class="input-data">
-            //             <label for="${variable.variable}-laplacian-snGrad">Esquema para los laplacianos</label>
-            //             <select id="${variable.variable}-laplacian-snGrad">
-            //                 <option value="default">Predeterminado</option>
-            //                 <option value="corrected">Corregido</option>
-            //                 <option value="orthogonal">Ortogonal</option>
-            //             </select>
-            //         </div>
-            //         `;
-            // }
-            
-            // if ( variable.schemes.indexOf('interp') != -1 ) {
-            //     newHTML += `
-            //         <div class="input-data">
-            //             <label for="${variable.variable}-interpolation-schema">Esquema de interpolación</label>
-            //             <select id="${variable.variable}-interpolation-schema">
-            //                 <option value="default">Predeterminado</option>
-            //                 <option value="linear">Lineal</option>
-            //                 <option value="pointLinear">Lineal en un punto</option>
-            //             </select>
-            //         </div>
-            //         `;
-            // }
-            
-            // if ( variable.schemes.indexOf('secondGrad') != -1 ) {
-            //     newHTML += `
-            //         <div class="input-data">
-            //             <label for="${variable.variable}-snGrad-schema">Gradientes normales a la superficie</label>
-            //             <select id="${variable.variable}-snGrad-schema"> 
-            //                 <option value="default">Predeterminado</option>
-            //                 <option value="corrected">Corregido</option>
-            //                 <option value="orthogonal">Ortogonal</option>
-            //             </select>
-            //         </div>
-            //         `;
-            // }
-            
-            // if ( variable.schemes.indexOf('wall') != -1 ) {
-            //     newHTML += `
-            //         <div class="input-data">
-            //             <label for="${variable.variable}-wall-schema">Distribución de pared</label>
-            //             <select id="${variable.variable}-wall-schema">
-            //                 <option value="default">Predeterminado</option>
-            //                 <option value="meshWave">MeshWave</option>
-            //                 <option value="cubic">Cubic</option>
-            //             </select>
-            //         </div>`;
-            // }
             
             newHTML += '</div>';
 
@@ -425,26 +364,7 @@ async function setSchemesDefaultData(simulationID, variables) {
             
             if ( variableData.schemes.indexOf('div') != -1 ) {
                 setDivValues(variable, schemesData.divSchemes[`div(phi,${variable.trim()})`]);
-            }
-            
-            // DUDA - QUITAR?
-            // if ( variableData.schemes.indexOf('lap') != -1 ) {
-            //     document.getElementById(`${variable}-laplacian-schema`).value = 
-            //         schemesData.laplacianSchemes[`${variable}`] != null ? 
-            //         schemesData.laplacianSchemes[`${variable}`] : 'default';
-            // }
-            
-            // if ( variableData.schemes.indexOf('interp') != -1 ) {
-            //     document.getElementById(`${variable}-interpolation-schema`).value = 
-            //         schemesData.interpolationSchemes[`${variable}`] != null ? 
-            //         schemesData.interpolationSchemes[`${variable}`] : 'default';
-            // }
-            
-            // if ( variableData.schemes.indexOf('secondGrad') != -1 ) {
-            //     document.getElementById(`${variable}-secondGrad-schema`).value = 
-            //         schemesData.snGradSchemes[`${variable}`] != null ? 
-            //         schemesData.snGradSchemes[`${variable}`] : 'default';
-            // }            
+            }           
         }
     }
 }
@@ -621,6 +541,14 @@ function solverChanges(value) {
     } else {
         selector.disabled = false;
     }
+
+    let button = document.getElementById('next-button');
+
+    if(value !== 'default') {
+        button.disabled = false;
+    } else {
+        button.disabled = true;
+    }
 }
 
 /**
@@ -658,14 +586,6 @@ function fillFormsForcesFields() {
                 <div id="rhoInf-data-info" class="info-div info-div-border" style="display: none;"></div>
                 <div id="forces-extra-inputs"></div>
             </div>`;
-
-            //      <div class="input-data">
-            //          <label for="rhoInf-data" class="long-label">Densidad aguas arriba</label>
-            //          <div>
-            //              <input class="short-input" type="text" id="rhoInf-data" type="number"/>
-            //              <span class="material-symbols-rounded" onclick="showInfo('rhoInf-data')">info</span>
-            //          </div>
-            //      </div>
 
     } else if (forces || coeffs) {
         inputsOn.style.display = 'block';
@@ -796,12 +716,17 @@ function fillFormsvectorDirections(vectorName, value) {
 async function setSimulationInfo(simulationID) {
     //linker function
     const simInfo = await getSimulationInfo(simulationID);
-
-    if (simInfo) {
+    
+    if(simInfo) {
         document.getElementById('simulation-name').value = simInfo.name;
-        document.getElementById('workspace').value = simInfo.simRoute;
-        document.getElementById('mesh').value = simInfo.simRoute + 'constant/polyMesh/';
+        document.getElementById('workspace').value = parseWorkspace(simInfo.simRoute);
+        document.getElementById('mesh').value = simInfo.simRoute + '/constant/polyMesh/';
     }
+}
+
+function parseWorkspace(route) {
+    let routeSplit = route.split('/');
+    return route.replaceAll(routeSplit.slice(-1), '');
 }
 
 /**

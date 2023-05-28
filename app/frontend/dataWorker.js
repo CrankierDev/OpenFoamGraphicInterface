@@ -45,16 +45,16 @@ async function generateSimulationInfo() {
 	data['0'] = await buildZero(boundariesData, variables);
 	data.system = buildSystem(boundariesData, variables);
 
-	// CLEAN
 	let simInfo = {
 		simName: document.getElementById('simulation-name').value,
-        simFolderPath: './ficheros', //document.getElementById('workspace').value,
-        mesh: './ficheros/constant/polyMesh', //document.getElementById('mesh').value
+        simFolderPath: document.getElementById('workspace').value,
+        mesh: document.getElementById('mesh').value,
 		boundariesData: boundariesData
 	}
 
-	console.log(data);
-	getSimulationFiles(simInfo, data);
+	console.log(simInfo, data);
+
+	return await getSimulationFiles(simInfo, data);
 }
 
 async function buildZero(boundariesData, variables) {
@@ -68,7 +68,11 @@ async function buildZero(boundariesData, variables) {
 			boundaryField: buildBoundaryField(variable, boundariesData)
 		}
 
-		newParameter.aoa = document.getElementById('flux-aoa').value;
+		newParameter.aoa = variable.variable === 'U' ? document.getElementById('flux-aoa').value : '0';
+		
+		if(variable.variable === 'U') {
+			newParameter.liftDirection = document.getElementById(`lift-option`).value;
+		}
 
 		if( variable.variable === 'p' || variable.variable === 'U' ) {
 			newParameter.internalField = document.getElementById(`flux-${variable.variable}`).value;
@@ -87,7 +91,8 @@ function buildBoundaryField(variable, boundariesData) {
 	for( let boundary of boundariesData ) {
 		if( boundary.type === 'empty' ) {
 			boundaryField += `
-	${boundary.name} {
+	${boundary.name} 
+	{
 		type	empty;
 	}
 			`;
@@ -96,7 +101,8 @@ function buildBoundaryField(variable, boundariesData) {
 
 		} else if( boundary.type === 'wall' ) {
 			boundaryField += `
-	${boundary.name} {`;
+	${boundary.name} 
+	{`;
 
 			if( variable.wallFunction == 1 &&
 					document.getElementById(`${boundary.name}-wall`).value == 1 ) {
@@ -126,7 +132,8 @@ function buildBoundaryField(variable, boundariesData) {
 			const patchType = document.getElementById(`${variable.variable}-data-${boundary.name}-type`).value;
 
 			boundaryField += `
-	${boundary.name} {
+	${boundary.name}
+	{
 		type				${patchType};`;
 
 			if ( patchType === 'freestreamPressure'
@@ -159,8 +166,8 @@ function buildConstant() {
     const coeffs = document.getElementById("forcesCoeffs-data").checked;
 
 	const constant = {
-		transportProperties: {
-			transportModel: "Newtonian",
+		physicalProperties: {
+			viscosityModel: "constant",
 			rho: document.getElementById('flux-density').value,
 			nu: document.getElementById('flux-viscosity').value
 		}, 
@@ -177,10 +184,16 @@ function buildConstant() {
 function buildSystem(boundariesData, variables) {
 	let solver = document.getElementById('solver').value;
 
+	console.log(window.simulationType);
+
 	let system = {
 		controlDict: buildControlDict(solver),
-		fvSchemes: buildFvSchemes(variables),
-		fvSolution: buildFvSolution(variables, solver)
+		fvSchemes: window.simulationType !== 'simpleSimulation' ? 
+					buildFvSchemes(variables) : 
+						buildFvSchemesDefault(),
+		fvSolution: window.simulationType !== 'simpleSimulation' ? 
+					buildFvSolution(variables, solver) : 
+						buildFvSolutionDefault(solver)
 	}
 
 	if( document.getElementById('forces-data').checked 
@@ -226,21 +239,21 @@ function buildControlDict(solver) {
 
 function buildFunctions() {
 	let functions = `
-	functions
-	{`;
+functions
+{`;
 
 	if( document.getElementById('forces-data').checked ) {
 		functions += `
-		#include "forces"`;
+	#include "forces"`;
 	}
 
 	if( document.getElementById('forcesCoeffs-data').checked ) {
 		functions += `
-		#include "forceCoeffs"`;
+	#include "forceCoeffs"`;
 	}
 
 	functions += `
-	}`;
+}`;
 
 	return functions
 }
@@ -292,7 +305,7 @@ function degToRadians(aoa) {
 }
 
 function buildLiftVector(direction, aoa) {
-	if( aoa != '' ) {
+	if( aoa != ''  && aoa != '0' ) {
 		const rads = degToRadians(aoa);
 
 		if( direction == 'Y' ) return `(-${Math.sin(rads)} ${Math.cos(rads)} 0)`;
@@ -305,7 +318,7 @@ function buildLiftVector(direction, aoa) {
 }
 
 function buildDragVector(aoa) {
-	if( aoa != '' ) {
+	if( aoa != ''  && aoa != '0' ) {
 		const liftDirection = document.getElementById(`lift-option`).value;
 		const rads = degToRadians(aoa);
 
@@ -328,6 +341,22 @@ function buildVectorValue(vector) {
 	const zValue = document.getElementById(`${vector}Z-data`).value;
 
 	return `(${xValue} ${yValue} ${zValue})`;
+}
+
+async function buildFvSchemesDefault() {
+	const schemes = await getSchemasData('default_sim');
+
+	const fvSchemes = {
+		ddtSchemes: schemes.ddtSchemes,
+		gradSchemes: schemes.gradSchemes,
+		divSchemes: schemes.divSchemes,		
+		laplacianSchemes: schemes.laplacianSchemes,
+		interpolationSchemes: schemes.interpolationSchemes,
+		snGradSchemes: schemes.snGradSchemes,
+		wallDist: schemes.wallDist
+	}
+
+	return fvSchemes;
 }
 
 function buildFvSchemes(variables) {
@@ -442,6 +471,34 @@ function buildWallDist() {
 {
 	default		${document.getElementById('default-wall-schema').value};
 }`;
+}
+
+async function buildFvSolutionDefault(solver) {
+	const solutions = await getSolutionData('default_sim');
+	
+	const solverParsed = solver.toUpperCase().replaceAll('FOAM', '');
+	const solverIndex = solverParsed.toLowerCase();
+	console.log('sol', solutions, solverIndex);
+
+	const solverBody = solutions[`${solverIndex}`];
+	// console.log('solverBody', solverBody);
+	
+	// solverBody = solverBody//.replaceAll('}','');
+// 	 `
+// 	residualControl		:residualControl
+// }`);
+
+	// console.log('solverBody', solverBody);
+
+	let fvSolution = {
+		relaxationFactors: solutions.relaxationFactors,
+		solvers: solutions.solvers,
+		mainSolver: solverParsed,
+		solverBody: solverBody,
+		residualControl: solutions.residualControl
+	}
+
+	return fvSolution;
 }
 
 function buildFvSolution(variables, solver) {

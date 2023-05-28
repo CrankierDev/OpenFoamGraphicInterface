@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
-const backEndApp = require('./app/backend/expressMain');
 const api = require('./app/backend/api');
 
 /**
@@ -21,6 +20,54 @@ function createWindow() {
     // Handling APIs
     ipcMain.handle('dialog:openDirectory', api.handleFileOpen);
     ipcMain.handle('versionNumber', api.getVersion);
+    ipcMain.handle('startDB', api.startDB);
+    ipcMain.handle('getTurbulenceModelsInfo', api.getTurbulenceModelsInfo);
+    ipcMain.handle('getAllSimulationsInfo', api.getAllSimulationsInfo);
+    ipcMain.handle('foldersData', (event, mesh) => {
+        return api.foldersData(mesh);
+    });
+    ipcMain.handle('getTurbulenceModelVariables', (event, model) => {
+        return api.getTurbulenceModelVariables(model)
+    });
+    ipcMain.handle('getSimulationData', (event, simulationID) => {
+        return api.getSimulationData(simulationID);
+    });
+    ipcMain.handle('getSimulationInfo', (event, simulationID) => {
+        return api.getSimulationInfo(simulationID);
+    });
+    ipcMain.handle('getConstantData', (event, simulationID) => {
+        return api.getConstantData(simulationID);
+    });
+    ipcMain.handle('getZeroData', (event, simulationID) => {
+        return api.getZeroData(simulationID);
+    });
+    ipcMain.handle('getControlDictData', (event, simulationID) => {
+        return api.getControlDictData(simulationID);
+    });
+    ipcMain.handle('getForcesData', (event, simulationID) => {
+        return api.getForcesData(simulationID);
+    });
+    ipcMain.handle('getSolutionData', (event, simulationID) => {
+        return api.getSolutionData(simulationID);
+    });
+    ipcMain.handle('getSchemasData', (event, simulationID) => {
+        return api.getSchemasData(simulationID);
+    });
+    ipcMain.handle('getSimulationBoundariesData', (event, simulationID) => {
+        return api.getSimulationBoundariesData(simulationID);
+    });
+    ipcMain.handle('getSimulationFiles', async (event, body) => {
+        let response = await api.getSimulationFiles(body);
+    
+        console.log('main', response);
+        return response
+    });
+    ipcMain.handle('deleteSimulation', (event, simulationID) => {
+        return api.deleteSimulation(simulationID);
+    });
+    ipcMain.handle('executeSimulation', (event, simulationID) => {
+        return api.executeSimulation(simulationID);
+    });
 
     mainWindow.loadFile('app/index.html');
     mainWindow.webContents.openDevTools();
@@ -42,8 +89,8 @@ function createWindow() {
  */
 app.whenReady().then( () => {
     // Start the express back end app
-    backEndApp.start();
     createWindow();
+    api.startDB();
     
     app.on('activate', () => {
         if( BrowserWindow.getAllWindows().length === 0){

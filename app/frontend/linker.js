@@ -1,204 +1,66 @@
-async function pathsData() {
-    const workspace = document.getElementById('workspace').value;
+/**
+ * Calls checkMesh api
+ */
+async function checkMeshFormat() {
     const mesh = document.getElementById('mesh').value;
-    const name = document.getElementById('simulation-name').value;
+    const response = true;
+    
+    if( response ) {
+        document.getElementById('checkMesh').style.backgroundColor = '#008500';
+        document.getElementById('checkMesh').innerText = '!Todo bien!';
+    } else { 
+        document.getElementById('checkMesh').style.backgroundColor = '#e31d1d';
+        document.getElementById('checkMesh').innerText = 'Revisa el mallado';
+    }
+}
 
-    return await fetch('http://localhost:9876/foldersData', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "workspace": "${workspace.replaceAll('\\','/')}",
-            "mesh": "${mesh.replaceAll('\\','/')}",
-            "name": "${name}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        console.log(data.data);
-        return data.data;
-    })
+async function pathsData() {
+    const mesh = document.getElementById('mesh').value.replaceAll('\\','/');
+    return await window.functionsAPI.foldersData(mesh);
 }
 
 async function getAllSimulationsInfo() {
-    return await fetch('http://localhost:9876/getAllSimulationsInfo', {
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getAllSimulationsInfo();
 }
 
 async function getConstantData(simulationID) {
-    return await fetch('http://localhost:9876/getConstantData', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "simulation_id": "${simulationID}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getConstantData(simulationID);
 }
 
 async function getZeroData(simulationID) {
-    return await fetch('http://localhost:9876/getZeroData', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "simulation_id": "${simulationID}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getZeroData(simulationID);
 }
 
 async function getControlDictData(simulationID) {
-    return await fetch('http://localhost:9876/getControlDictData', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "simulation_id": "${simulationID}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getControlDictData(simulationID);
 }
 
 async function getForcesData(simulationID) {
-    return await fetch('http://localhost:9876/getForcesData', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "simulation_id": "${simulationID}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getForcesData(simulationID);
 }
 
 async function getSolutionData(simulationID) {
-    return await fetch('http://localhost:9876/getSolutionData', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "simulation_id": "${simulationID}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getSolutionData(simulationID);
 }
 
 async function getSchemasData(simulationID) {
-    return await fetch('http://localhost:9876/getSchemasData', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "simulation_id": "${simulationID}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getSchemasData(simulationID);
 }
 
 async function getTurbulenceModelsInfo() {
-    return await fetch('http://localhost:9876/getTurbulenceModelsInfo', {
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getTurbulenceModelsInfo();
 }
 
 async function getTurbulenceModelVariables(model) {
-    return await fetch('http://localhost:9876/getTurbulenceModelVariables', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "model": "${model}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getTurbulenceModelVariables(model);
 }
 
 async function getSimulationInfo(simulationID) {
-    return await fetch('http://localhost:9876/getSimulationInfo', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "simulation_id": "${simulationID}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getSimulationInfo(simulationID);
 }
 
 async function getSimulationBoundariesData(simulationID) {
-    return await fetch('http://localhost:9876/getSimulationBoundariesData', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: `{
-            "simulation_id": "${simulationID}"
-        }`,
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getSimulationBoundariesData(simulationID);
 }
 
 async function getSimulationFiles(simInfo, data) {
@@ -207,18 +69,21 @@ async function getSimulationFiles(simInfo, data) {
         data: data
     };
     
-    return await fetch('http://localhost:9876/getSimulationFiles', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body),
-    })
-    .then( response => response.json() )
-    .then( data => {
-        return data.data;
-    });
+    return await window.functionsAPI.getSimulationFiles(JSON.stringify(body));
+    // return await response.json();
+}
+
+async function executeSimulation(simulationID) {
+    return await window.functionsAPI.executeSimulation(simulationID);
+}
+
+async function checkMesh(meshRoute) {
+    // return await window.functionsAPI.checkMesh(meshRoute);
+}
+
+async function deleteSimulation(simulationID) {
+    await window.functionsAPI.deleteSimulation(simulationID);
+    setLastSimulationsTable();
 }
 
 async function loadInfo(id){

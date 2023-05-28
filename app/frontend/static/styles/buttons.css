@@ -35,6 +35,22 @@
     color: var(--whitetext-pallete);
 }
 
+.folder-selected {
+    background-color: var(--orange-pallete);
+}
+
+#info-mesh, #info-workspace {
+    display: none;
+    text-align: right;
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 600;
+}
+
+/* #checkMesh {
+    position: absolute;
+} */
+
 button:disabled,
 button[disabled] {
     background-color: var(--grey-pallete);

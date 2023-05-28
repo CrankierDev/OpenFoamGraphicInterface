@@ -21,8 +21,8 @@ function showContent(id) {
 		for (let section of sections) {
 			let element = document.getElementById(section.id);
 			
-			if( section.id !== id ){
-				if( section.id !== 'start-section' ){
+			if( section.id !== id ) {
+				if( section.id !== 'start-section' ) {
 					element.innerHTML = '';
 				}
 				
@@ -39,6 +39,7 @@ function showContent(id) {
 	}, 300);
 }
 
-function showStart() {
+async function showStart() {
 	showContent('start-section');
+	setLastSimulationsTable();
 }

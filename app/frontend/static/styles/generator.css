@@ -1,12 +1,27 @@
 /*--------------------------------- GENERATOR STYLES ---------------------------------------------*/
 .generator-container {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    color: var(--blacktext-pallete);
     width: 80%;
     margin: 0 auto;
-    justify-content: center;
+    margin-bottom: 1em;
+    background-color: var(--whitetext-pallete);
+    border: solid;
+    border-radius: 20px;
+    border-width: 0;
+    padding-top: 0;
+    padding-bottom: 25px;
 }
 
+
 .generator, .executioner {
-    width: 100%;
+    display: inline-flex;
+    width: 80%;
     margin: 0 auto;
+    margin-bottom: 0;
+    justify-content: space-between;
+    align-items: center;
 }

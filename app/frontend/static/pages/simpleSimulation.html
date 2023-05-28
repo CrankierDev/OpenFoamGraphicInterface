@@ -23,17 +23,17 @@
                                         onclick="clickPage('basics', 'simple')">
                                     <p>Datos</p>
                                 </li>                
-                                <li id="zero-nav-simple" class="nav-option" 
+                                <li id="zero-nav-simple" class="nav-option nav-option-hidden" 
                                         onclick="clickPage('zero', 'simple')">
                                     <p>Física</p>
                                 </li>
-                                <li id="controlDict-nav-simple" class="nav-option"
+                                <li id="controlDict-nav-simple" class="nav-option nav-option-hidden"
                                         onclick="clickPage('controlDict', 'simple')">
                                     <p>Control</p>
                                 </li>
                             </ul>
                         </li>
-                        <li id="generator-nav-simple" class="nav-option"
+                        <li id="generator-nav-simple" class="nav-option nav-option-hidden"
                                 onclick="clickPage('generator', 'simple')">
                             <p>Generador</p>
                         </li>
@@ -50,9 +50,8 @@
         <article class="buttons-container">
             <button id="back-button" class="left-button buttons-style back-button" 
                 onclick="pagination(false, 'simple')">Atrás</button>
-            <!-- CLEAN disabled -->
             <button id="next-button" class="center-buttons buttons-style next-button"
-                onclick="pagination(true, 'simple')">Siguiente</button>
+                onclick="pagination(true, 'simple')" disabled>Siguiente</button>
         </article> 
     </main>
 </body>
