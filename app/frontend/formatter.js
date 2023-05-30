@@ -16,7 +16,7 @@ async function setLastSimulationsTable() {
     // Writes the table with the DB data from past simulations
     let table = document.getElementById('last-simulations-table');
 
-    if( table.innerHTML !== '' ) table.innerHTML = '';
+    if( table != null && table.innerHTML !== '' ) table.innerHTML = '';
 
     // Checks how many simulations there are
     if( info.length === 1 ){

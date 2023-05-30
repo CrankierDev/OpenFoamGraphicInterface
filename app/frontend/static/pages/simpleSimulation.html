@@ -5,6 +5,8 @@
             $('#basics-inputs-simple').load("./frontend/static/pages/components/starterSection.html");
             $('#zero-inputs-simple').load("./frontend/static/pages/components/zero.html");
             $('#controlDict-inputs-simple').load("./frontend/static/pages/components/controlDict.html");
+            $('#fvSchemes-inputs-simple').load("./frontend/static/pages/components/fvSchemes.html");
+            $('#fvSolution-inputs-simple').load("./frontend/static/pages/components/fvSolutions.html");
             $('#generator-inputs-simple').load("./frontend/static/pages/components/executioner.html");
         });
     </script>
@@ -14,7 +16,7 @@
         <article>
             <section class="sim-header">
                 <h1 class="sim-name">Configuración - Simulación simple</h1>
-                
+
                 <nav class="nav-section">
                     <ul class="nav-options-list">
                         <li>
@@ -22,7 +24,7 @@
                                 <li id="basics-nav-simple" class="nav-option active-nav" 
                                         onclick="clickPage('basics', 'simple')">
                                     <p>Datos</p>
-                                </li>                
+                                </li>
                                 <li id="zero-nav-simple" class="nav-option nav-option-hidden" 
                                         onclick="clickPage('zero', 'simple')">
                                     <p>Física</p>
@@ -31,27 +33,40 @@
                                         onclick="clickPage('controlDict', 'simple')">
                                     <p>Control</p>
                                 </li>
-                            </ul>
+                                <li id="fvSolution-nav-simple" class="nav-option nav-option-always-hidden"
+                                        onclick="clickPage('fvSolution', 'simple')">
+                                    <p>Simulación</p>
+                                </li>
+                                <li id="fvSchemes-nav-simple" class="nav-option nav-option-always-hidden"
+                                        onclick="clickPage('fvSchemes', 'simple')">
+                                    <p>Esquemas</p>
+                                </li>
+                            </ul>                        
                         </li>
                         <li id="generator-nav-simple" class="nav-option nav-option-hidden"
                                 onclick="clickPage('generator', 'simple')">
                             <p>Generador</p>
                         </li>
-                    </ul>              
+                    </ul>
                 </nav>
             </section>
-
+            
             <section id="basics-inputs-simple"></section>
             <section id="zero-inputs-simple"></section>
             <section id="controlDict-inputs-simple"></section>
-            <section id="generator-inputs-simple"></article>
+            <section id="fvSchemes-inputs-simple"></section>
+            <section id="fvSolution-inputs-simple"></section>
+            <section id="generator-inputs-simple"></section>
             
         </article>
+
         <article class="buttons-container">
-            <button id="back-button" class="left-button buttons-style back-button" 
-                onclick="pagination(false, 'simple')">Atrás</button>
+            <button id="back-button" class="left-button buttons-style back-button"
+                    onclick="pagination(false, 'simple')">Atrás</button>
             <button id="next-button" class="center-buttons buttons-style next-button"
-                onclick="pagination(true, 'simple')" disabled>Siguiente</button>
-        </article> 
+                    onclick="pagination(true, 'simple')" disabled >
+                Siguiente
+            </button>
+        </article>
     </main>
 </body>

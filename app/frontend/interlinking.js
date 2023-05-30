@@ -22,10 +22,12 @@ async function paginationAdvanced(direction) {
     if( activeId == 'basics-nav-advanced' ) {
         if(direction){
             changeSection('basics', 'zero', 'advanced');
-
-            let boundariesData = await pathsData();
-            fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
-            fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
+            
+            if( window.simulationType !== 'pastSimulation' ){
+                let boundariesData = await pathsData();
+                fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
+                fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
+            } 
             
             document.getElementById(`back-button`).style.display = "block";
             showPages();
@@ -83,6 +85,7 @@ async function paginationSimple(direction) {
 
             let boundariesData = await pathsData();
             fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
+            fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
             
             document.getElementById(`back-button`).style.display = "block";
             showPages();
@@ -215,5 +218,5 @@ async function generateFiles() {
 
 async function generateAndExecute() {
     const response = await generateSimulationInfo();
-    executeSimulation(response.simID);
+    executeSimulation(response);
 }

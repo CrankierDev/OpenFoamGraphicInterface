@@ -41,6 +41,10 @@
     visibility: hidden;
 }
 
+.nav-option-always-hidden {
+    visibility: hidden;
+}
+
 .nav-option:hover {
     padding-bottom: 0px;
     color: var(--blacktext-pallete);

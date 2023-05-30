@@ -43,7 +43,7 @@ async function generateSimulationInfo() {
     }
 
 	data['0'] = await buildZero(boundariesData, variables);
-	data.system = buildSystem(boundariesData, variables);
+	data.system = await buildSystem(boundariesData, variables);
 
 	let simInfo = {
 		simName: document.getElementById('simulation-name').value,
@@ -181,19 +181,13 @@ function buildConstant() {
 	return constant;
 }
 
-function buildSystem(boundariesData, variables) {
+async function buildSystem(boundariesData, variables) {
 	let solver = document.getElementById('solver').value;
-
-	console.log(window.simulationType);
 
 	let system = {
 		controlDict: buildControlDict(solver),
-		fvSchemes: window.simulationType !== 'simpleSimulation' ? 
-					buildFvSchemes(variables) : 
-						buildFvSchemesDefault(),
-		fvSolution: window.simulationType !== 'simpleSimulation' ? 
-					buildFvSolution(variables, solver) : 
-						buildFvSolutionDefault(solver)
+		fvSchemes: buildFvSchemes(variables),
+		fvSolution: buildFvSolution(variables, solver) 
 	}
 
 	if( document.getElementById('forces-data').checked 
@@ -343,22 +337,6 @@ function buildVectorValue(vector) {
 	return `(${xValue} ${yValue} ${zValue})`;
 }
 
-async function buildFvSchemesDefault() {
-	const schemes = await getSchemasData('default_sim');
-
-	const fvSchemes = {
-		ddtSchemes: schemes.ddtSchemes,
-		gradSchemes: schemes.gradSchemes,
-		divSchemes: schemes.divSchemes,		
-		laplacianSchemes: schemes.laplacianSchemes,
-		interpolationSchemes: schemes.interpolationSchemes,
-		snGradSchemes: schemes.snGradSchemes,
-		wallDist: schemes.wallDist
-	}
-
-	return fvSchemes;
-}
-
 function buildFvSchemes(variables) {
 	const fvSchemes = {
 		ddtSchemes: buildDdtSchemes(),
@@ -471,34 +449,6 @@ function buildWallDist() {
 {
 	default		${document.getElementById('default-wall-schema').value};
 }`;
-}
-
-async function buildFvSolutionDefault(solver) {
-	const solutions = await getSolutionData('default_sim');
-	
-	const solverParsed = solver.toUpperCase().replaceAll('FOAM', '');
-	const solverIndex = solverParsed.toLowerCase();
-	console.log('sol', solutions, solverIndex);
-
-	const solverBody = solutions[`${solverIndex}`];
-	// console.log('solverBody', solverBody);
-	
-	// solverBody = solverBody//.replaceAll('}','');
-// 	 `
-// 	residualControl		:residualControl
-// }`);
-
-	// console.log('solverBody', solverBody);
-
-	let fvSolution = {
-		relaxationFactors: solutions.relaxationFactors,
-		solvers: solutions.solvers,
-		mainSolver: solverParsed,
-		solverBody: solverBody,
-		residualControl: solutions.residualControl
-	}
-
-	return fvSolution;
 }
 
 function buildFvSolution(variables, solver) {

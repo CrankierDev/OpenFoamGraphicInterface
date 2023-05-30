@@ -14,14 +14,16 @@ async function createAllFiles(simInfo, data) {
 	const turbulenceModel = data.constant.momentumTransport.turbulenceModel;
 	global.turbulentVariables = internalFieldTurbulences( turbulenceModel, nu );
 
-	const winRoute = parseWindowsRoutes(simInfo.simFolderPath) + '\\' + simID
+	const winRoute = parseWindowsRoutes(simInfo.simFolderPath) + simID
 
+	console.log('win', winRoute);
 	const simData = {
 		name: simInfo.simName,
 		route: parseLinuxRoutes(winRoute),
 		solver: data.system.controlDict.application
 	}
 
+	console.log('1', simData);
 	const keys = Object.keys(data);
 
 	for( let key of keys ) { // 0, constant, system
@@ -50,6 +52,7 @@ async function createAllFiles(simInfo, data) {
 
 	execSync(`copy ${parseWindowsRoutes(simInfo.mesh)} ${polyMeshRoute}`);
 
+	console.log('2', simData);
 	db.saveSimulationInfo(simID, simData);
 
 	simInfo.boundariesData.forEach( (boundary) => {
@@ -77,7 +80,7 @@ function parseLinuxRoutes(winRoute){
 	let splittedWinRoute = winRoute.split(':');
 
 	if( splittedWinRoute.length > 1 ) {
-		return `/mnt/${splittedWinRoute[0].toLowerCase()}${splittedWinRoute[1].replaceAll('\\','/')}`;
+		return `/mnt/${splittedWinRoute[0].toLowerCase()}${splittedWinRoute[1].replaceAll('\\','/').replaceAll('//','/')}`;
 	} else {
 		return winRoute;
 	}
@@ -94,7 +97,13 @@ function parseWindowsRoutes(linuxRoute) {
 		let winRoute = `${splittedLinRoute[0].toUpperCase()}:\\\\`;
 	
 		for( let i = 1; i < splittedLinRoute.length; i++ ) {
-			winRoute += `${splittedLinRoute[i]}\\\\`;
+			console.log(splittedLinRoute[i]);
+
+			if( splittedLinRoute[i] !== '' ) {
+				winRoute += `${splittedLinRoute[i]}\\\\`;
+			}
+			
+			console.log(winRoute);
 		}
 		
 		return winRoute;
@@ -270,9 +279,7 @@ function saveData(simID, key, object) {
 
 function deleteFiles(linuxRoute) {
 	console.log('Deleting simulation files at', linuxRoute);
-
 	const winRoute = parseWindowsRoutes(linuxRoute);
-	console.log('Deleting simulation files at', winRoute);
 
 	fs.rm(winRoute, { recursive: true }, (err) => {
 		console.log(err);

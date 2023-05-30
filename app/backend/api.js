@@ -1,5 +1,6 @@
 const { app, dialog } = require('electron');
 const fs = require('fs');
+const { spawnSync } = require('node:child_process');
 
 const db = require("./database.js");
 const fw = require("./fileWriter.js");
