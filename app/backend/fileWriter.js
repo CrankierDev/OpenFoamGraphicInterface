@@ -16,14 +16,12 @@ async function createAllFiles(simInfo, data) {
 
 	const winRoute = parseWindowsRoutes(simInfo.simFolderPath) + simID
 
-	console.log('win', winRoute);
 	const simData = {
 		name: simInfo.simName,
 		route: parseLinuxRoutes(winRoute),
 		solver: data.system.controlDict.application
 	}
 
-	console.log('1', simData);
 	const keys = Object.keys(data);
 
 	for( let key of keys ) { // 0, constant, system
@@ -52,7 +50,6 @@ async function createAllFiles(simInfo, data) {
 
 	execSync(`copy ${parseWindowsRoutes(simInfo.mesh)} ${polyMeshRoute}`);
 
-	console.log('2', simData);
 	db.saveSimulationInfo(simID, simData);
 
 	simInfo.boundariesData.forEach( (boundary) => {
@@ -97,13 +94,9 @@ function parseWindowsRoutes(linuxRoute) {
 		let winRoute = `${splittedLinRoute[0].toUpperCase()}:\\\\`;
 	
 		for( let i = 1; i < splittedLinRoute.length; i++ ) {
-			console.log(splittedLinRoute[i]);
-
 			if( splittedLinRoute[i] !== '' ) {
 				winRoute += `${splittedLinRoute[i]}\\\\`;
 			}
-			
-			console.log(winRoute);
 		}
 		
 		return winRoute;
