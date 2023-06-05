@@ -101,7 +101,7 @@ function parseWindowsRoutes(linuxRoute) {
 		
 		return winRoute;
 	} else {
-		return linuxRoute;
+		return linuxRoute + '\\\\';
 	}
 }
 
@@ -113,9 +113,12 @@ function createFile (filePath, model, filename, data) {
 
 	dataKeys.forEach( (subKey) => {
 		if( subKey === 'internalField' ) {
-			if( filename === 'U' && data.aoa !== '0' ) {
-				data.internalField = internalFieldAOA(data.internalField, data.aoa, data.liftDirection);
-			
+			if( filename === 'U' ) {
+				if( data.aoa !== '0' ) {
+					data.internalField = internalFieldAOA(data.internalField, data.aoa, data.liftDirection);
+				} else {
+					data.internalField = `(${data.internalField} 0 0)`;
+				}
 			} else if( data.internalField === 'calculate' ) {
 				data.internalField = turbulentVariables[`${filename}`];
 			} 

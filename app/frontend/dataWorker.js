@@ -42,7 +42,7 @@ async function generateSimulationInfo() {
         }
     }
 
-	data['0'] = await buildZero(boundariesData, variables);
+	data['0'] = await buildZero(boundariesData, variables, turbulenceModel);
 	data.system = await buildSystem(boundariesData, variables);
 
 	let simInfo = {
@@ -57,15 +57,16 @@ async function generateSimulationInfo() {
 	return await getSimulationFiles(simInfo, data);
 }
 
-async function buildZero(boundariesData, variables) {
+async function buildZero(boundariesData, variables, turbulenceModel) {
 	let zero = {};
 
 	for( let variable of variables ) {
 		let newParameter = {
+			variable: variable.variable,
 			class: variable.class,
 			dimensions: variable.dimensions,
 			internalField: 'calculate',
-			boundaryField: buildBoundaryField(variable, boundariesData)
+			boundaryField: buildBoundaryField(variable, boundariesData, turbulenceModel)
 		}
 
 		newParameter.aoa = variable.variable === 'U' ? document.getElementById('flux-aoa').value : '0';
@@ -84,7 +85,7 @@ async function buildZero(boundariesData, variables) {
 	return zero;
 }
 
-function buildBoundaryField(variable, boundariesData) {
+function buildBoundaryField(variable, boundariesData, turbulenceModel) {
 	let boundaryField = `
 {`;
 
@@ -106,9 +107,14 @@ function buildBoundaryField(variable, boundariesData) {
 
 			if( variable.wallFunction == 1 &&
 					document.getElementById(`${boundary.name}-wall`).value == 1 ) {
+				let wallFunction;
+
+				if( turbulenceModel === 'SpalartAllmaras' ) wallFunction = 'nutUSpaldingWallFunction';
+				else if( turbulenceModel === 'kOmegaSST' ) wallFunction = 'omegaRWallFunction';
+				else if( turbulenceModel === 'kEpsilon' ) wallFunction = 'epsilonWallFunction';
 
 				boundaryField += `
-		type	wallFunction;
+		type	${wallFunction};
 		value	uniform 0;
 	}
 			`;
@@ -426,7 +432,7 @@ function divBuilder(div) {
 function buildLaplacianSchemes() {
 	return `
 {
-	default		${document.getElementById('default-laplacian').value};
+	default		Gauss linear ${document.getElementById('default-laplacian').value};
 }`;
 }
 
@@ -447,7 +453,7 @@ function buildSnGradSchemes() {
 function buildWallDist() {
 	return `
 {
-	default		${document.getElementById('default-wall-schema').value};
+	method		${document.getElementById('default-wall-schema').value};
 }`;
 }
 

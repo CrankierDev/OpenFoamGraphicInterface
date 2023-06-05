@@ -57,16 +57,13 @@ function createWindow() {
         return api.getSimulationBoundariesData(simulationID);
     });
     ipcMain.handle('getSimulationFiles', async (event, body) => {
-        let response = await api.getSimulationFiles(body);
-    
-        console.log('main', response);
-        return response
+        return await api.getSimulationFiles(body);
     });
     ipcMain.handle('deleteSimulation', (event, simulationID) => {
         return api.deleteSimulation(simulationID);
     });
-    ipcMain.handle('executeSimulation', (event, simulationID) => {
-        return api.executeSimulation(simulationID);
+    ipcMain.handle('executeSimulation', async (event, simulationID) => {
+        return await api.executeSimulation(simulationID);
     });
 
     mainWindow.loadFile('app/index.html');

@@ -161,6 +161,9 @@ async function executeSimulationChild(combinedCommand) {
     const err = child.stderr.toString();
     const output = child.stdout.toString();
 
+    console.log('output', output);
+    console.log('err', err);
+
     if(child.status !== 0) {
         return {
             'status': child.status,

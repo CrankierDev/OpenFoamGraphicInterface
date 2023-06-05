@@ -218,5 +218,40 @@ async function generateFiles() {
 
 async function generateAndExecute() {
     const response = await generateSimulationInfo();
-    executeSimulation(response);
+    let executionResponse = null;
+
+    console.log('mostramos spinner');
+    document.getElementById('spinner').style.display = 'flex';
+    document.getElementById('execution-info').style.display = 'none';
+    
+    setTimeout( async () => {
+        console.log('empieza simulacion');
+        executionResponse = await executeSimulation(response);
+        console.log('termina simulacion');
+    }, 1000);
+
+    const statusInterval = setInterval( () => {
+        console.log('execResp', executionResponse);
+        if( executionResponse != null ) {
+            console.log('ocultamos spinner');
+            document.getElementById('spinner').style.display = 'none';
+
+            if( executionResponse.status != null ) {
+                if( executionResponse.status === 200 ) {
+                    document.getElementById('execution-info').innerHTML = `
+                        <p>¡Simulacion ejecutada correctamente! Compruebe los resultados.</p>
+                    `;
+                } else if( executionResponse.status !== 200 ) {
+                    document.getElementById('execution-info').innerHTML = `
+                        <p>Ha habido problemas durante la simulación</p>
+                        <p>Traza de error: ${executionResponse.error}</p>
+                    `;
+                }
+
+                document.getElementById('execution-info').style.display = 'flex';
+            }
+
+            clearInterval(statusInterval);
+        }
+    }, 500);
 }
