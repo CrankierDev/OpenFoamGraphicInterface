@@ -10,9 +10,9 @@ const { execSync } = require('node:child_process');
 async function createAllFiles(simInfo, data) {
 	const simID = generateSimID(simInfo.simName);
 
-	const nu = Number(data.constant.physicalProperties.nu);
-	const turbulenceModel = data.constant.momentumTransport.turbulenceModel;
-	global.turbulentVariables = internalFieldTurbulences( turbulenceModel, nu );
+	// const nu = data.constant.physicalProperties.nu;
+	const velocity = Number(data['0'].U.internalField);
+	global.turbulentVariables = internalFieldTurbulences( velocity, 1 );
 
 	const winRoute = parseWindowsRoutes(simInfo.simFolderPath) + simID
 
@@ -152,19 +152,18 @@ function degToRadians(aoa) {
 /**
  * Builds internal field with
  */
-function internalFieldTurbulences(model, nu) {
+function internalFieldTurbulences(velocity, lengthRef) {
 	let variables = {};
+	const C_mu = 0.09;
 
-	if( model === 'SpalartAllmaras' ) {
-		variables.nuTilda = 5*nu;
-		const fv1 = Math.pow(5, 3) / ( Math.pow(5, 3) + Math.pow(7.1, 3) );
-		variables.nut = fv1 * 5 * nu;
+	variables.k = (1.5) * Math.pow(velocity*(1/100) , 2);
+	variables.omega = Math.pow(variables.k , 0.5) / (Math.pow(C_mu, 0.25) * lengthRef);
 
-	} else if( model === 'KOmegaSST' ) {
+	variables.nuTilda = variables.nut = variables.k / variables.omega;
 
-	} else if( model === 'KEpsilon' ) {
+	variables.epsilon = (C_mu * Math.pow(variables.k, 2)) / (variables.nut) ;
 
-	}
+	console.table(variables);
 
 	return variables;
 }

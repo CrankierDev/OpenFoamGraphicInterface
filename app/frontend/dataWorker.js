@@ -109,9 +109,21 @@ function buildBoundaryField(variable, boundariesData, turbulenceModel) {
 					document.getElementById(`${boundary.name}-wall`).value == 1 ) {
 				let wallFunction;
 
-				if( turbulenceModel === 'SpalartAllmaras' ) wallFunction = 'nutUSpaldingWallFunction';
-				else if( turbulenceModel === 'kOmegaSST' ) wallFunction = 'omegaRWallFunction';
-				else if( turbulenceModel === 'kEpsilon' ) wallFunction = 'epsilonWallFunction';
+				if( variable.variable === 'omega' ) {
+					wallFunction = 'omegaWallFunction';
+					
+				} else if( variable.variable === 'k' ) {
+					wallFunction = 'kqRWallFunction';
+
+				} else if( variable.variable === 'nut' ) {
+					if( turbulenceModel === 'SpalartAllmaras' ) {
+						wallFunction = 'nutUSpaldingWallFunction';
+					} else {
+						wallFunction = 'nutkWallFunction';
+					}
+				} else if( variable.variable === 'epsilon' ) {
+					wallFunction = 'epsilonWallFunction';
+				}
 
 				boundaryField += `
 		type	${wallFunction};
@@ -399,11 +411,12 @@ function buildDivSchemes(variables) {
 				!document.getElementById(`check-default-div-${variable.variable}`).checked ){
 					
 			divs += `
-	div(phi,${variable.variable})	${divBuilder(variable.variable)})`;
+	div(phi,${variable.variable})	${divBuilder(variable.variable)}`;
 		}
 	}
 
-	divs += `
+	divs += `	
+    div((nuEff*dev2(T(grad(U)))))    Gauss linear;
 }`;
 
 	return divs;
