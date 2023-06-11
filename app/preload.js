@@ -25,6 +25,7 @@ contextBridge.exposeInMainWorld('functionsAPI', {
     getSimulationFiles: (body) => ipcRenderer.invoke('getSimulationFiles', body ),
     deleteSimulation: (simulationID) => ipcRenderer.invoke('deleteSimulation', simulationID ),
     executeSimulation: (simulationID) => ipcRenderer.invoke('executeSimulation', simulationID ),
+    plotData: (simulationID) => ipcRenderer.invoke('plotSimulationData', simulationID ),
 });
 
 window.addEventListener('DOMContentLoaded', () => {

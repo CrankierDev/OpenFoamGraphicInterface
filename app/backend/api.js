@@ -5,6 +5,7 @@ const { spawnSync } = require('node:child_process');
 const db = require("./database.js");
 const fw = require("./fileWriter.js");
 const common = require("./commonFunctions.js");
+const resultsWorker = require("./resultsPlotter.js");
 
 /**
  * Returns path from folders instead of files
@@ -94,7 +95,13 @@ async function getSimulationInfo(simulationID) {
 
 async function getAllSimulationsInfo() {
     console.log('Getting old simulations data');
-    return await db.getAllSimulationsInfo();
+    let simulations = await db.getAllSimulationsInfo();
+    
+    simulations.map( (sim) => {
+        sim.simRoute = common.parseWindowsRoutes(sim.simRoute);
+    });
+
+    return simulations;
 }
 
 async function getConstantData(simulationID) {
@@ -148,11 +155,18 @@ async function executeSimulation(simulationID) {
     const simInfo = await db.getSimulationInfo(simulationID);
     const combinedCommand = `${simInfo.simRoute}/script.sh`;
     
-    return await executeSimulationChild(combinedCommand);
+    const executionResp = await executeSimulationChild(combinedCommand);
+
+    try {
+        plotAll(simInfo.simRoute);
+    } catch {
+        console.error('Simulation has failed');
+    }
+
+    return executionResp;
 }
 
 /* API INTERNAL FUNCTIONS */
-
 async function executeSimulationChild(combinedCommand) {
     let child = spawnSync('wsl', [combinedCommand], {
         shell: true
@@ -183,6 +197,48 @@ async function executeSimulationChild(combinedCommand) {
         "message": 'Success processing',
         "output": output
     };
+}
+
+async function plotData(simulationID) {
+    const simInfo = await db.getSimulationInfo(simulationID);
+    plotAll(simInfo.simRoute);
+}
+
+async function plotAll(simRoute) {
+    const winSimRoute = common.parseWindowsRoutes(simRoute);
+    const data = await resultsWorker.readLog(winSimRoute);
+
+    if( data.residuals == null ) return;
+
+    let residualData = [];
+    
+    for( let variableName in data.residuals ) {
+        if( data.residuals[`${variableName}`] !== [] ) {
+            
+            residualData.push({
+                name: variableName,
+                data: data.residuals[`${variableName}`]
+            });
+        }
+    };
+
+    resultsWorker.plotter(residualData, 'Residuales');
+
+    if( data.coeffs == null ) return;
+
+    let coeffsData = [];
+    
+    for( let variableName in data.coeffs ) {
+        if( data.coeffs[`${variableName}`] !== [] ) {
+            
+            coeffsData.push({
+                name: variableName,
+                data: data.coeffs[`${variableName}`]
+            });
+        }
+    };
+
+    resultsWorker.plotter(coeffsData, 'Coeficientes');
 }
 
 async function getZeroDataAPI(simulationID) {
@@ -330,5 +386,6 @@ module.exports = {
     getSimulationBoundariesData: getSimulationBoundariesData,
     getSimulationFiles: getSimulationFiles,
     deleteSimulation: deleteSimulation,
-    executeSimulation: executeSimulation
+    executeSimulation: executeSimulation,
+    plotData: plotData
 }

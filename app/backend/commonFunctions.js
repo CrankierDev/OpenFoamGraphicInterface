@@ -44,7 +44,44 @@ function buildMultipleJSON(solversData) {
     return solvers;
 }
 
+/**
+ * Generates a simulation route for Linux's terminal processes
+ */
+function parseLinuxRoutes(winRoute){
+	let splittedWinRoute = winRoute.split(':');
+
+	if( splittedWinRoute.length > 1 ) {
+		return `/mnt/${splittedWinRoute[0].toLowerCase()}${splittedWinRoute[1].replaceAll('\\','/').replaceAll('//','/')}`;
+	} else {
+		return winRoute;
+	}
+}
+
+/**
+ * Generates a simulation route for Windows's terminal processes
+*/
+function parseWindowsRoutes(linuxRoute) {
+	let linuxRouteCopy = linuxRoute.replaceAll('/mnt/', '');
+	splittedLinRoute = linuxRouteCopy.split('/');
+
+	if( splittedLinRoute.length > 1 ) {
+		let winRoute = `${splittedLinRoute[0].toUpperCase()}:\\\\`;
+	
+		for( let i = 1; i < splittedLinRoute.length; i++ ) {
+			if( splittedLinRoute[i] !== '' ) {
+				winRoute += `${splittedLinRoute[i]}\\\\`;
+			}
+		}
+		
+		return winRoute;
+	} else {
+		return linuxRoute + '\\\\';
+	}
+}
+
 module.exports = {
 	buildMultipleJSON: buildMultipleJSON,
-	buildJSON: buildJSON
+	buildJSON: buildJSON,
+    parseLinuxRoutes: parseLinuxRoutes,
+    parseWindowsRoutes: parseWindowsRoutes
 }

@@ -12,6 +12,10 @@ function loadContent(id) {
 	const htmlRoute = `./frontend/static/pages/${id}.html`;
 
 	$(`#${sectionID}`).load(htmlRoute);
+	
+	if( id ==='start' ) {
+		setTimeout( () => setLastSimulationsTable(), 500);
+	}
 }
 
 function showContent(id) {

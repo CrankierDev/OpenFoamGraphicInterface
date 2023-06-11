@@ -1,8 +1,10 @@
-const db = require("./database.js");
 const fs = require('fs');
 const path = require('path');
 const uuid = require('uuid');
 const { execSync } = require('node:child_process');
+
+const db = require("./database.js");
+const common = require("./commonFunctions.js");
 
 /**
  * Creates all files needed for the simulation
@@ -14,11 +16,11 @@ async function createAllFiles(simInfo, data) {
 	const velocity = Number(data['0'].U.internalField);
 	global.turbulentVariables = internalFieldTurbulences( velocity, 1 );
 
-	const winRoute = parseWindowsRoutes(simInfo.simFolderPath) + simID
+	const winRoute = common.parseWindowsRoutes(simInfo.simFolderPath) + simID
 
 	const simData = {
 		name: simInfo.simName,
-		route: parseLinuxRoutes(winRoute),
+		route: common.parseLinuxRoutes(winRoute),
 		solver: data.system.controlDict.application
 	}
 
@@ -48,7 +50,7 @@ async function createAllFiles(simInfo, data) {
 		fs.mkdirSync(polyMeshRoute, { recursive: true });
 	}
 
-	execSync(`copy ${parseWindowsRoutes(simInfo.mesh)} ${polyMeshRoute}`);
+	execSync(`copy ${common.parseWindowsRoutes(simInfo.mesh)} ${polyMeshRoute}`);
 
 	db.saveSimulationInfo(simID, simData);
 
@@ -68,41 +70,6 @@ function generateSimID(simName){
 								.replaceAll(' ', '');
 
 	return normalizedSimName.substr(0,10) + '-' + uuid.v1();
-}
-
-/**
- * Generates a simulation route for Linux's terminal processes
- */
-function parseLinuxRoutes(winRoute){
-	let splittedWinRoute = winRoute.split(':');
-
-	if( splittedWinRoute.length > 1 ) {
-		return `/mnt/${splittedWinRoute[0].toLowerCase()}${splittedWinRoute[1].replaceAll('\\','/').replaceAll('//','/')}`;
-	} else {
-		return winRoute;
-	}
-}
-
-/**
- * Generates a simulation route for Windows's terminal processes
-*/
-function parseWindowsRoutes(linuxRoute) {
-	let linuxRouteCopy = linuxRoute.replaceAll('/mnt/', '');
-	splittedLinRoute = linuxRouteCopy.split('/');
-
-	if( splittedLinRoute.length > 1 ) {
-		let winRoute = `${splittedLinRoute[0].toUpperCase()}:\\\\`;
-	
-		for( let i = 1; i < splittedLinRoute.length; i++ ) {
-			if( splittedLinRoute[i] !== '' ) {
-				winRoute += `${splittedLinRoute[i]}\\\\`;
-			}
-		}
-		
-		return winRoute;
-	} else {
-		return linuxRoute + '\\\\';
-	}
 }
 
 /**
@@ -274,7 +241,7 @@ function saveData(simID, key, object) {
 
 function deleteFiles(linuxRoute) {
 	console.log('Deleting simulation files at', linuxRoute);
-	const winRoute = parseWindowsRoutes(linuxRoute);
+	const winRoute = common.parseWindowsRoutes(linuxRoute);
 
 	fs.rm(winRoute, { recursive: true }, (err) => {
 		console.log(err);

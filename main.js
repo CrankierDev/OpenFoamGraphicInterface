@@ -65,6 +65,9 @@ function createWindow() {
     ipcMain.handle('executeSimulation', async (event, simulationID) => {
         return await api.executeSimulation(simulationID);
     });
+    ipcMain.handle('plotSimulationData', async (event, simulationID) => {
+        return await api.plotData(simulationID);
+    });
 
     mainWindow.loadFile('app/index.html');
     mainWindow.webContents.openDevTools();

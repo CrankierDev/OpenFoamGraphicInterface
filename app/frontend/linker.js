@@ -77,6 +77,10 @@ async function executeSimulation(simulationID) {
     return await window.functionsAPI.executeSimulation(simulationID);
 }
 
+async function plotData(simulationID) {
+    return window.functionsAPI.plotData(simulationID);
+}
+
 async function checkMesh(meshRoute) {
     // return await window.functionsAPI.checkMesh(meshRoute);
 }

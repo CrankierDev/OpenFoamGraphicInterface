@@ -19,7 +19,7 @@ async function setLastSimulationsTable() {
     if( table != null && table.innerHTML !== '' ) table.innerHTML = '';
 
     // Checks how many simulations there are
-    if( info.length === 1 ){
+    if( info.length === 0 || info.length === 1 ){
         document.getElementById('table-title').style.display = 'none';
         return ;
     }
@@ -30,6 +30,7 @@ async function setLastSimulationsTable() {
         <th>Nombre</th>
         <th>Fecha de creación</th>
         <th>Ruta de la simulación</th>
+        <th>Gráficos</th>
         <th>Eliminar</th>`;
 
     tblBody.appendChild(tblHeader);
@@ -45,10 +46,16 @@ async function setLastSimulationsTable() {
             </td>
             <td>${row.creationDate}</td>
             <td>${row.simRoute}</td>
+            <td onclick="plotData('${row.id}')"
+                    class="clickable-td">
+                <img src="./frontend/static/images/graph_icon.svg"
+                    class="icon graph-icon"
+                    title="Abrir gráficas de la simulación">
+            </td>
             <td onclick="deleteSimulation('${row.id}')"
                     class="clickable-td">
                 <img src="./frontend/static/images/trash_icon.svg"
-                    class="icon"
+                    class="icon trash-icon"
                     title="Eliminar simulación">
             </td>`;
         
@@ -638,14 +645,6 @@ function fillFormsForcesFields() {
             <div id="pitch-option-info" class="info-div info-div-border" style="display: none;"></div>
             <div id="pitch-vector" class="axis-data"></div>
             <div class="input-data">
-                <label for="lRef-data" class="long-label">Longitud de referencia</label>
-                <div>
-                    <input class="short-input" type="text" id="lRef-data" type="number"/>
-                    <span class="material-symbols-rounded" onclick="showInfo('lRef-data')">info</span>
-                </div>
-            </div>
-            <div id="lRef-data-info" class="info-div info-div-border" style="display: none;"></div>
-            <div class="input-data">
                 <label for="aRef-data" class="long-label">Área de referencia</label>
                 <div>
                     <input class="short-input" type="text" id="aRef-data" type="number"/>
@@ -655,17 +654,8 @@ function fillFormsForcesFields() {
             <div id="aRef-data-info" class="info-div info-div-border" style="display: none;"></div>
             `;
 
-            // <div class="input-data">
-            //     <label for="magUInf-data" class="long-label">Velocidad de flujo sin perturbar</label>
-            //     <div>
-            //         <input class="short-input" type="text" id="magUInf-data"/>
-            //         <span class="material-symbols-rounded" onclick="showInfo('magUInf-data')">info</span>
-            //     </div>
-            // </div>
-            // <div id="magUInf-data-info" class="info-div info-div-border" style="display: none;"></div>
-
     } else if (coeffs && extraInputs.innerHTML !== '') {
-        extraInputs.style.display = 'block';
+        extraInputs.style.display = 'flex';
 
     } else if (!coeffs) {
         extraInputs.style.display = 'none';
