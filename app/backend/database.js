@@ -9,7 +9,7 @@ const BOUNDARIES_VARIABLES_INSERT = `INSERT INTO boundaries_variables (name, var
                                         schemes, wallFunction, dimensions, class) VALUES (?,?,?,?,?,?,?)`;
 const SIMULATIONS_INFO_INSERT = `INSERT INTO simulations_info (id, creationDate, name, simRoute
                                     ) VALUES (?,?,?,?)`;
-const ZERO_DATA_INSERT = `INSERT INTO zero_data (id, variable, value, AOAValue, boundaries) VALUES (?,?,?,?,?)`;
+const ZERO_DATA_INSERT = `INSERT INTO zero_data (id, variable, value, AOAValue, lRef, boundaries) VALUES (?,?,?,?,?,?)`;
 const SIMULATION_BOUNDARIES_INSERT = `INSERT INTO simulation_boundaries (id, name, type) VALUES (?,?,?)`;
 const CONSTANT_DATA_INSERT = `INSERT INTO constant_data (id, viscosityModel, turbulenceModel,
                                 printCoeffs, rho, nu) VALUES (?,?,?,?,?,?)`;
@@ -331,14 +331,14 @@ echo "Process finished!"`]);
         }
     );
 
-    db.run(`CREATE TABLE zero_data (id text, variable text, value text, AOAValue text, boundaries text)`,
+    db.run(`CREATE TABLE zero_data (id text, variable text, value text, AOAValue text, lRef text, boundaries text)`,
         (err) => {
             if(err) {
                 console.log('Table zero_data already created.');
             } else {
                 console.log('Table zero_data just created.');
                 
-                db.run(ZERO_DATA_INSERT, ['default_sim', 'p', '0', '0', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'p', '0', null, '1', `{
                     inlet
                     {
                         type            freestreamPressure;
@@ -361,7 +361,7 @@ echo "Process finished!"`]);
                         type            empty;
                     }
                 }`]);
-                db.run(ZERO_DATA_INSERT, ['default_sim', 'U', '26', '0', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'U', '26', '0', '1', `{
                     inlet
                     {
                         type            freestreamVelocity;
@@ -384,7 +384,7 @@ echo "Process finished!"`]);
                         type            empty;
                     }
                 }`]);
-                db.run(ZERO_DATA_INSERT, ['default_sim', 'nuTilda', '0.14', '0', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'nuTilda', '0.14', null, '1', `{
                     inlet
                     {
                         type            freestream;
@@ -408,7 +408,7 @@ echo "Process finished!"`]);
                         type            empty;
                     }
                 }`]);
-                db.run(ZERO_DATA_INSERT, ['default_sim', 'nut', '0.14', '0', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'nut', '0.14', null, '1', `{
                     inlet
                     {
                         type            freestream;
@@ -495,9 +495,12 @@ echo "Process finished!"`]);
     default         Gauss linear;
 }`, `
 {
-    default         none;
-    div(phi,U)      bounded Gauss linearUpwind grad(U);
+    default             none;
+    div(phi,U)          bounded Gauss linearUpwind grad(U);
     div(phi,nuTilda)    bounded Gauss linearUpwind grad(nuTilda);
+    div(phi,k)          bounded Gauss linearUpwind grad(k);
+    div(phi,omega)      bounded Gauss linearUpwind grad(omega);
+    div(phi,epsilon)    bounded Gauss linearUpwind grad(epsilon);
     div((nuEff*dev2(T(grad(U)))))    Gauss linear;
 }`, `
 {
@@ -600,16 +603,24 @@ echo "Process finished!"`]);
     p               1e-5;
     U               1e-5;
     nuTilda         1e-5;
+    nut             1e-5;
+    k               1e-5;
+    omega           1e-5;
+    epsilon         1e-5;
 }`, `
 {
     fields
     {
-        p               0.3;
+        p           0.3;
     }
     equations
     {
-        U               0.7;
-        nuTilda         0.7;
+        U           0.7;
+        nuTilda     0.7;
+        nut         0.7;
+        k           0.7;
+        epsilon     0.7;
+        omega       0.7;
     }
 }`
                 ]);
@@ -641,7 +652,7 @@ async function getTurbulenceModelsInfo() {
     return new Promise( (resolve, reject) => {
         db.all(`SELECT * FROM turbulence_models`, (err, rows) => {
             if (err) {
-                console.log(err.message);
+                console.log('Error', err.message);
             }
             
             if(rows.length){
@@ -656,7 +667,7 @@ async function getTurbulenceModelsInfo() {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -669,7 +680,7 @@ async function getTurbulenceModelVariables(model) {
                 model,
             (err, variables) => {
                 if(err) {
-                    console.log(err.message);
+                    console.log('Error', err.message);
                 } 
                 
                 let variablesList = variables.variables.split(',');
@@ -679,7 +690,7 @@ async function getTurbulenceModelVariables(model) {
                 
                 db.all(query, variablesList, (err, rows) => {
                         if (err) {
-                            console.log(err.message);
+                            console.log('Error', err.message);
                         }
                         
                         if(rows.length){
@@ -697,7 +708,7 @@ async function getTurbulenceModelVariables(model) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -724,7 +735,7 @@ async function getSolutionData(simulationID) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -751,7 +762,7 @@ async function getSchemesData(simulationID) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -778,7 +789,7 @@ async function getSimulationInfo(simulationID) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -808,7 +819,7 @@ async function getZeroData(simulationID) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -835,7 +846,7 @@ async function getControlDictData(simulationID) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -862,7 +873,7 @@ async function getConstantData(simulationID) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -889,7 +900,7 @@ async function getForcesData(simulationID) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -916,7 +927,7 @@ async function getSimulationBoundariesData(simulationID) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -943,7 +954,7 @@ async function getAllSimulationsInfo() {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -951,7 +962,7 @@ async function getModelFile(folder, filename) {
     let db = open();
 
     return new Promise( (resolve, reject) => {
-        db.get(`SELECT DISTINCT model FROM output_models WHERE folder = (?) and filename = (?)`, [folder, filename],
+        db.get(`SELECT DISTINCT model FROM output_models WHERE folder = (?) and filename like (?)`, [folder, filename],
             (err, rows) => {
                 if (err) {
                     console.log('err', err.message);
@@ -970,7 +981,7 @@ async function getModelFile(folder, filename) {
 
     }).catch( (err) => {
         close(db);
-        console.log(err);
+        console.log('Error', err);
     });
 }
 
@@ -979,11 +990,11 @@ async function saveZeroData(simID, data) {
 
     try {
         db.run( ZERO_DATA_INSERT, [simID, data.variable, data.value,
-                                data.AOAValue, data.boundaries
+                                    data.AOAValue, data.lRef, data.boundaries
                             ]);  
         
     } catch (err) {
-        console.log(err);
+        console.log('Error', err);
     };
     
     close(db);
@@ -998,7 +1009,7 @@ async function saveConstantData(simID, data) {
                             ]);
                             
     } catch (err) {
-        console.log(err);
+        console.log('Error', err);
     };
     
     close(db);
@@ -1014,7 +1025,7 @@ async function saveControlDictData(simID, data) {
                             ]);
                             
     } catch (err) {
-        console.log(err);
+        console.log('Error', err);
     };
 
     close(db);
@@ -1030,7 +1041,7 @@ async function saveForcesData(simID, data) {
                             ]);
                             
     } catch (err) {
-        console.log(err);
+        console.log('Error', err);
     };
     
     close(db);
@@ -1046,7 +1057,7 @@ async function saveSchemesData(simID, data) {
                             ]);
                             
     } catch (err) {
-        console.log(err);
+        console.log('Error', err);
     };
     
     close(db);
@@ -1085,7 +1096,7 @@ async function saveSimulationInfo(simID, data) {
         db.run( SIMULATIONS_INFO_INSERT, [simID, currentDate, data.name, data.route]);
                             
     } catch (err) {
-        console.log(err);
+        console.log('Error', err);
     };
     
     close(db);
@@ -1109,7 +1120,7 @@ async function saveSolutionsData(simID, data) {
                                 ]);
                             
     } catch (err) {
-        console.log(err);
+        console.log('Error', err);
     };
     
     close(db);
@@ -1122,7 +1133,7 @@ async function saveSimulationBoundariesData(simID, data) {
         db.run(SIMULATION_BOUNDARIES_INSERT, [simID, data.name, data.type]);
                             
     } catch (err) {
-        console.log(err);
+        console.log('Error', err);
     };
     
     close(db);
@@ -1142,7 +1153,7 @@ function deleteSimulation(simulationID) {
         db.run( 'delete from zero_data where id = (?)', [simulationID]);
                             
     } catch (err) {
-        console.log(err);
+        console.log('Error', err);
     };
     
     close(db);

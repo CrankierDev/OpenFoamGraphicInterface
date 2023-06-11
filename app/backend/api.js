@@ -70,12 +70,12 @@ async function getTurbulenceModelsInfo() {
 }
 
 async function getTurbulenceModelVariables(model) {
-    console.log('Getting turbulence model variables info for: ', model);
+    console.log('Getting turbulence model variables info for:', model);
     return await db.getTurbulenceModelVariables(model);
 }
 
 async function getSimulationData(simulationID) {
-    console.log('Getting simulation data for simulation: ', simulationID);
+    console.log('Getting simulation data for simulation:', simulationID);
 
     let response = await db.getSimulationInfo(simulationID);
     response.boundaries = await getSimulationBoundariesDataAPI(simulationID);
@@ -89,7 +89,7 @@ async function getSimulationData(simulationID) {
 }
 
 async function getSimulationInfo(simulationID) {
-    console.log('Getting simulation info for simulation: ', simulationID);
+    console.log('Getting simulation info for simulation:', simulationID);
     return await db.getSimulationInfo(simulationID);
 }
 
@@ -105,37 +105,37 @@ async function getAllSimulationsInfo() {
 }
 
 async function getConstantData(simulationID) {
-    console.log('Getting constant data for simulation: ', simulationID);
+    console.log('Getting constant data for simulation:', simulationID);
     return await getConstantDataAPI(simulationID);
 }
 
 async function getZeroData(simulationID) {
-    console.log('Getting constant data for simulation: ', simulationID);
+    console.log('Getting constant data for simulation:', simulationID);
     return await getZeroDataAPI(simulationID);
 }
 
 async function getControlDictData(simulationID) {
-    console.log('Getting constant data for simulation: ', simulationID);
+    console.log('Getting constant data for simulation:', simulationID);
     return await getControlDictDataAPI(simulationID);
 }
 
 async function getForcesData(simulationID) {
-    console.log('Getting forces data for simulation: ', simulationID);
+    console.log('Getting forces data for simulation:', simulationID);
     return await getForcesDataAPI(simulationID);
 }
 
 async function getSolutionData(simulationID) {
-    console.log('Getting solution data for simulation: ', simulationID);
+    console.log('Getting solution data for simulation:', simulationID);
     return await getSolutionDataAPI(simulationID);
 }
 
 async function getSchemasData(simulationID) {
-    console.log('Getting schemes data for simulation: ', simulationID);
+    console.log('Getting schemes data for simulation:', simulationID);
     return await getSchemesDataAPI(simulationID);
 }
 
 async function getSimulationBoundariesData(simulationID) {
-    console.log('Getting schemes data for simulation: ', simulationID);
+    console.log('Getting schemes data for simulation:', simulationID);
     return await getSimulationBoundariesDataAPI(simulationID);
 }
 
@@ -181,20 +181,20 @@ async function executeSimulationChild(combinedCommand) {
     if(child.status !== 0) {
         return {
             'status': child.status,
-            "message": 'Process has failed during execution',
+            "message":'Process has failed during execution',
             "error": err
         }
     } else if( err != null && err != '' ) {
         return {
             'status': 501,
-            "message": 'Process has failed during execution',
+            "message":'Process has failed during execution',
             "error": err
         }
     }
 
     return {
         'status': 200,
-        "message": 'Success processing',
+        "message":'Success processing',
         "output": output
     };
 }
@@ -224,7 +224,9 @@ async function plotAll(simRoute) {
 
     resultsWorker.plotter(residualData, 'Residuales');
 
-    if( data.coeffs == null ) return;
+    if( data.coeffs.cl.length === 0 &&
+        data.coeffs.cd.length === 0 &&
+        data.coeffs.cm.length === 0 ) return;
 
     let coeffsData = [];
     
@@ -251,6 +253,7 @@ async function getZeroDataAPI(simulationID) {
                 variable: row.variable,
                 value: row.value,
                 AOAValue: row.AOAValue,
+                lRef: row.lRef,
                 boundaries: common.buildMultipleJSON( row.boundaries.replaceAll('\n', '').split('{') )
             }
 
@@ -275,19 +278,26 @@ async function getSimulationBoundariesDataAPI(simulationID) {
 
 async function getControlDictDataAPI(simulationID) {
     let response = await db.getControlDictData(simulationID);
-    delete response.id;
+    if( response != null ) {
+        delete response.id;
+    }
     return response;
 }
 
 async function getConstantDataAPI(simulationID) {
     let response = await db.getConstantData(simulationID);
-    delete response.id;
+    if( response != null ) {
+        delete response.id;
+    }
     return response;
 }
 
 async function getForcesDataAPI(simulationID) {
     let response = await db.getForcesData(simulationID);
-    delete response.id;
+    if( response != null ) {
+        delete response.id;
+    }
+
     return response;
 }
 

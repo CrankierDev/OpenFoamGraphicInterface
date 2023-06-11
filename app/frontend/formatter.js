@@ -45,7 +45,7 @@ async function setLastSimulationsTable() {
                 ${row.name}
             </td>
             <td>${row.creationDate}</td>
-            <td>${row.simRoute}</td>
+            <td>${row.simRoute.replaceAll('\\\\','\\')}</td>
             <td onclick="plotData('${row.id}')"
                     class="clickable-td">
                 <img src="./frontend/static/images/graph_icon.svg"
@@ -78,9 +78,11 @@ async function setFluxDefaultData(simulation) {
 
     for( let data of zeroData ) {
         document.getElementById(`flux-${data.variable}`).value = data.value;
-        if(data.variable === 'U') document.getElementById('flux-aoa').value = data.AOAValue;
+        if(data.variable === 'U') {
+            document.getElementById('flux-aoa').value = data.AOAValue;
+            document.getElementById('lRef-data').value = data.lRef;
+        }
     }
-
 
     let constantData = await getConstantData(simulation);
 
@@ -112,7 +114,7 @@ async function setControlDictDefaultData(simulation) {
     let forcesData = await getForcesData(simulation);
 
     // If there is data we fill the form
-    if( forcesData !== null && forcesData !== [] ){
+    if( forcesData != null && forcesData.length !== 0 ){
         document.getElementById('forces-data').checked = true;
         document.getElementById('forcesCoeffs-data').checked 
             = forcesData.forceCoeffs === 1 ? true : false;
@@ -123,7 +125,6 @@ async function setControlDictDefaultData(simulation) {
             setCofR(forcesData.cofR);
             
             if(forcesData.forceCoeffs === 1){
-                document.getElementById('lRef-data').value = forcesData.lRef;
                 document.getElementById('aRef-data').value = forcesData.aRef;
                     
                 setVectorDirection(forcesData.liftDir, 'lift');
@@ -508,14 +509,18 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                             
                             newText += `</section>
                                     </section>`;
+
                     boundaryConditions.innerHTML += newText;
                 }
             }
         }
 
-        // FIX-ME: view boundaries and work with it
-        document.getElementById('p-data-walls-type').value = 'zeroGradient';
-        document.getElementById('U-data-walls-type').value = 'noSlip';
+        for (boundary of boundariesData) {
+            if( boundary.type === 'wall' ) {
+                document.getElementById(`p-data-${boundary.name}-type`).value = 'zeroGradient';
+                document.getElementById(`U-data-${boundary.name}-type`).value = 'noSlip';
+            }
+        }
     }
 }
 
@@ -653,6 +658,8 @@ function fillFormsForcesFields() {
             </div>
             <div id="aRef-data-info" class="info-div info-div-border" style="display: none;"></div>
             `;
+            
+        extraInputs.style.display = 'flex';
 
     } else if (coeffs && extraInputs.innerHTML !== '') {
         extraInputs.style.display = 'flex';
@@ -872,7 +879,8 @@ function setResidualControlSection(variables, residualData) {
 function setRelaxationSection(variables, relaxationData) {
     for ( let variableData of variables ) {
         const variable = variableData.variable;
-
+        if( variable === 'nut' ) continue;
+        
         document.getElementById(`${variable}-relaxation`).value =
                 formatInput(relaxationData[`${variable}`]);
     }
@@ -1180,12 +1188,14 @@ function fillFormsRelaxationSection(relaxationInputs, variables) {
             `;
     
     for ( let variable of variables ) {
-        newHTML += `
+        if( variable.variable !== 'nut' ) {
+            newHTML += `
             <div class="input-data">
                 <label for="${variable.variable}-relaxation">${capitalize(variable.name)}</label>
                 <input class="long-input" id="${variable.variable}-relaxation" type="number"/>
             </div>
-            `;    
+            `;
+        }    
     }
 
     newHTML += '</div>';

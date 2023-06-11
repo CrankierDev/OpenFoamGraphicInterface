@@ -59,6 +59,7 @@ async function generateSimulationInfo() {
 
 async function buildZero(boundariesData, variables, turbulenceModel) {
 	let zero = {};
+	let lRef = document.getElementById('lRef-data').value;
 
 	for( let variable of variables ) {
 		let newParameter = {
@@ -66,10 +67,11 @@ async function buildZero(boundariesData, variables, turbulenceModel) {
 			class: variable.class,
 			dimensions: variable.dimensions,
 			internalField: 'calculate',
+			lRef: lRef,
 			boundaryField: buildBoundaryField(variable, boundariesData, turbulenceModel)
 		}
 
-		newParameter.aoa = variable.variable === 'U' ? document.getElementById('flux-aoa').value : '0';
+		newParameter.aoa = variable.variable === 'U' ? document.getElementById('flux-aoa').value : null;
 		
 		if(variable.variable === 'U') {
 			newParameter.liftDirection = document.getElementById(`lift-option`).value;
@@ -201,9 +203,12 @@ function buildConstant() {
 
 async function buildSystem(boundariesData, variables) {
 	let solver = document.getElementById('solver').value;
+	let walls = boundariesData.filter( (boundary) => {
+		if( boundary.type === 'wall' ) return boundary;
+	});
 
 	let system = {
-		controlDict: buildControlDict(solver),
+		controlDict: buildControlDict(solver, walls.length),
 		fvSchemes: buildFvSchemes(variables),
 		fvSolution: buildFvSolution(variables, solver) 
 	}
@@ -212,18 +217,12 @@ async function buildSystem(boundariesData, variables) {
 			|| document.getElementById('forcesCoeffs-data').checked) {
 		
 		const genForcesCoeffs =	document.getElementById('forcesCoeffs-data').checked;
-			
-		let walls = boundariesData.filter( (boundary) => {
-			if( boundary.type === 'wall' ) return boundary;
-		});
 
 		if( walls.length > 1) {
-			let i = 0;
-			for( let wall of walls ) {
-				system[`forces${i}`] = buildForces(wall.name);
-				if(genForcesCoeffs) system[`forceCoeffs${i}`] = buildForceCoeffs(system.forces);
+			for( let i = 0; i < walls.length; i++ ) {
+				system[`forces${i}`] = buildForces(walls[i].name);
+				if(genForcesCoeffs) system[`forceCoeffs${i}`] = buildForceCoeffs(system[`forces${i}`]);
 			}
-
 		} else {
 			system.forces = buildForces(walls[0].name);
 			if(genForcesCoeffs) system.forceCoeffs = buildForceCoeffs(system.forces);
@@ -233,7 +232,7 @@ async function buildSystem(boundariesData, variables) {
 	return system;
 }
 
-function buildControlDict(solver) {
+function buildControlDict(solver, wallsLength) {
 	const controlDict = {
 		application: solver,
 		startFrom: document.getElementById('simulation-begin').value,
@@ -243,25 +242,39 @@ function buildControlDict(solver) {
 		deltaT: document.getElementById('simulation-deltat').value,
 		runTimeModifiable: document.getElementById('deltat-adjust').checked ? 'true' : 'false',
 		adjustTimeStep: document.getElementById('run-time-modifiable').checked ? 'yes' : 'no',
-		functions: buildFunctions()
+		functions: buildFunctions(wallsLength)
 	}
 
 	return controlDict;
 }
 
-function buildFunctions() {
+function buildFunctions(wallsLength) {
 	let functions = `
 functions
 {`;
 
 	if( document.getElementById('forces-data').checked ) {
+		if( wallsLength > 1) {
+			for( let i = 0; i < wallsLength; i++ ) {
+		functions += `
+	#include "forces${i}"`;
+			}
+		} else {
 		functions += `
 	#include "forces"`;
+		}
 	}
 
 	if( document.getElementById('forcesCoeffs-data').checked ) {
+		if( wallsLength > 1) {
+			for( let i = 0; i < wallsLength; i++ ) {
+		functions += `
+	#include "forceCoeffs${i}"`;
+			}
+		} else {
 		functions += `
 	#include "forceCoeffs"`;
+		}
 	}
 
 	functions += `
@@ -411,12 +424,12 @@ function buildDivSchemes(variables) {
 				!document.getElementById(`check-default-div-${variable.variable}`).checked ){
 					
 			divs += `
-	div(phi,${variable.variable})	${divBuilder(variable.variable)}`;
+	div(phi,${variable.variable})	${divBuilder(variable.variable)};`;
 		}
 	}
-
+	
+    // div((nuEff*dev2(T(grad(U)))))    Gauss linear;
 	divs += `	
-    div((nuEff*dev2(T(grad(U)))))    Gauss linear;
 }`;
 
 	return divs;
@@ -494,7 +507,7 @@ function buildRelaxation(variables) {
 	{`;
 
 	for( let variable of variables ) {
-		if( variable.variable !== 'p' && 
+		if( variable.variable !== 'p' && variable.variable !== 'nut' &&
 				document.getElementById(`${variable.variable}-relaxation`).value != 0 ) {
 			relaxation += `
 		${variable.variable}		${document.getElementById(`${variable.variable}-relaxation`).value};`;

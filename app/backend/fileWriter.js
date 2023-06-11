@@ -14,7 +14,8 @@ async function createAllFiles(simInfo, data) {
 
 	// const nu = data.constant.physicalProperties.nu;
 	const velocity = Number(data['0'].U.internalField);
-	global.turbulentVariables = internalFieldTurbulences( velocity, 1 );
+	const lRef = Number(data['0'].U.lRef);
+	global.turbulentVariables = internalFieldTurbulences( velocity, lRef );
 
 	const winRoute = common.parseWindowsRoutes(simInfo.simFolderPath) + simID
 
@@ -36,7 +37,7 @@ async function createAllFiles(simInfo, data) {
 		saveData(simID, key, object);
 
 		for( let filename of objectKeys ) {
-			let text = await db.getModelFile(key, key == '0' ? 'all' : filename);
+			let text = await db.getModelFile(key, key == '0' ? 'all' : filename.substring(0,6)+'%');
 			createFile (filePath, text, filename, object[`${filename}`]); 
 		}
 	}
@@ -90,7 +91,7 @@ function createFile (filePath, model, filename, data) {
 				data.internalField = turbulentVariables[`${filename}`];
 			} 
 		}	
-		
+
 		model = model.replaceAll(`:${subKey}`, data[`${subKey}`]);
 	});
 
@@ -166,6 +167,7 @@ function saveData(simID, key, object) {
 				variable: filename,
 				value: object[`${filename}`].internalField,
 				AOAValue: object[`${filename}`].aoa,
+				lRef: object[`${filename}`].lRef,
 				boundaries: object[`${filename}`].boundaryField
 			}
 
@@ -244,7 +246,7 @@ function deleteFiles(linuxRoute) {
 	const winRoute = common.parseWindowsRoutes(linuxRoute);
 
 	fs.rm(winRoute, { recursive: true }, (err) => {
-		console.log(err);
+		console.log('Error', err);
 	});
 }
 

@@ -207,33 +207,34 @@ async function loadSimulationData(simulationID) {
         document.getElementById('solver').value = controlDictData.application;
         document.getElementById('turbulence-model').value = constantData.turbulenceModel;
 
-        fillFormsBasicFields(boundariesData, constantData.turbulenceModel, simulationID);
+        fillFormsBasicFieldsSim(boundariesData, constantData.turbulenceModel, simulationID);
         fillFormsSolverVariables(controlDictData.application, simulationID);
     }, 100 );
 }
 
 async function generateFiles() {
-    generateSimulationInfo();
+    window.generatedSimID = await generateSimulationInfo();
 }
 
 async function generateAndExecute() {
-    const response = await generateSimulationInfo();
+    let simID;
     let executionResponse = null;
+    
+    if( window.generatedSimID != null ) {
+        simID = window.generatedSimID;
+    } else {
+        simID = await generateSimulationInfo();
+    }
 
-    console.log('mostramos spinner');
     document.getElementById('spinner').style.display = 'flex';
     document.getElementById('execution-info').style.display = 'none';
     
     setTimeout( async () => {
-        console.log('empieza simulacion');
-        executionResponse = await executeSimulation(response);
-        console.log('termina simulacion');
+        executionResponse = await executeSimulation(simID);
     }, 1000);
 
     const statusInterval = setInterval( () => {
-        console.log('execResp', executionResponse);
         if( executionResponse != null ) {
-            console.log('ocultamos spinner');
             document.getElementById('spinner').style.display = 'none';
 
             if( executionResponse.status != null ) {
@@ -253,5 +254,5 @@ async function generateAndExecute() {
 
             clearInterval(statusInterval);
         }
-    }, 500);
+    }, 2000);
 }
