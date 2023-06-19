@@ -15,7 +15,8 @@ async function createAllFiles(simInfo, data) {
 	// const nu = data.constant.physicalProperties.nu;
 	const velocity = Number(data['0'].U.internalField);
 	const lRef = Number(data['0'].U.lRef);
-	global.turbulentVariables = internalFieldTurbulences( velocity, lRef );
+	const intensity = Number(data['0'].U.intensity);
+	global.turbulentVariables = internalFieldTurbulences( velocity, lRef, intensity);
 
 	const winRoute = common.parseWindowsRoutes(simInfo.simFolderPath) + simID
 
@@ -120,11 +121,12 @@ function degToRadians(aoa) {
 /**
  * Builds internal field with
  */
-function internalFieldTurbulences(velocity, lengthRef) {
+function internalFieldTurbulences(velocity, lengthRef, intensity_percent) {
 	let variables = {};
 	const C_mu = 0.09;
+	const INTENSITY = Number(intensity_percent)/100; 
 
-	variables.k = (1.5) * Math.pow(velocity*(1/100) , 2);
+	variables.k = (1.5) * Math.pow(velocity * INTENSITY , 2);
 	variables.omega = Math.pow(variables.k , 0.5) / (Math.pow(C_mu, 0.25) * lengthRef);
 
 	variables.nuTilda = variables.nut = variables.k / variables.omega;
@@ -168,6 +170,7 @@ function saveData(simID, key, object) {
 				value: object[`${filename}`].internalField,
 				AOAValue: object[`${filename}`].aoa,
 				lRef: object[`${filename}`].lRef,
+				intensity: object[`${filename}`].intensity,
 				boundaries: object[`${filename}`].boundaryField
 			}
 
@@ -250,7 +253,33 @@ function deleteFiles(linuxRoute) {
 	});
 }
 
+async function temporalMeshFolder(meshRoute) {
+	const script = await db.getModelFile('temp', 'script');
+	const temporalFolder = '.\\temp';
+	
+	// const simData = {
+	// 	name: simInfo.simName,
+	// 	route: common.parseLinuxRoutes(winRoute),
+	// 	solver: data.system.controlDict.application
+	// }
+
+	const data = {
+
+	}
+	
+	createFile (temporalFolder, script, 'checkMesh.sh', data); 
+
+	let temporalPolymesh = `${temporalFolder}\\constant\\polyMesh`;
+
+	if (!fs.existsSync(temporalPolymesh)){
+		fs.mkdirSync(temporalPolymesh, { recursive: true });
+	}
+
+	execSync(`copy ${common.parseWindowsRoutes(meshRoute)} ${temporalPolymesh}`);
+}
+
 module.exports = {
 	createAllFiles: createAllFiles,
-	deleteFiles: deleteFiles
+	deleteFiles: deleteFiles,
+	temporalMeshFolder: temporalMeshFolder
 }

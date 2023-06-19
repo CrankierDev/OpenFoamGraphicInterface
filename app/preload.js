@@ -25,6 +25,7 @@ contextBridge.exposeInMainWorld('functionsAPI', {
     getSimulationFiles: (body) => ipcRenderer.invoke('getSimulationFiles', body ),
     deleteSimulation: (simulationID) => ipcRenderer.invoke('deleteSimulation', simulationID ),
     executeSimulation: (simulationID) => ipcRenderer.invoke('executeSimulation', simulationID ),
+    checkMesh: (meshRoute) => ipcRenderer.invoke('checkMesh', meshRoute ),
     plotData: (simulationID) => ipcRenderer.invoke('plotSimulationData', simulationID ),
 });
 

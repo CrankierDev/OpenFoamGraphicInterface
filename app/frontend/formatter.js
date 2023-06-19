@@ -81,6 +81,7 @@ async function setFluxDefaultData(simulation) {
         if(data.variable === 'U') {
             document.getElementById('flux-aoa').value = data.AOAValue;
             document.getElementById('lRef-data').value = data.lRef;
+            document.getElementById('intensity-data').value = data.intensity;
         }
     }
 
@@ -459,7 +460,9 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                             }
 
                             newText += `
+                                        <option value='zeroGradient'>Gradiente nulo</option>
                                         <option value='fixedValue'>Valor fijo</option>
+                                        <option value='calculated'>Calculado</option>
                                         <option value='empty'>Vacío</option>
                                     </select>
                                 </div>`;
@@ -905,12 +908,11 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                     <div class="input-data">
                         <label for="${variable.variable}-solver-schema">Solver</label>
                         <select id="${variable.variable}-solver-schema">
-                            <option value="GaussSeidel">Gauss-Seidel</option>
                             <option value="smoothSolver">smoothSolver</option>
-                            <option value="DILU">DILU</option>
-                            <option value="PCG">PCG</option>
-                            <option value="PBiCG">PBiCG</option>
                             <option value="PBiCGStab">PBiCGStab</option>
+                            <option value="PCG">PCG</option>
+                            <option value="GAMG">GAMG</option>
+                            <option value="DIC">DIC</option>
                         </select>
                     </div>
                     
@@ -919,15 +921,17 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                         <select id="${variable.variable}-preconditioner-schema">
                             <option value="default">Sin precondicionador</option>
                             <option value="symGaussSeidel">Gauss-Seidel</option>
-                            <option value="DILU">DILU</option>
+                            <option value="DIC">DIC</option>
+                            <option value="GAMG">GAMG</option>
                         </select>
                     </div>
                     
                     <div class="input-data">
                         <label for="${variable.variable}-smoother-data">Smoother</label>
                         <select id="${variable.variable}-smoother-data">
-                            <option value="GaussSeidel">Gauss-Seidel</option>
-                            <option value="DILU">DILU</option>
+                            <option value="symGaussSeidel">Gauss-Seidel</option>
+                            <option value="DIC">DIC</option>
+                            <option value="DICGaussSeidel">DICGaussSeidel</option>
                         </select>
                     </div>
                     
@@ -952,9 +956,9 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                         <label for="${variable.variable}-solver-schema">Solver</label>
                         <select id="${variable.variable}-solver-schema"> 
                             <option value="GAMG">GAMG</option>
-                            <option value="DIC">DIC</option>
-                            <option value="PCG">PCG</option>
                             <option value="PBiCGStab">PBiCGStab</option>
+                            <option value="PBiCG">PBiCG</option>
+                            <option value="DILU">DILU</option>
                         </select>
                     </div>
                     
@@ -964,7 +968,7 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                             <option value="default">Sin precondicionador</option>
                             <option value="GaussSeidel">Gauss-Seidel</option>
                             <option value="GAMG">GAMG</option>
-                            <option value="DIC">DIC</option>
+                            <option value="DILU">DILU</option>
                         </select>
                     </div>
                     
@@ -973,7 +977,7 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                         <select id="${variable.variable}-smoother-data">
                             <option value="GaussSeidel">Gauss-Seidel</option>
                             <option value="GAMG">GAMG</option>
-                            <option value="DIC">DIC</option>
+                            <option value="DILU">DILU</option>
                             <option value="DICGaussSeidel">DICGaussSeidel</option>
                         </select>
                     </div>

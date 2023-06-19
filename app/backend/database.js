@@ -9,7 +9,7 @@ const BOUNDARIES_VARIABLES_INSERT = `INSERT INTO boundaries_variables (name, var
                                         schemes, wallFunction, dimensions, class) VALUES (?,?,?,?,?,?,?)`;
 const SIMULATIONS_INFO_INSERT = `INSERT INTO simulations_info (id, creationDate, name, simRoute
                                     ) VALUES (?,?,?,?)`;
-const ZERO_DATA_INSERT = `INSERT INTO zero_data (id, variable, value, AOAValue, lRef, boundaries) VALUES (?,?,?,?,?,?)`;
+const ZERO_DATA_INSERT = `INSERT INTO zero_data (id, variable, value, AOAValue, lRef, intensity, boundaries) VALUES (?,?,?,?,?,?,?)`;
 const SIMULATION_BOUNDARIES_INSERT = `INSERT INTO simulation_boundaries (id, name, type) VALUES (?,?,?)`;
 const CONSTANT_DATA_INSERT = `INSERT INTO constant_data (id, viscosityModel, turbulenceModel,
                                 printCoeffs, rho, nu) VALUES (?,?,?,?,?,?)`;
@@ -131,6 +131,8 @@ RAS
     turbulence      :turbulence;
 
     printCoeffs     :printCoeffs;
+    
+    viscosityModel  :viscosityModel;
 }
 `]);
 
@@ -331,14 +333,15 @@ echo "Process finished!"`]);
         }
     );
 
-    db.run(`CREATE TABLE zero_data (id text, variable text, value text, AOAValue text, lRef text, boundaries text)`,
+    db.run(`CREATE TABLE zero_data (id text, variable text, value text, 
+                AOAValue text, lRef text, intensity text, boundaries text)`,
         (err) => {
             if(err) {
                 console.log('Table zero_data already created.');
             } else {
                 console.log('Table zero_data just created.');
                 
-                db.run(ZERO_DATA_INSERT, ['default_sim', 'p', '0', null, '1', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'p', '0', null, '1', '1', `{
                     inlet
                     {
                         type            freestreamPressure;
@@ -361,7 +364,7 @@ echo "Process finished!"`]);
                         type            empty;
                     }
                 }`]);
-                db.run(ZERO_DATA_INSERT, ['default_sim', 'U', '26', '0', '1', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'U', '26', '0', '1', '1', `{
                     inlet
                     {
                         type            freestreamVelocity;
@@ -384,7 +387,7 @@ echo "Process finished!"`]);
                         type            empty;
                     }
                 }`]);
-                db.run(ZERO_DATA_INSERT, ['default_sim', 'nuTilda', '0.14', null, '1', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'nuTilda', '0.14', null, '1', '1', `{
                     inlet
                     {
                         type            freestream;
@@ -408,7 +411,7 @@ echo "Process finished!"`]);
                         type            empty;
                     }
                 }`]);
-                db.run(ZERO_DATA_INSERT, ['default_sim', 'nut', '0.14', null, '1', `{
+                db.run(ZERO_DATA_INSERT, ['default_sim', 'nut', '0.14', null, '1', '1', `{
                     inlet
                     {
                         type            freestream;
@@ -541,7 +544,7 @@ echo "Process finished!"`]);
     U
     {
         solver          smoothSolver;
-        smoother        GaussSeidel;
+        smoother        symGaussSeidel;
         nSweeps         2;
         tolerance       1e-08;
         relTol          0.1;
@@ -550,7 +553,7 @@ echo "Process finished!"`]);
     nuTilda
     {
         solver          smoothSolver;
-        smoother        GaussSeidel;
+        smoother        symGaussSeidel;
         nSweeps         2;
         tolerance       1e-08;
         relTol          0.1;
@@ -559,7 +562,7 @@ echo "Process finished!"`]);
     k
     {
         solver          smoothSolver;
-        smoother        GaussSeidel;
+        smoother        symGaussSeidel;
         nSweeps         2;
         tolerance       1e-08;
         relTol          0.1;
@@ -568,7 +571,7 @@ echo "Process finished!"`]);
     epsilon
     {
         solver          smoothSolver;
-        smoother        GaussSeidel;
+        smoother        symGaussSeidel;
         nSweeps         2;
         tolerance       1e-08;
         relTol          0.1;
@@ -577,7 +580,7 @@ echo "Process finished!"`]);
     omega
     {
         solver          smoothSolver;
-        smoother        GaussSeidel;
+        smoother        symGaussSeidel;
         nSweeps         2;
         tolerance       1e-08;
         relTol          0.1;

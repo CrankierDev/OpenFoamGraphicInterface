@@ -14,19 +14,20 @@ aside {
     align-items: flex-end;
     width: 20%;
     max-width: 20%;
+    max-height: 100vh;
 }
 
-aside>a {
+aside>.logo-ESI {
     width: 90%;
     margin: 20px auto;
 }
 
-aside>a>img {
+aside>.logo-ESI>img {
     width: 90%;
     object-fit: scale-down;
 }
 
-aside>article {
+aside>.aside-navigator {
     width: 100%;
 }
 

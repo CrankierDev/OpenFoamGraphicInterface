@@ -65,6 +65,9 @@ function createWindow() {
     ipcMain.handle('executeSimulation', async (event, simulationID) => {
         return await api.executeSimulation(simulationID);
     });
+    ipcMain.handle('checkMesh', async (event, meshRoute) => {
+        return await api.checkMesh(meshRoute);
+    });
     ipcMain.handle('plotSimulationData', async (event, simulationID) => {
         return await api.plotData(simulationID);
     });
