@@ -166,6 +166,14 @@ async function executeSimulation(simulationID) {
     return executionResp;
 }
 
+async function checkMesh(meshRoute) {
+    const combinedCommand = `${simInfo.simRoute}/script.sh`;
+    
+    const executionResp = await checkMeshChild(combinedCommand);
+
+    return executionResp;
+}
+
 /* API INTERNAL FUNCTIONS */
 async function executeSimulationChild(combinedCommand) {
     let child = spawnSync('wsl', [combinedCommand], {
@@ -254,6 +262,7 @@ async function getZeroDataAPI(simulationID) {
                 value: row.value,
                 AOAValue: row.AOAValue,
                 lRef: row.lRef,
+                intensity: row.intensity,
                 boundaries: common.buildMultipleJSON( row.boundaries.replaceAll('\n', '').split('{') )
             }
 
@@ -397,5 +406,6 @@ module.exports = {
     getSimulationFiles: getSimulationFiles,
     deleteSimulation: deleteSimulation,
     executeSimulation: executeSimulation,
+    checkMesh: checkMesh,
     plotData: plotData
 }

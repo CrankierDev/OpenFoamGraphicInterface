@@ -240,7 +240,7 @@ async function generateAndExecute() {
             if( executionResponse.status != null ) {
                 if( executionResponse.status === 200 ) {
                     document.getElementById('execution-info').innerHTML = `
-                        <p>¡Simulacion ejecutada correctamente! Compruebe los resultados.</p>
+                        <p>¡Simulacion ejecutada! Compruebe los resultados.</p>
                     `;
                 } else if( executionResponse.status !== 200 ) {
                     document.getElementById('execution-info').innerHTML = `

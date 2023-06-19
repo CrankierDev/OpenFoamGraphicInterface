@@ -59,7 +59,8 @@ async function generateSimulationInfo() {
 
 async function buildZero(boundariesData, variables, turbulenceModel) {
 	let zero = {};
-	let lRef = document.getElementById('lRef-data').value;
+	const lRef = document.getElementById('lRef-data').value;
+	const intensity = document.getElementById('intensity-data').value;
 
 	for( let variable of variables ) {
 		let newParameter = {
@@ -68,13 +69,15 @@ async function buildZero(boundariesData, variables, turbulenceModel) {
 			dimensions: variable.dimensions,
 			internalField: 'calculate',
 			lRef: lRef,
+			intensity: intensity,
 			boundaryField: buildBoundaryField(variable, boundariesData, turbulenceModel)
 		}
 
 		newParameter.aoa = variable.variable === 'U' ? document.getElementById('flux-aoa').value : null;
 		
 		if(variable.variable === 'U') {
-			newParameter.liftDirection = document.getElementById(`lift-option`).value;
+			newParameter.liftDirection = document.getElementById(`lift-option`) ?
+					document.getElementById(`lift-option`).value : 'Y';
 		}
 
 		if( variable.variable === 'p' || variable.variable === 'U' ) {
@@ -129,7 +132,7 @@ function buildBoundaryField(variable, boundariesData, turbulenceModel) {
 
 				boundaryField += `
 		type	${wallFunction};
-		value	uniform 0;
+		value	$internalField;
 	}
 			`;
 
@@ -165,9 +168,13 @@ function buildBoundaryField(variable, boundariesData, turbulenceModel) {
 	}
 			`;
 
-			} else {
+			} else if( patchType !== 'zeroGradient' ) {
 				boundaryField += `
 		value				$internalField;
+			}
+			`;
+			} else if( patchType === 'zeroGradient' ) {
+				boundaryField += `
 			}
 			`;
 			}
@@ -182,8 +189,6 @@ function buildBoundaryField(variable, boundariesData, turbulenceModel) {
 
 function buildConstant() {
 	const turbulenceModel = document.getElementById('turbulence-model').value;
-	const forces = document.getElementById("forces-data").checked;
-    const coeffs = document.getElementById("forcesCoeffs-data").checked;
 
 	const constant = {
 		physicalProperties: {
@@ -192,9 +197,10 @@ function buildConstant() {
 			nu: document.getElementById('flux-viscosity').value
 		}, 
 		momentumTransport: {
-			turbulenceModel: turbulenceModel == 'default' ? 'none' : turbulenceModel,
-			turbulence:  turbulenceModel == 'default' ? 'off' : 'on',
-			printCoeffs: forces || coeffs ? 'on' : 'off'
+			turbulenceModel: turbulenceModel === 'default' ? 'none' : turbulenceModel,
+			turbulence:  turbulenceModel === 'default' ? 'off' : 'on',
+			printCoeffs: 'on',
+			viscosityModel: "Newtonian"
 		}
 	}
 
@@ -214,7 +220,7 @@ async function buildSystem(boundariesData, variables) {
 	}
 
 	if( document.getElementById('forces-data').checked 
-			|| document.getElementById('forcesCoeffs-data').checked) {
+			|| document.getElementById('forcesCoeffs-data').checked ) {
 		
 		const genForcesCoeffs =	document.getElementById('forcesCoeffs-data').checked;
 
@@ -249,11 +255,16 @@ function buildControlDict(solver, wallsLength) {
 }
 
 function buildFunctions(wallsLength) {
+	const forces = document.getElementById("forces-data").checked;
+    const coeffs = document.getElementById("forcesCoeffs-data").checked;
+
+	if( !forces && !coeffs ) return '';
+
 	let functions = `
 functions
 {`;
 
-	if( document.getElementById('forces-data').checked ) {
+	if( forces ) {
 		if( wallsLength > 1) {
 			for( let i = 0; i < wallsLength; i++ ) {
 		functions += `
@@ -265,7 +276,7 @@ functions
 		}
 	}
 
-	if( document.getElementById('forcesCoeffs-data').checked ) {
+	if( coeffs ) {
 		if( wallsLength > 1) {
 			for( let i = 0; i < wallsLength; i++ ) {
 		functions += `
@@ -497,18 +508,23 @@ function buildFvSolution(variables, solver) {
 
 function buildRelaxation(variables) {
 	let relaxation = `
-{
+{`;
+
+	if( document.getElementById('p-relaxation').value !== 0 ) {
+		relaxation += `
 	fields
 	{
 		p		${document.getElementById('p-relaxation').value};
+	}`;
 	}
 	
+	relaxation += `
 	equations
 	{`;
 
 	for( let variable of variables ) {
 		if( variable.variable !== 'p' && variable.variable !== 'nut' &&
-				document.getElementById(`${variable.variable}-relaxation`).value != 0 ) {
+				document.getElementById(`${variable.variable}-relaxation`).value !== 0 ) {
 			relaxation += `
 		${variable.variable}		${document.getElementById(`${variable.variable}-relaxation`).value};`;
 		}
@@ -545,7 +561,8 @@ function buildSolverVariable(variable) {
 		smoother	${document.getElementById(`${variable.variable}-smoother-data`).value};
 		`;
 
-	if( variable.type === 'symmetric' ){
+	if( variable.type === 'symmetric' &&
+			document.getElementById(`${variable.variable}-sweeps-data`).value !== 0 ){
 		solver += `nSweeps		${document.getElementById(`${variable.variable}-sweeps-data`).value};`
 	}
 
@@ -554,8 +571,7 @@ function buildSolverVariable(variable) {
 	}
 	
 	solver += `
-	}
-	`;
+	}`;
 
 	return solver;
 }
