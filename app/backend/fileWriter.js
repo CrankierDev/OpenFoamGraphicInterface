@@ -254,27 +254,46 @@ function deleteFiles(linuxRoute) {
 }
 
 async function temporalMeshFolder(meshRoute) {
-	const script = await db.getModelFile('temp', 'script');
+	// Setting default data for checkMesh and temporal folder where try on
 	const temporalFolder = '.\\temp';
 	
-	// const simData = {
-	// 	name: simInfo.simName,
-	// 	route: common.parseLinuxRoutes(winRoute),
-	// 	solver: data.system.controlDict.application
-	// }
-
-	const data = {
-
+	const meshData = {
+		route: './temp',
+		solver: 'checkMesh'
 	}
 	
-	createFile (temporalFolder, script, 'checkMesh.sh', data); 
-
-	let temporalPolymesh = `${temporalFolder}\\constant\\polyMesh`;
-
-	if (!fs.existsSync(temporalPolymesh)){
+	const controlData = {
+		application: 'simpleFoam',
+		startFrom: 'startTime',
+		startTime: '0',
+		stopAt: 'endTime',
+		endTime: '100',
+		deltaT: '1',
+		runTimeModifiable: 'true',
+		functions: ' '
+	}
+	
+	// Checking if folders already exists and creating them
+	const temporalSystem = `${temporalFolder}\\system`;
+	
+	if (!fs.existsSync(temporalSystem)) {
+		fs.mkdirSync(temporalSystem, { recursive: true });
+	}
+	
+	const temporalPolymesh = `${temporalFolder}\\constant\\polyMesh`;
+	
+	if (!fs.existsSync(temporalPolymesh)) {
 		fs.mkdirSync(temporalPolymesh, { recursive: true });
 	}
-
+	
+	// Getting models from db replacing data and writing files
+	const controlDict = await db.getModelFile('system', 'contro%');
+	const scriptCheckMesh = await db.getModelFile('home', 'script%');
+	
+	createFile (temporalSystem, controlDict, 'controlDict', controlData);
+	createFile (temporalFolder, scriptCheckMesh, 'checkMesh.sh', meshData);
+	
+	// Temporal copy of polyMesh folder
 	execSync(`copy ${common.parseWindowsRoutes(meshRoute)} ${temporalPolymesh}`);
 }
 

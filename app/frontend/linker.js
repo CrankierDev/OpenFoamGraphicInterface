@@ -3,7 +3,9 @@
  */
 async function checkMeshFormat() {
     const mesh = document.getElementById('mesh').value;
-    const response = true;
+    const response = await window.functionsAPI.checkMesh(mesh);
+
+    console.log('response', response);
     
     if( response ) {
         document.getElementById('checkMesh').style.backgroundColor = '#008500';

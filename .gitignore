@@ -4,5 +4,6 @@
 /release-builds
 /out
 /Output
+/temp
 ficheros/
 db.sqlite

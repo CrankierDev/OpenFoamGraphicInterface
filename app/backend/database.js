@@ -305,25 +305,25 @@ echo "Process finished!"`]);
                 let currentDate = new Date();
 
                 let day = currentDate.getDate();
-                day = day > 10 ? 
+                day = day >= 10 ? 
                         day : "0" + String(day);
                         
                 let month = currentDate.getMonth() + 1;
-                month = month > 10 ? 
+                month = month >= 10 ? 
                         month : "0" + String(month);
         
                 let year = currentDate.getFullYear();
 
                 let hour = currentDate.getHours();
-                hour = hour > 10 ? 
+                hour = hour >= 10 ? 
                         hour : "0" + String(hour);
 
                 let minutes = currentDate.getMinutes();
-                minutes = minutes > 10 ? 
+                minutes = minutes >= 10 ? 
                         minutes : "0" + String(minutes);
 
                 let seconds = currentDate.getSeconds();
-                seconds = seconds > 10 ? 
+                seconds = seconds >= 10 ? 
                         seconds : "0" + String(seconds);
                         
                 currentDate = `${day}/${month}/${year} ${hour}:${minutes}:${seconds}`;
@@ -993,7 +993,8 @@ async function saveZeroData(simID, data) {
 
     try {
         db.run( ZERO_DATA_INSERT, [simID, data.variable, data.value,
-                                    data.AOAValue, data.lRef, data.boundaries
+                                    data.AOAValue, data.lRef, data.intensity, 
+                                    data.boundaries
                             ]);  
         
     } catch (err) {
@@ -1073,25 +1074,25 @@ async function saveSimulationInfo(simID, data) {
         let currentDate = new Date();
 
         let day = currentDate.getDate();
-        day = day > 10 ? 
+        day = day >= 10 ? 
                 day : "0" + String(day);
 
         let month = currentDate.getMonth() + 1;
-        month = month > 10 ? 
+        month = month >= 10 ? 
                 month : "0" + String(month);
 
         let year = currentDate.getFullYear();
 
         let hour = currentDate.getHours();
-        hour = hour > 10 ? 
+        hour = hour >= 10 ? 
                 hour : "0" + String(hour);
 
         let minutes = currentDate.getMinutes();
-        minutes = minutes > 10 ? 
+        minutes = minutes >= 10 ? 
                 minutes : "0" + String(minutes);
 
         let seconds = currentDate.getSeconds();
-        seconds = seconds > 10 ? 
+        seconds = seconds >= 10 ? 
                 seconds : "0" + String(seconds);
                 
         currentDate = `${day}/${month}/${year} ${hour}:${minutes}:${seconds}`;

@@ -5,6 +5,7 @@ const { spawnSync } = require('node:child_process');
 const db = require("./database.js");
 const fw = require("./fileWriter.js");
 const common = require("./commonFunctions.js");
+const logReader = require("./logReader.js");
 const resultsWorker = require("./resultsPlotter.js");
 
 /**
@@ -167,11 +168,20 @@ async function executeSimulation(simulationID) {
 }
 
 async function checkMesh(meshRoute) {
-    const combinedCommand = `${simInfo.simRoute}/script.sh`;
-    
-    const executionResp = await checkMeshChild(combinedCommand);
+    await fw.temporalMeshFolder(meshRoute);
 
-    return executionResp;
+    const combinedCommand = 'temp/checkMesh.sh';
+    const executionResp = await executeSimulationChild(combinedCommand);
+    console.log('executionMesh', executionResp);
+    
+    const meshOK = await logReader.readCheckMesh('.\\temp');
+    console.log('meshOK', meshOK);
+
+    if(meshOK) {
+        //fw.deleteFiles('.\\temp');
+    }
+
+    return meshOK;
 }
 
 /* API INTERNAL FUNCTIONS */
@@ -214,7 +224,7 @@ async function plotData(simulationID) {
 
 async function plotAll(simRoute) {
     const winSimRoute = common.parseWindowsRoutes(simRoute);
-    const data = await resultsWorker.readLog(winSimRoute);
+    const data = await logReader.readCoeffs(winSimRoute);
 
     if( data.residuals == null ) return;
 

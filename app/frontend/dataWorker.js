@@ -510,7 +510,7 @@ function buildRelaxation(variables) {
 	let relaxation = `
 {`;
 
-	if( document.getElementById('p-relaxation').value !== 0 ) {
+	if( Number(document.getElementById('p-relaxation').value) !== 0 ) {
 		relaxation += `
 	fields
 	{
@@ -524,7 +524,7 @@ function buildRelaxation(variables) {
 
 	for( let variable of variables ) {
 		if( variable.variable !== 'p' && variable.variable !== 'nut' &&
-				document.getElementById(`${variable.variable}-relaxation`).value !== 0 ) {
+				Number(document.getElementById(`${variable.variable}-relaxation`).value) !== 0 ) {
 			relaxation += `
 		${variable.variable}		${document.getElementById(`${variable.variable}-relaxation`).value};`;
 		}
@@ -559,19 +559,20 @@ function buildSolverVariable(variable) {
 		tolerance	${document.getElementById(`${variable.variable}-tolerance-data`).value};
 		relTol		${document.getElementById(`${variable.variable}-relTol-data`).value};
 		smoother	${document.getElementById(`${variable.variable}-smoother-data`).value};
-		`;
+	`;
 
 	if( variable.type === 'symmetric' &&
-			document.getElementById(`${variable.variable}-sweeps-data`).value !== 0 ){
-		solver += `nSweeps		${document.getElementById(`${variable.variable}-sweeps-data`).value};`
+			Number(document.getElementById(`${variable.variable}-sweeps-data`).value) !== 0 ){
+		solver += `nSweeps		${document.getElementById(`${variable.variable}-sweeps-data`).value};
+	`;
 	}
 
 	if( document.getElementById(`${variable.variable}-preconditioner-schema`).value !== 'default' ){
-		solver += `preconditioner		${document.getElementById(`${variable.variable}-preconditioner-schema`).value};`
+		solver += `preconditioner		${document.getElementById(`${variable.variable}-preconditioner-schema`).value};
+	`;
 	}
 	
-	solver += `
-	}`;
+	solver += `}`;
 
 	return solver;
 }
