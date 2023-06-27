@@ -1,6 +1,9 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
-const api = require('./app/backend/api');
+const fs = require('fs');
+
+const api = require('./app/backend/api.js');
+const logger = require('./app/backend/logger.js');
 
 /**
  * Creates the sandbox for the main windows of the app
@@ -16,6 +19,10 @@ function createWindow() {
             enableRemoteModule: true,
         }
     });
+    
+    if (!fs.existsSync('logs')) {
+        fs.mkdirSync('.\\logs\\checkMeshLogs', { recursive: true });
+    }
 
     // Handling APIs
     ipcMain.handle('dialog:openDirectory', api.handleFileOpen);
@@ -106,6 +113,13 @@ app.whenReady().then( () => {
  * Ensure the app closes completely when we close the windows
  */
 app.on('window-all-closed', () => {
+    if(fs.existsSync('.\\temp')) {
+        fs.rmSync('.\\temp', { recursive: true });
+        logger.info('La carpeta temporal ha sido eliminada');
+    } else {
+        logger.info('La carpeta temporal no existe');
+    }
+
     // In a macOS (darwin) is prefereable not to completely quit the app
     if( process.platform !== 'darwin') {
         app.quit();

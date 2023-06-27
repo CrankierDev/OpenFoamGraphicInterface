@@ -1,6 +1,8 @@
 const lineReader = require('line-reader');
 const { plot } = require('nodeplotlib');
 
+const logger = require('./logger.js');
+
 function plotter(yAxisData, title) {
 	let data = [];
 
@@ -18,7 +20,7 @@ function plotter(yAxisData, title) {
 	let layout = {
 		title: title
 	}
-	  
+
 	plot(data, layout);
 }
 

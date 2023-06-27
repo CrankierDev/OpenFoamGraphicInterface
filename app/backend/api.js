@@ -1,12 +1,14 @@
 const { app, dialog } = require('electron');
 const fs = require('fs');
 const { spawnSync } = require('node:child_process');
+const { execSync } = require('node:child_process');
 
 const db = require("./database.js");
 const fw = require("./fileWriter.js");
 const common = require("./commonFunctions.js");
 const logReader = require("./logReader.js");
 const resultsWorker = require("./resultsPlotter.js");
+const logger = require("./logger.js");
 
 /**
  * Returns path from folders instead of files
@@ -38,7 +40,7 @@ function startDB() {
 }
 
 function foldersData(mesh) {
-    console.log('Reading mesh info... ');
+    logger.info('Leyendo la información de la malla...');
     
     try {
         let data = fs.readFileSync(mesh + '/boundary', 'utf8');
@@ -61,22 +63,22 @@ function foldersData(mesh) {
         
         return boundaries;
     } catch(e) {
-        console.log('Error:', e.stack)
+        logger.error(e.stack)
     }
 }
 
 async function getTurbulenceModelsInfo() {
-    console.log('Getting turbulence models info... ');
+    logger.info('Obteniendo la información de los modelos de turbulencia...');
     return await db.getTurbulenceModelsInfo();
 }
 
 async function getTurbulenceModelVariables(model) {
-    console.log('Getting turbulence model variables info for:', model);
+    logger.info('Obteniendo las variables de los modelos de turbulencia para: ' + model);
     return await db.getTurbulenceModelVariables(model);
 }
 
 async function getSimulationData(simulationID) {
-    console.log('Getting simulation data for simulation:', simulationID);
+    logger.info('Obteniendo los datos de simulación para: ' + simulationID);
 
     let response = await db.getSimulationInfo(simulationID);
     response.boundaries = await getSimulationBoundariesDataAPI(simulationID);
@@ -90,12 +92,12 @@ async function getSimulationData(simulationID) {
 }
 
 async function getSimulationInfo(simulationID) {
-    console.log('Getting simulation info for simulation:', simulationID);
+    logger.info('Obteniendo la información de la simulación: ' + simulationID);
     return await db.getSimulationInfo(simulationID);
 }
 
 async function getAllSimulationsInfo() {
-    console.log('Getting old simulations data');
+    logger.info('Obteniendo datos de simulaciones guardadas');
     let simulations = await db.getAllSimulationsInfo();
     
     simulations.map( (sim) => {
@@ -106,43 +108,43 @@ async function getAllSimulationsInfo() {
 }
 
 async function getConstantData(simulationID) {
-    console.log('Getting constant data for simulation:', simulationID);
+    logger.info('Obteniendo datos de constantes para: ' + simulationID);
     return await getConstantDataAPI(simulationID);
 }
 
 async function getZeroData(simulationID) {
-    console.log('Getting constant data for simulation:', simulationID);
+    logger.info('Obteniendo datos de variables de entorno para: ' + simulationID);
     return await getZeroDataAPI(simulationID);
 }
 
 async function getControlDictData(simulationID) {
-    console.log('Getting constant data for simulation:', simulationID);
+    logger.info('Obteniendo datos de control de simulación para: ' + simulationID);
     return await getControlDictDataAPI(simulationID);
 }
 
 async function getForcesData(simulationID) {
-    console.log('Getting forces data for simulation:', simulationID);
+    logger.info('Obteniendo datos de fuerzas para: ' + simulationID);
     return await getForcesDataAPI(simulationID);
 }
 
 async function getSolutionData(simulationID) {
-    console.log('Getting solution data for simulation:', simulationID);
+    logger.info('Obteniendo datos de simulación para: ' + simulationID);
     return await getSolutionDataAPI(simulationID);
 }
 
 async function getSchemasData(simulationID) {
-    console.log('Getting schemes data for simulation:', simulationID);
+    logger.info('Obteniendo datos de esquemas para: ' + simulationID);
     return await getSchemesDataAPI(simulationID);
 }
 
 async function getSimulationBoundariesData(simulationID) {
-    console.log('Getting schemes data for simulation:', simulationID);
+    logger.info('Obteniendo datos de contornos para: ' + simulationID);
     return await getSimulationBoundariesDataAPI(simulationID);
 }
 
 async function getSimulationFiles(body) {
     const bodyParsed = JSON.parse(body);
-    console.log('Creating simulation files at', bodyParsed.simInfo.simFolderPath);
+    logger.info('Creando archivos de simulación en ' + bodyParsed.simInfo.simFolderPath);
     return await fw.createAllFiles(bodyParsed.simInfo, bodyParsed.data);
 }
 
@@ -161,27 +163,36 @@ async function executeSimulation(simulationID) {
     try {
         plotAll(simInfo.simRoute);
     } catch {
-        console.error('Simulation has failed');
+        console.error('La simulación ha fallado');
     }
 
     return executionResp;
 }
 
 async function checkMesh(meshRoute) {
-    await fw.temporalMeshFolder(meshRoute);
+    const logName = await fw.temporalMeshFolder(meshRoute);
+    const tempFolder = '.\\temp';
 
-    const combinedCommand = 'temp/checkMesh.sh';
-    const executionResp = await executeSimulationChild(combinedCommand);
-    console.log('executionMesh', executionResp);
-    
-    const meshOK = await logReader.readCheckMesh('.\\temp');
-    console.log('meshOK', meshOK);
+    return new Promise( (resolve, reject) => {
+        setTimeout( async () => {        
+            const combinedCommand = 'temp/checkMesh.sh';
+            const executionResp = await executeSimulationChild(combinedCommand);
+            logger.info(`checkMesh ejecutado. Estado del proceso: ${executionResp.status} - ${executionResp.message}`);
 
-    if(meshOK) {
-        //fw.deleteFiles('.\\temp');
-    }
+            const meshOK = await logReader.readCheckMesh(`${tempFolder}\\${logName}`);
+            
+            if(!meshOK) {
+                logger.error(`Error detectado en las validaciones del checkMesh. Log guardado como: ${logName}`);
+                execSync(`copy ${tempFolder}\\${logName} .\\logs\\checkMeshLogs\\`);
+            } else {
+                logger.info(`No se detectaron errores en las validaciones del checkMesh`);
+            }
 
-    return meshOK;
+            fw.deleteFiles(tempFolder);
+            
+            resolve(meshOK);
+        }, 500);
+    });
 }
 
 /* API INTERNAL FUNCTIONS */
@@ -191,29 +202,25 @@ async function executeSimulationChild(combinedCommand) {
     });
     
     const err = child.stderr.toString();
-    const output = child.stdout.toString();
-
-    console.log('output', output);
-    console.log('err', err);
 
     if(child.status !== 0) {
         return {
             'status': child.status,
-            "message":'Process has failed during execution',
+            "message": 'El proceso ha fallado durante la ejecución',
             "error": err
         }
     } else if( err != null && err != '' ) {
         return {
             'status': 501,
-            "message":'Process has failed during execution',
+            "message": 'El proceso ha fallado durante la ejecución',
             "error": err
         }
     }
 
     return {
         'status': 200,
-        "message":'Success processing',
-        "output": output
+        "message": 'Proceso ejecutado con éxito',
+        "output": child.stdout.toString()
     };
 }
 
@@ -224,6 +231,7 @@ async function plotData(simulationID) {
 
 async function plotAll(simRoute) {
     const winSimRoute = common.parseWindowsRoutes(simRoute);
+	logger.info('Graficando datos del logo de la ruta: ' + winSimRoute);
     const data = await logReader.readCoeffs(winSimRoute);
 
     if( data.residuals == null ) return;

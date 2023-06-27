@@ -1,10 +1,8 @@
 const lineReader = require('line-reader');
 
-async function readCheckMesh(simRoute) {
-    const file = `${simRoute}\\log`
-
+function readCheckMesh(logName) {
     return new Promise( (resolve, reject) => {
-        lineReader.eachLine(file, function(line, last) {
+        lineReader.eachLine(logName, function(line, last) {
             if (line.indexOf('Mesh OK.') !== -1) {
 				resolve(true);    
             }

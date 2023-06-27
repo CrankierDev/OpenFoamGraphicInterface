@@ -5,6 +5,7 @@ const { execSync } = require('node:child_process');
 
 const db = require("./database.js");
 const common = require("./commonFunctions.js");
+const logger = require("./logger.js");
 
 /**
  * Creates all files needed for the simulation
@@ -23,7 +24,8 @@ async function createAllFiles(simInfo, data) {
 	const simData = {
 		name: simInfo.simName,
 		route: common.parseLinuxRoutes(winRoute),
-		solver: data.system.controlDict.application
+		solver: data.system.controlDict.application,
+		log: 'log'
 	}
 
 	const keys = Object.keys(data);
@@ -43,7 +45,7 @@ async function createAllFiles(simInfo, data) {
 		}
 	}
 
-	const script = await db.getModelFile('home', 'script');
+	const script = await db.getModelFile('home', 'script%');
 	createFile (winRoute, script, 'script.sh', simData); 
 
 	let polyMeshRoute = `${winRoute}\\constant\\polyMesh`;
@@ -153,7 +155,7 @@ function writeFile(filePath, filename, text) {
 	// Write text to file
 	fs.writeFile(finalPath, text, (err) => {
 	  if (err) throw err;
-	  console.log('Data written to file', finalPath);
+	  logger.info('Escribiendo datos en el fichero: ' + finalPath)
 	});
 }
 
@@ -241,25 +243,25 @@ function saveData(simID, key, object) {
 		}
 	}
 	
-	console.log('Data saved for ', key);
+	logger.info('Datos guardados para ' + key);
 }
 
 function deleteFiles(linuxRoute) {
-	console.log('Deleting simulation files at', linuxRoute);
+	logger.info('Eliminando ficheros de simulación en ' + linuxRoute);
 	const winRoute = common.parseWindowsRoutes(linuxRoute);
 
-	fs.rm(winRoute, { recursive: true }, (err) => {
-		console.log('Error', err);
-	});
+	fs.rmSync(winRoute, { recursive: true });
 }
 
 async function temporalMeshFolder(meshRoute) {
 	// Setting default data for checkMesh and temporal folder where try on
 	const temporalFolder = '.\\temp';
+	const logName = 'log-' + uuid.v1();
 	
 	const meshData = {
 		route: './temp',
-		solver: 'checkMesh'
+		solver: 'checkMesh',
+		log: logName
 	}
 	
 	const controlData = {
@@ -295,6 +297,8 @@ async function temporalMeshFolder(meshRoute) {
 	
 	// Temporal copy of polyMesh folder
 	execSync(`copy ${common.parseWindowsRoutes(meshRoute)} ${temporalPolymesh}`);
+
+	return logName;
 }
 
 module.exports = {
