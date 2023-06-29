@@ -32,7 +32,7 @@ async function generateSimulationInfo() {
         }
     ];
 
-	if (turbulenceModel !== 'none') {
+	if (turbulenceModel !== 'default') {
         let newVariables = await getTurbulenceModelVariables(turbulenceModel);
 
         if(newVariables != null && newVariables.length > 0){
@@ -197,8 +197,8 @@ function buildConstant() {
 			nu: document.getElementById('flux-viscosity').value
 		}, 
 		momentumTransport: {
-			turbulenceModel: turbulenceModel === 'default' ? 'none' : turbulenceModel,
 			turbulence:  turbulenceModel === 'default' ? 'off' : 'on',
+			turbulenceModel: turbulenceModel,
 			printCoeffs: 'on',
 			viscosityModel: "Newtonian"
 		}
@@ -487,7 +487,7 @@ function buildSnGradSchemes() {
 }`;
 }
 
-function buildWallDist() {
+function buildWallDist() { // FIX ? QUIZA NECESITAMOS SOLVER PARA MANEJAR ICOFOAM
 	return `
 {
 	method		${document.getElementById('default-wall-schema').value};
@@ -498,8 +498,10 @@ function buildFvSolution(variables, solver) {
 	let fvSolution = {
 		relaxationFactors: buildRelaxation(variables),
 		solvers: buildSolver(variables),
-		mainSolver: solver.toUpperCase().replaceAll('FOAM', ''),
-		solverBody: buildMainSolver(variables, solver),
+		mainSolver: solver.toUpperCase() !== 'ICOFOAM' ? 
+						solver.toUpperCase().replaceAll('FOAM', '') : 
+						'PISO',
+		solverBody: buildMainSolver(solver),
 		residualControl: buildResidualControl(variables)
 	}
 
@@ -546,6 +548,12 @@ function buildSolver(variables) {
 	}
 
 	solvers += `
+
+    pFinal
+    {
+        $p;
+        relTol		0;
+    }
 }`;
 
 	return solvers;
@@ -563,44 +571,45 @@ function buildSolverVariable(variable) {
 
 	if( variable.type === 'symmetric' &&
 			Number(document.getElementById(`${variable.variable}-sweeps-data`).value) !== 0 ){
-		solver += `nSweeps		${document.getElementById(`${variable.variable}-sweeps-data`).value};
+		solver += `	nSweeps		${document.getElementById(`${variable.variable}-sweeps-data`).value};
 	`;
 	}
 
 	if( document.getElementById(`${variable.variable}-preconditioner-schema`).value !== 'default' ){
-		solver += `preconditioner		${document.getElementById(`${variable.variable}-preconditioner-schema`).value};
+		solver += `	preconditioner		${document.getElementById(`${variable.variable}-preconditioner-schema`).value};
 	`;
 	}
 	
-	solver += `}`;
+	solver += `}
+	`;
 
 	return solver;
 }
 
-function buildMainSolver(variables, solver) {
+function buildMainSolver(solver) {
 	let mainSolver = `
 {
 	nNonOrthogonalCorrectors	${document.getElementById('nNonOrthogonalCorrectors').value};`;
 
-	if( solver === 'pisoFoam' || solver === 'pimpleFoam' ) {
+	if( solver === 'pisoFoam' || solver === 'pimpleFoam' || solver === 'icoFoam' ) {
 		mainSolver += `
-	nCorrectors					${document.getElementById('nCorrectors').value}; `;
+	nCorrectors			${document.getElementById('nCorrectors').value}; `;
 	}
 
-	if( solver === 'pisoFoam' ) {
+	if( solver === 'pisoFoam' || solver === 'icoFoam' ) {
 		mainSolver += `
-	pRefCell					${document.getElementById('pRefCell').value}; 
-	pRefValue					${document.getElementById('pRefValue').value}; `;
+	pRefCell			${document.getElementById('pRefCell').value}; 
+	pRefValue			${document.getElementById('pRefValue').value}; `;
 	}
 	
 	if( solver === 'pimpleFoam' ) {
 		mainSolver += `
-	nOuterCorrectors			${document.getElementById('nOuterCorrectors').value};
-	correctPhi					${document.getElementById('correctPhi').value}; `;
+	nOuterCorrectors	${document.getElementById('nOuterCorrectors').value};
+	correctPhi			${document.getElementById('correctPhi').value}; `;
 	}
 
 	mainSolver += `
-	consistent					${document.getElementById('consistent').value};
+	consistent			${document.getElementById('consistent').value};
 
 	residualControl		:residualControl
 }`;

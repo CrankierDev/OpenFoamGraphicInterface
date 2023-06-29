@@ -68,6 +68,10 @@
     width: 300px;
 }
 
+.input-data>div>.long-input-info, .input-data>.long-input-info {
+    width: 271px;
+}
+
 .input-data>div>.short-input, .input-data>.short-input {
     width: 100px;
 }

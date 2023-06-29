@@ -70,18 +70,59 @@ async function setLastSimulationsTable() {
 }
 
 /**
+ * Enables/Disables specific values for pressure or velocity in boundaries
+ */
+function enableDisableSpecificValues(variable, boundary) {
+    let check = document.getElementById(`${variable}-${boundary}-value-check`).checked;
+
+    if(check) document.getElementById(`${variable}-${boundary}-value`).disabled = false;
+    else document.getElementById(`${variable}-${boundary}-value`).disabled = true;    
+}
+
+/**
  * Fills basic flux data from DB
  */
-async function setFluxDefaultData(simulation) {
+async function setFluxDefaultData(simulation, boundariesData) {
     // Gets flux data from DB
     let zeroData = await getZeroData(simulation);
+    // console.log(zeroData);
 
     for( let data of zeroData ) {
         document.getElementById(`flux-${data.variable}`).value = data.value;
         if(data.variable === 'U') {
             document.getElementById('flux-aoa').value = data.AOAValue;
             document.getElementById('lRef-data').value = data.lRef;
-            document.getElementById('intensity-data').value = data.intensity;
+            document.getElementById('intensity-data').value = data.intensity;  
+        }
+
+        if(simulation !== 'default_sim') {
+            for( let boundary in data.boundaries ) {
+                if( data.boundaries[boundary].type === 'empty' ) continue;
+                
+                document.getElementById(`${data.variable}-data-${boundary}-type`).value
+                    = data.boundaries[boundary].type;
+            }
+
+            if( data.variable === 'U' || data.variable === 'p') {
+                let patchBoundaries = boundariesData.filter( (value) => {
+                    return value.type ==='patch';
+                });
+
+                for( boundary of patchBoundaries ) {
+                    // console.log(boundary, data.boundaries[boundary.name]);
+                    
+                    if( data.boundaries[boundary.name].value != null &&
+                            data.boundaries[boundary.name].value !== '$internalField') {
+
+                        console.log(boundary, data.boundaries[boundary.name].value);
+                        document.getElementById(`${data.variable}-${boundary.name}-value`).value =
+                            data.boundaries[boundary.name].value.replaceAll('uniform', '');
+                        document.getElementById(`${data.variable}-${boundary.name}-value-check`).checked = true;
+                    
+                        enableDisableSpecificValues(data.variable, boundary.name);
+                    }
+                }            
+            }
         }
     }
 
@@ -227,7 +268,7 @@ async function fillFormsBasicFieldsSim(boundariesData, turbulenceModel, simulati
     fillFormsBoundariesFields(boundariesData, variables);
     fillFormsSchemesFields(variables, simulationID);
 
-    await setFluxDefaultData(simulationID);
+    await setFluxDefaultData(simulationID, boundariesData);
     await setControlDictDefaultData(simulationID)
 }
 
@@ -342,7 +383,17 @@ async function setSchemesDefaultData(simulationID, variables) {
 
     // Fill inputs with default data
     // Here predeteminated schemes are set
-    document.getElementById('temporal-schema').value = schemesData.ddtSchemes.default;
+    const temporalSchema = document.getElementById('temporal-schema');
+
+    // Managing icoFoam needs
+    if( document.getElementById('solver').value === 'icoFoam' ) {
+        temporalSchema.value = 'Euler';
+        temporalSchema.disabled = true;
+
+    } else {
+        temporalSchema.value = schemesData.ddtSchemes.default;
+    }
+    
     setGradValues('default', schemesData.gradSchemes.default);
     
     if(schemesData.divSchemes.default !== 'none') {
@@ -466,10 +517,32 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                         <option value='empty'>Vacío</option>
                                     </select>
                                 </div>`;
+                            
+                            if( variable.variable === 'U' || variable.variable === 'p' ){
+                                newText += `
+                                <div class="input-data">
+                                    <div>
+                                        <input type="checkbox" id="${variable.variable}-${boundary.name}-value-check"
+                                            onclick="enableDisableSpecificValues('${variable.variable}', '${boundary.name}')"/>
+                                        <label for="${variable.variable}-${boundary.name}-value">
+                                            Especificar ${variable.name} en el contorno
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="long-input-info" disabled
+                                            id="${variable.variable}-${boundary.name}-value"/>
+                                        <span class="material-symbols-rounded" onclick="showInfo('${variable.variable}-${boundary.name}-value')">info</span>
+                                    </div>
+                                </div>
+                                <div class="input-data">
+                                    <div id="${variable.variable}-${boundary.name}-value-info" class="info-div info-div-border" style="display: none;"></div>
+                                </div>`;
+                            }
                         }
                         
-                        newText += `</section>
-                                </section>`;
+                        newText += `
+                            </section>
+                        </section>`;
 
                     boundaryConditions.innerHTML += newText;
 
@@ -549,7 +622,7 @@ function endTime(value) {
 function solverChanges(value) {
     let selector = document.getElementById('turbulence-model');
 
-    if(value === 'ico') {
+    if(value === 'icoFoam') {
         selector.disabled = true;
         selector.value = 'default';
 
@@ -808,7 +881,11 @@ async function fillFormsSolverVariables(solver, simulationID){
         setSolverVariablesSection(variables, solutionData.solvers);
     }
     if (solverInputs.innerHTML != ''){
-        setSolverSection(solver, solutionData[`${solver.replaceAll('Foam','')}`]);
+        if( solver === 'icoFoam' ) {
+            setSolverSection(solver, solutionData['piso']);
+        } else {
+            setSolverSection(solver, solutionData[`${solver.replaceAll('Foam','')}`]);
+        }
         setResidualControlSection(variables, solutionData.residualControl);
     }
     if (relaxationInputs.innerHTML != '') {
@@ -853,15 +930,18 @@ function setSolverSection(solver, solverData) {
     document.getElementById('nNonOrthogonalCorrectors').value =
             formatInput(solverData.nNonOrthogonalCorrectors);
 
-    if (solver === 'pisoFoam' || solver === 'pimpleFoam') {
+    if (solver === 'pisoFoam' || solver === 'pimpleFoam' || solver === 'icoFoam') {
         document.getElementById('nCorrectors').value = formatInput(solverData.nCorrectors);
     }
 
     if (solver === 'pimpleFoam') {
         document.getElementById('nOuterCorrectors').value = formatInput(solverData.nOuterCorrectors);
     }
-
-    // TODO: manage icoFoam
+    
+    if (solver === 'pisoFoam' || solver === 'icoFoam') {
+        document.getElementById('pRefCell').value = formatInput(solverData.pRefCell);
+        document.getElementById('pRefValue').value = formatInput(solverData.pRefValue);
+    }
 }
 
 /**
@@ -1005,7 +1085,7 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
  */
 function fillFormsSolverSection(solverInputs, solver){
     let newHTML = '';
-    // TODO: check fields for pimple, piso and simple
+
     if(solver === 'simpleFoam') {
         newHTML = `
             <div class="card-title">
@@ -1015,7 +1095,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
                     <div>
-                        <input class="long-input" id="nNonOrthogonalCorrectors" type="number"/>
+                        <input class="long-input-info" id="nNonOrthogonalCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
                     </div>
                 </div>
@@ -1033,7 +1113,8 @@ function fillFormsSolverSection(solverInputs, solver){
                 </div>
                 <div id="consistent-info" class="info-div info-div-border" style="display: none;"></div>
             </div>`;
-    } else if(solver === 'pisoFoam') {
+
+    } else if(solver === 'pisoFoam' || solver === 'icoFoam') {
         newHTML = `
             <div class="card-title">
                 <p class="input-label">PISO</p>
@@ -1042,7 +1123,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nCorrectors">nCorrectors</label>
                     <div>
-                        <input class="long-input" id="nCorrectors" type="number"/>
+                        <input class="long-input-info" id="nCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nCorrectors')">info</span>
                     </div>
                 </div>
@@ -1051,7 +1132,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
                     <div>
-                        <input class="long-input" id="nNonOrthogonalCorrectors" type="number"/>
+                        <input class="long-input-info" id="nNonOrthogonalCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
                     </div>
                 </div>
@@ -1060,7 +1141,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="pRefCell">Presión de referencia en las celdas</label>
                     <div>
-                        <input class="long-input" id="pRefCell" type="number"/>
+                        <input class="long-input-info" id="pRefCell" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('pRefCell')">info</span>
                     </div>
                 </div>
@@ -1069,7 +1150,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="pRefValue">Valor de la presión de referencia</label>
                     <div>
-                        <input class="long-input" id="pRefValue" type="number"/>
+                        <input class="long-input-info" id="pRefValue" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('pRefValue')">info</span>
                     </div>
                 </div>
@@ -1087,6 +1168,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 </div>
                 <div id="consistent-info" class="info-div info-div-border" style="display: none;"></div>
             </div>`;
+
     } else if(solver === 'pimpleFoam') {
         newHTML = `
             <div class="card-title">
@@ -1096,7 +1178,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nOuterCorrectors">nOuterCorrectors</label>
                     <div>
-                        <input class="long-input" id="nOuterCorrectors" type="number"/>
+                        <input class="long-input-info" id="nOuterCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nOuterCorrectors')">info</span>
                     </div>
                 </div>
@@ -1105,7 +1187,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nCorrectors">nCorrectors</label>
                     <div>
-                        <input class="long-input" id="nCorrectors" type="number"/>
+                        <input class="long-input-info" id="nCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nCorrectors')">info</span>
                     </div>
                 </div>
@@ -1114,7 +1196,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
                     <div>
-                        <input class="long-input" id="nNonOrthogonalCorrectors" type="number"/>
+                        <input class="long-input-info" id="nNonOrthogonalCorrectors" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
                     </div>
                 </div>
@@ -1144,9 +1226,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 </div>
                 <div id="consistent-info" class="info-div info-div-border" style="display: none;"></div>
             </div>`;
-    } 
-    
-    // TODO: manage icoFoam
+    }
 
     solverInputs.innerHTML += newHTML;
 }

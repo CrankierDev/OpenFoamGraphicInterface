@@ -214,7 +214,7 @@ function saveData(simID, key, object) {
 						data['pimple'] = object[`${filename}`]['solverBody'];
 						data['simple'] = null;
 						data['piso'] = null;
-					} else if( solver === 'PISO' ) {
+					} else if( solver === 'PISO' ||  solver === 'ICO' ) {
 						data['piso'] = object[`${filename}`]['solverBody'];
 						data['pimple'] = null;
 						data['simple'] = null;
