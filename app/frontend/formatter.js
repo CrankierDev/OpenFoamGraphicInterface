@@ -116,7 +116,7 @@ async function setFluxDefaultData(simulation, boundariesData) {
 
                         console.log(boundary, data.boundaries[boundary.name].value);
                         document.getElementById(`${data.variable}-${boundary.name}-value`).value =
-                            data.boundaries[boundary.name].value.replaceAll('uniform', '');
+                            data.boundaries[boundary.name].value.replaceAll('uniform ', '');
                         document.getElementById(`${data.variable}-${boundary.name}-value-check`).checked = true;
                     
                         enableDisableSpecificValues(data.variable, boundary.name);

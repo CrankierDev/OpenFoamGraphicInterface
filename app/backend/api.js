@@ -160,11 +160,11 @@ async function executeSimulation(simulationID) {
     
     const executionResp = await executeSimulationChild(combinedCommand);
 
-    try {
-        plotAll(simInfo.simRoute);
-    } catch {
-        console.error('La simulación ha fallado');
-    }
+    plotAll(simInfo.simRoute);
+    
+	// File needed for ParaView
+    const winSimRoute = common.parseWindowsRoutes(simInfo.simRoute);
+	fw.writeFile(winSimRoute, simulationID + '.foam', '');
 
     return executionResp;
 }

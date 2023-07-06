@@ -90,6 +90,17 @@ async function buildZero(boundariesData, variables, turbulenceModel) {
 	return zero;
 }
 
+function patchValue(variable, boundary) {
+	if( variable !== 'U' && variable !== 'p' ) return '$internalField';
+
+    let check = document.getElementById(`${variable}-${boundary}-value-check`).checked;
+	if(check) {
+		return 'uniform ' + document.getElementById(`${variable}-${boundary}-value`).value;
+	} 
+
+	return '$internalField';
+}
+
 function buildBoundaryField(variable, boundariesData, turbulenceModel) {
 	let boundaryField = `
 {`;
@@ -153,6 +164,7 @@ function buildBoundaryField(variable, boundariesData, turbulenceModel) {
 			}
 		} else if( boundary.type === 'patch' ) {
 			const patchType = document.getElementById(`${variable.variable}-data-${boundary.name}-type`).value;
+			const valuePatch = patchValue(variable.variable, boundary.name);
 
 			boundaryField += `
 	${boundary.name}
@@ -164,18 +176,18 @@ function buildBoundaryField(variable, boundariesData, turbulenceModel) {
 					|| patchType === 'freestream') {
 
 				boundaryField += `
-		freestreamValue		$internalField;
+		freestreamValue		${valuePatch};
 	}
 			`;
 
 			} else if( patchType !== 'zeroGradient' ) {
 				boundaryField += `
-		value				$internalField;
-			}
+		value				${valuePatch};
+	}
 			`;
 			} else if( patchType === 'zeroGradient' ) {
 				boundaryField += `
-			}
+	}
 			`;
 			}
 		}
@@ -197,12 +209,14 @@ function buildConstant() {
 			nu: document.getElementById('flux-viscosity').value
 		}, 
 		momentumTransport: {
-			turbulence:  turbulenceModel === 'default' ? 'off' : 'on',
 			turbulenceModel: turbulenceModel,
+			turbulence:  turbulenceModel === 'default' ? 'off' : 'on',
 			printCoeffs: 'on',
 			viscosityModel: "Newtonian"
 		}
 	}
+
+	console.log(constant.momentumTransport);
 
 	return constant;
 }

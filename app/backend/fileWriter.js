@@ -303,6 +303,7 @@ async function temporalMeshFolder(meshRoute) {
 
 module.exports = {
 	createAllFiles: createAllFiles,
+	writeFile: writeFile,
 	deleteFiles: deleteFiles,
 	temporalMeshFolder: temporalMeshFolder
 }
