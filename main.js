@@ -27,9 +27,15 @@ function createWindow() {
     // Handling APIs
     ipcMain.handle('dialog:openDirectory', api.handleFileOpen);
     ipcMain.handle('versionNumber', api.getVersion);
-    ipcMain.handle('startDB', api.startDB);
-    ipcMain.handle('getTurbulenceModelsInfo', api.getTurbulenceModelsInfo);
-    ipcMain.handle('getAllSimulationsInfo', api.getAllSimulationsInfo);
+    ipcMain.handle('startDB', async () => {
+        return await api.startDB()
+    });
+    ipcMain.handle('getTurbulenceModelsInfo', () => {
+        return api.getTurbulenceModelsInfo()
+    });
+    ipcMain.handle('getAllSimulationsInfo', () => {
+        return api.getAllSimulationsInfo()
+    });
     ipcMain.handle('foldersData', (event, mesh) => {
         return api.foldersData(mesh);
     });
@@ -80,7 +86,7 @@ function createWindow() {
     });
 
     mainWindow.loadFile('app/index.html');
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
         if (url.startsWith('https:')) {
             shell.openExternal(url);
@@ -100,7 +106,6 @@ function createWindow() {
 app.whenReady().then( () => {
     // Start the express back end app
     createWindow();
-    api.startDB();
     
     app.on('activate', () => {
         if( BrowserWindow.getAllWindows().length === 0){

@@ -21,6 +21,10 @@ async function pathsData() {
     return await window.functionsAPI.foldersData(mesh);
 }
 
+async function startDB() {
+    return await window.functionsAPI.startDB();
+}
+
 async function getAllSimulationsInfo() {
     return await window.functionsAPI.getAllSimulationsInfo();
 }
@@ -72,7 +76,6 @@ async function getSimulationFiles(simInfo, data) {
     };
     
     return await window.functionsAPI.getSimulationFiles(JSON.stringify(body));
-    // return await response.json();
 }
 
 async function executeSimulation(simulationID) {
@@ -81,10 +84,6 @@ async function executeSimulation(simulationID) {
 
 async function plotData(simulationID) {
     return window.functionsAPI.plotData(simulationID);
-}
-
-async function checkMesh(meshRoute) {
-    // return await window.functionsAPI.checkMesh(meshRoute);
 }
 
 async function deleteSimulation(simulationID) {

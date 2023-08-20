@@ -35,8 +35,8 @@ function getVersion() {
 /**
  * Starts the db if it was non created before
  */
-function startDB() {
-    db.start();
+async function startDB() {
+    await db.start();
 }
 
 function foldersData(mesh) {

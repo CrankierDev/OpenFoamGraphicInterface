@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('functionsAPI', {
     getTurbulenceModelsInfo: () => ipcRenderer.invoke('getTurbulenceModelsInfo'),
     getAllSimulationsInfo: () => ipcRenderer.invoke('getAllSimulationsInfo'),
     foldersData: (mesh) => ipcRenderer.invoke('foldersData', mesh ),
+    startDB: () => ipcRenderer.invoke('startDB'),
     getTurbulenceModelVariables: (model) => ipcRenderer.invoke('getTurbulenceModelVariables', model ),
     getSimulationData: (simulationID) => ipcRenderer.invoke('getSimulationData', simulationID ),
     getSimulationInfo: (simulationID) => ipcRenderer.invoke('getSimulationInfo', simulationID ),

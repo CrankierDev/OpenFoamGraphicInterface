@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   packagerConfig: {
     packageManager: "npm",
-    icon: path.join(__dirname, "assets", "icons", "win", "icon"), // no file extension required
+    icon: path.join(__dirname, "assets", "icons", "win", "logo-OFGUI"), // no file extension required
     asar:  true,
     overwrite: true,
     ignore: [

@@ -10,6 +10,7 @@ async function getVersion() {
  * Looks for past simulations on DB and fills the initial page with this data tabulated 
  */
 async function setLastSimulationsTable() {
+    await startDB();
     // Looks for past simulations on DB
     let info = await getAllSimulationsInfo();
 

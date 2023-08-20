@@ -37,25 +37,6 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion    
 Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\resources\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\locales\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\chrome_100_percent.pak"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\chrome_200_percent.pak"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\d3dcompiler_47.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\ffmpeg.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\icudtl.dat"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\libEGL.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\libGLESv2.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\LICENSES.chromium.html"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\resources.pak"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\snapshot_blob.bin"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\Squirrel.exe"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\v8_context_snapshot.bin"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\version"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\vk_swiftshader.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\vk_swiftshader_icd.json"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "F:\ProyectosGitHub\OpenFoamGraphicInterface\out\openfoamgraphicinterface-win32-x64\vulkan-1.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
