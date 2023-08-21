@@ -131,7 +131,7 @@ function isSecondContentAvailable() {
 
         const checkButton = document.getElementById('checkMesh');
         checkButton.style = '';
-        checkButton.innerText = 'Checkeo de malla';
+        checkButton.innerText = 'Comprobar la malla';
     }
 
     const workspaceRoute = document.getElementById('workspace').value;

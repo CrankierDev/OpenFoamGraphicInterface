@@ -4,12 +4,10 @@
 async function checkMeshFormat() {
     const mesh = document.getElementById('mesh').value;
     const response = await window.functionsAPI.checkMesh(mesh);
-
-    console.log('response', response);
     
     if( response ) {
         document.getElementById('checkMesh').style.backgroundColor = '#008500';
-        document.getElementById('checkMesh').innerText = '!Todo bien!';
+        document.getElementById('checkMesh').innerText = '!Mallado correcto!';
     } else { 
         document.getElementById('checkMesh').style.backgroundColor = '#e31d1d';
         document.getElementById('checkMesh').innerText = 'Revisa el mallado';

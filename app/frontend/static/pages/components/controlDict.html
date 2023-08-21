@@ -1,6 +1,6 @@
 <h2 class="input-label">Condiciones de simulación</h2>
 <section id="simulation-conditions" class="data-container">
-	<div class="input-data">
+	<!-- <div class="input-data">
 		<label for="simulation-begin">Inicio de la simulación</label>
 		<div>
 			<select id="simulation-begin" onchange="startTime(value)">
@@ -11,7 +11,12 @@
 			<span class="material-symbols-rounded" onclick="showInfo('simulation-begin')">info</span>
 		</div>
 	</div>
-	<div id="simulation-begin-info" class="info-div info-div-border" style="display: none;"></div>
+	<div id="simulation-begin-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
+			turbulencias en la simulación.
+		</p>
+	</div>
 	<div class="input-data">
 		<label for="simulation-begin-time">Empezar en</label>
 		<div>
@@ -19,7 +24,12 @@
 			<span class="material-symbols-rounded" onclick="showInfo('simulation-begin-time')">info</span>
 		</div>
 	</div>
-	<div id="simulation-begin-time-info" class="info-div info-div-border" style="display: none;"></div>
+	<div id="simulation-begin-time-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
+			turbulencias en la simulación.
+		</p>
+	</div>
 	<div class="input-data">
 		<label for="simulation-end">Fin de la simulación</label>
 		<div>
@@ -30,15 +40,24 @@
 			<span class="material-symbols-rounded" onclick="showInfo('simulation-end')">info</span>
 		</div>
 	</div>
-	<div id="simulation-end-info" class="info-div info-div-border" style="display: none;"></div>
+	<div id="simulation-end-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
+			turbulencias en la simulación.
+		</p>
+	</div> -->
 	<div class="input-data">
-		<label for="simulation-end-time">Terminar en</label>
+		<label for="simulation-end-time">Terminar la simulacion en</label>
 		<div>
 			<input class="long-input-info" id="simulation-end-time" type="number"/>
 			<span class="material-symbols-rounded" onclick="showInfo('simulation-end-time')">info</span>
 		</div>
 	</div>
-	<div id="simulation-end-time-info" class="info-div info-div-border" style="display: none;"></div>
+	<div id="simulation-end-time-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Iteración en la que, de no haber convergido, se detendrá la simulación.
+		</p>
+	</div>
 	<div class="input-data">
 		<label for="simulation-deltat">Diferencial de tiempo</label>
 		<div>
@@ -46,7 +65,11 @@
 			<span class="material-symbols-rounded" onclick="showInfo('simulation-deltat')">info</span>
 		</div>
 	</div>
-	<div id="simulation-deltat-info" class="info-div info-div-border" style="display: none;"></div>
+	<div id="simulation-deltat-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Diferencial de tiempo entre la iteración actual y la siguiente.
+		</p>
+	</div>
 	<div class="input-data">
 		<label for="deltat-adjust" class="checkbox-label">Ajustar el diferencial de tiempo</label>
 		<div>
@@ -54,7 +77,12 @@
 			<span class="material-symbols-rounded" onclick="showInfo('deltat-adjust')">info</span>
 		</div>
 	</div>
-	<div id="deltat-adjust-info" class="info-div info-div-border" style="display: none;"></div>
+	<div id="deltat-adjust-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Activar esta opción permite que, de ser posible, OpenFOAM ajuste el diferencial de
+			tiempo anteriormente indicado para hacer la simulación más estable.
+		</p>
+	</div>
 	<div class="input-data">
 		<label for="run-time-modifiable" class="checkbox-label">Modificable en tiempo de ejecución</label>
 		<div>
@@ -62,7 +90,13 @@
 			<span class="material-symbols-rounded" onclick="showInfo('run-time-modifiable')">info</span>
 		</div>
 	</div>
-	<div id="run-time-modifiable-info" class="info-div info-div-border" style="display: none;"></div>
+	<div id="run-time-modifiable-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Seleccionar esta opción permite que se puedan modificar parámetros de los archivos de simulación
+			mientras la misma está corriendo. Por ejemplo, podría reducir o aumentar la iteración en la que
+			la simulación se interrumpa.
+		</p>
+	</div>
 	<div class="input-data">
 		<label for="forces-data" class="checkbox-label">Generar fuerzas</label>
 		<div>
@@ -71,7 +105,12 @@
 			<span class="material-symbols-rounded" onclick="showInfo('forces-data')">info</span>
 		</div>
 	</div>
-	<div id="forces-data-info" class="info-div info-div-border" style="display: none;"></div>
+	<div id="forces-data-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Esta opción hace que se generen archivos de post-procesado para las fuerzas sobre las paredes
+			del objeto mallado.
+		</p>
+	</div>
 	<div class="input-data">
 		<label for="forcesCoeffs-data" class="checkbox-label">Generar coeficientes de fuerzas</label>
 		<div>
@@ -80,14 +119,11 @@
 			<span class="material-symbols-rounded" onclick="showInfo('forcesCoeffs-data')">info</span>
 		</div>
 	</div>
-	<div id="forcesCoeffs-data-info" class="info-div info-div-border" style="display: none;"></div>
-	<!-- <div class="input-data">
-		<label for="lRef-data" class="long-label">Longitud de referencia</label>
-		<div>
-			<input class="short-input" type="text" id="lRef-data" type="number"/>
-			<span class="material-symbols-rounded" onclick="showInfo('lRef-data')">info</span>
-		</div>
+	<div id="forcesCoeffs-data-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Esta opción hace que se generen archivos de post-procesado para los coeficientes de las fuerzas
+			sobre las paredes del objeto mallado.
+		</p>
 	</div>
-	<div id="lRef-data-info" class="info-div info-div-border" style="display: none;"></div> -->
 </section>
 <div id="forces-inputs"></div>

@@ -1307,23 +1307,11 @@ async function showInfo(id) {
     const infoID = `${id}-info`;
     const element = document.getElementById(infoID);
 
-    const text = await loadInfo(id);
-
-    if( element.innerHTML == '' && text != null) {
-        let info = '';
-        
-        for( paragraph of text.split('\n')) {
-            if(paragraph == '') continue;
-
-            info += `<p>${paragraph}</p>`;    
-        }
-        
-        element.innerHTML = info;
+    if( element.style.display === 'none' ) {
         element.style.display = 'block';
         return true;
 
     } else {
-        element.innerHTML = '';
         element.style.display = 'none';
         return false;
     }

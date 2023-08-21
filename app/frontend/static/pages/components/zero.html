@@ -8,7 +8,13 @@
 				<span class="material-symbols-rounded" onclick="showInfo('flux-U')">info</span>
 			</div>
 		</div>
-		<div id="flux-U-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="flux-U-info" class="info-div info-div-border" style="display: none;">
+			<p>
+				Velocidad global del flujo de la simulación. Ha de introducirse el valor del módulo,
+				teniendo en cuenta que la componente principal será sobre el eje X.
+			</p>
+			<p>Luego podrá especificarse la velocidad en los contornos de ser necesario.</p>
+		</div>
 		<div class="input-data">
 			<label for="flux-aoa">Ángulo de incidencia</label>
 			<div>
@@ -16,7 +22,17 @@
 				<span class="material-symbols-rounded" onclick="showInfo('flux-aoa')">info</span>
 			</div>
 		</div>
-		<div id="flux-aoa-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="flux-aoa-info" class="info-div info-div-border" style="display: none;">
+			<p>
+				Ángulo de incidencia del flujo de la simulación sobre el cuerpo del mallado.
+				Este campo facilita por ejemplo, cuando quiere realizarse un barrido de simulaciones
+				sobre un cuerpo fuselado (como un perfil aerodinámico) a distintos ángulos de ataque.
+			</p>
+			<p>
+				Puede dejarse a 0 si se quiere que no se tenga este en cuenta. De lo contratio, la aplicación
+				hará los cálculos para calcular las componentes de velocidad y fuerza partiendo del eje X.
+			</p>
+		</div>
 		<div class="input-data">
 			<label for="flux-p">Presión del flujo</label>
 			<div>
@@ -24,7 +40,13 @@
 				<span class="material-symbols-rounded" onclick="showInfo('flux-p')">info</span>
 			</div>
 		</div>
-		<div id="flux-p-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="flux-p-info" class="info-div info-div-border" style="display: none;">
+			<p>
+				Presión global de referencia en el flujo. Normalmente, suele dejarse el valor a 0 y,
+				de esa forma, OpenFOAM devuelve directamente los diferenciales de presión como valor de la presión.
+				Esto ayuda al post-procesado de los datos.
+			</p>
+		</div>
 		<div class="input-data">
 			<label for="flux-density">Densidad de flujo</label>
 			<div>
@@ -32,7 +54,9 @@
 				<span class="material-symbols-rounded" onclick="showInfo('flux-density')">info</span>
 			</div>
 		</div>
-		<div id="flux-density-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="flux-density-info" class="info-div info-div-border" style="display: none;">
+			<p>Densidad del flujo simulado.</p>
+		</div>
 		<div class="input-data">
 			<label for="flux-viscosity">Viscosidad de flujo</label>
 			<div>
@@ -40,7 +64,12 @@
 				<span class="material-symbols-rounded" onclick="showInfo('flux-viscosity')">info</span>
 			</div>
 		</div>
-		<div id="flux-viscosity-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="flux-viscosity-info" class="info-div info-div-border" style="display: none;">
+			<p>
+				Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
+				turbulencias en la simulación.
+			</p>
+		</div>
 		<div class="input-data">
 			<label for="lRef-data">Longitud de referencia</label>
 			<div>
@@ -48,8 +77,21 @@
 				<span class="material-symbols-rounded" onclick="showInfo('lRef-data')">info</span>
 			</div>
 		</div>
-		<div id="lRef-data-info" class="info-div info-div-border" style="display: none;"></div>
-		<div id="flux-viscosity-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="lRef-data-info" class="info-div info-div-border" style="display: none;">
+			<p>
+				Se refiere a una dimensión característica o distancia utilizada para definir y normalizar
+				las dimensiones físicas en un problema de simulación. Esta longitud proporciona una base
+				para definir las escalas y magnitudes de las propiedades del flujo y las geometrías dentro
+				del dominio de simulación. La elección de la longitud de referencia depende del problema
+				específico y puede influir en la precisión y la interpretación de los resultados de la
+				simulación. Por ejemplo, en un problema de flujo alrededor de un objeto aerodinámico, la
+				longitud de referencia podría ser la longitud del objeto, como la cuerda de un perfil alar.
+			</p>
+			<p>
+				Normalmente, con el fin de adimensionalizar las simulaciones, suele hacerse que la longitud
+				del cuerpo tenga valor 1.
+			</p>
+		</div>
 		<div class="input-data">
 			<label for="intensity-data">Intensidad de turbulencia</label>
 			<div>
@@ -57,7 +99,25 @@
 				<span class="material-symbols-rounded" onclick="showInfo('intensity-data')">info</span>
 			</div>
 		</div>
-		<div id="intensity-data-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="intensity-data-info" class="info-div info-div-border" style="display: none;">
+			<p>
+				La
+				<a target="blank" href="https://www.cfd-online.com/Wiki/Turbulence_intensity">
+					Intensidad de turbulencia
+				</a>
+				es un parámetro que indica la magnitud relativa de las fluctuaciones turbulentas en un flujo de
+				fluido. Es una medida de cuán caótico y agitado es el flujo en comparación con su componente
+				de velocidad media. La intensidad de turbulencia se expresa típicamente como un porcentaje
+				y se utiliza para definir las condiciones iniciales o de contorno en las simulaciones de
+				dinámica de fluidos, especialmente cuando se aplican modelos de turbulencia. Cuanto mayor
+				sea la intensidad de turbulencia, más fuertes serán las fluctuaciones turbulentas en el
+				flujo.
+			</p>	
+			<p>
+				Para simulaciones como las que se pretende sean practicables con esta aplicación, la
+				intensidad de turbulencia debería encontrarse entre 1 y 5.
+			</p>
+		</div>
 	</div>
 </section>
 <div id="boundary-conditions"></div>

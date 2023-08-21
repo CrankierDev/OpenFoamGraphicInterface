@@ -19,11 +19,11 @@
 	</div>
 	<div class="input-data" id="info-mesh">
 		<button class="buttons-style folder-button" id="checkMesh"
-			type="button" onclick="checkMeshFormat()">Checkeo de malla</button>
+			type="button" onclick="checkMeshFormat()">Comprobar la malla</button>
 		<span id="route-mesh"></span>
 	</div>
 </section>
-<article id="flux-conditions" style="display: none;" >
+<article id="flux-conditions" style="display: none;">
 	<h2 class="input-label">Condiciones de simulación</h2>
 	<section class="data-container">
 		<div class="input-data">
@@ -39,7 +39,28 @@
 				<span class="material-symbols-rounded" onclick="showInfo('solver')">info</span>
 			</div>
 		</div>
-		<div id="solver-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="solver-info" class="info-div info-div-border" style="display: none;">
+			<p>El solver es el algoritmo numérico para resolver las ecuaciones fundamentales de la dinámica de fluidos (Navier-Stokes) y la transferencia de calor.</p>
+			<p>Cada solver en OpenFOAM se adapta para resolver un conjunto específico de ecuaciones y problemas. Hay solvers disponibles para diferentes tipos de flujos, condiciones de contorno y geometrías. en concreto, la aplicación está diseñada para realizar simulaciones incompresibles. En concreto los solvers presentes en el selector son:</p>
+			<ul>
+				<li><strong>icoFoam:</strong> Solver transitorio para fluidos Newtonianos, laminares e incompresibles.</li>
+				<li>
+					<strong>simpleFoam:</strong>
+					Solver para flujos incompresibles en estado estacionario y turbulento. Utiliza el
+					<a target="blank" href="https://www.cfd-online.com/Wiki/SIMPLE_algorithm">algoritmo SIMPLE</a>.
+				</li>
+				<li>
+					<strong>pisoFoam:</strong> Solver transitorio para flujos incompresibles y turbulentos que utiliza el 
+					<a target="blank" href="https://en.wikipedia.org/wiki/PISO_algorithm">algoritmo PISO</a>.
+				</li>
+				<li>
+					<strong>pimpleFoam:</strong>
+					Solver transitorio para flujos Newtonianos incompresibles y turbulentos que utiliza el 
+					<a target="blank" href="https://www.cfd-online.com/Forums/openfoam-solving/169885-pimple-algorithm.html">algoritmo PIMPLE</a>,
+					el cual combina los algoritmos PISO y SIMPLE.
+				</li>
+			</ul>
+		</div>
 		<div id="turbulence-model-div" class="input-data">
 			<label for="turbulence-model">Modelo de turbulencia</label>
 			<div>
@@ -47,6 +68,33 @@
 				<span class="material-symbols-rounded" onclick="showInfo('turbulence-model')">info</span>
 			</div>
 		</div>
-		<div id="turbulence-model-info" class="info-div info-div-border" style="display: none;"></div>
+		<div id="turbulence-model-info" class="info-div info-div-border" style="display: none;">
+			<p>Un modelo de turbulencia es una representación matemática y simplificada de los fenómenos turbulentos en un flujo de fluido. La turbulencia se refiere al comportamiento caótico y altamente complejo que puede ocurrir en los flujos de fluidos, donde las propiedades como la velocidad y la presión varían aleatoriamente en el tiempo y el espacio. Debido a la naturaleza caótica de la turbulencia, resolver completamente las ecuaciones de Navier-Stokes para describir todos los detalles del flujo turbulentos es computacionalmente inabordable en la mayoría de los casos prácticos.</p>
+			<p>Los modelos de turbulencia se utilizan para aproximarse a la descripción de la turbulencia en un flujo sin la necesidad de resolver todas las escalas y detalles en el dominio. En lugar de calcular directamente las fluctuaciones turbulentas en una simulación, se introducen ecuaciones y relaciones que representan estadísticas o características macroscópicas del flujo turbulento. Estos modelos permiten capturar los efectos generales de la turbulencia en la simulación de manera más eficiente.</p>
+			<p>La aplicación permite simular flujos laminares o usar métodos RANS(Reynolds-Averaged Navier-Stokes) que promedian las ecuaciones de Navier-Stokes en el tiempo para obtener un conjunto de ecuaciones promediadas:</p>
+			<ul>
+				<li><strong>Flujo laminar:</strong>
+					Flujo sin perturbar. No se simulan turbulencias.
+				</li>
+				<li>
+					<strong>
+						<a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-turbulence-ras-k-epsilon.html">kEpsilon</a>:
+					</strong>
+					Modelo estándar de dos ecuaciones de transporte para flujos incompresibles. Uso muy exntendido con reconocido rendimiento.
+				</li>
+				<li>
+					<strong>
+						<a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-turbulence-ras-k-omega-sst.html">kOmegaSST</a>:
+					</strong>
+					Modelo de dos ecuaciones a partir del modelo estándar kOmega. Usado en gran variedad de campos.
+				</li>
+				<li>
+					<strong>
+						<a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-turbulence-ras-spalart-allmaras.html">Spalart-Allmaras</a>:
+					</strong>
+					Modelo de única ecuación basado en una viscosidad de turbulencia modificada. Es muy usado en el ámbito aeroespacial.
+				</li>
+			</ul>
+		</div>
 	</section>
 </article>
