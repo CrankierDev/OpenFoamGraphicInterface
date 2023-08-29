@@ -12,7 +12,7 @@
 	</div>
 	<div id="temporal-schema-info" class="info-div info-div-border" style="display: none;">
 		<p>
-			Derivadas temporales para el cálculo de las ecuaciones. Se han definido dos posibilidades:
+			Esquemas aplicados a las derivadas temporales para el cálculo de las ecuaciones. Se han definido dos opciones:
 		</p>
 		<ul>
 			<li>
@@ -32,9 +32,28 @@
 	</div>
 	<div id="default-grad-info" class="info-div info-div-border" style="display: none;">
 		<p>
-			Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
-			turbulencias en la simulación.
+			Esquemas aplicados en el cálculo de <a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-gradient.html">gradientes</a>. Estos esquemas se subdividen en dos partes:
+			esquema e interpolación; y se dan las siguientes opciones:
 		</p>
+		<ul>
+			<li>Para el esquema:
+				<ul>
+					<li>
+						<strong><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-gradient-gauss.html">Teorema de Gauss</a></strong>
+					</li>
+					<li>
+						<strong><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-gradient-least-squares.html">Mínimos cuadrados</a></strong>
+					</li>
+				</ul>
+			</li>
+			<li>Para la interpolación:
+				<ul>
+					<li>Lineal basado en las celdas</li>
+					<li>Lineal basado en puntos</li>
+					<li>Mínimos cuadrados</li>
+				</ul>
+			</li>
+		</ul>
 	</div>
 	<div class="schemes-data">
 		<div class="subinput-data">
@@ -59,9 +78,15 @@
 	</div>
 	<div id="default-divergency-info" class="info-div info-div-border" style="display: none;">
 		<p>
-			Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
-			turbulencias en la simulación.
+			Esquemas aplicados en el cálculo de <a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-divergence.html">divergencias</a>. Estos esquemas se subdividen en tres partes:
+			delimitación, esquema e interpolación. Se utiliza el teorema de Gauss como esquema, el esquema
+			se puede o no delimitar.y para la interpolación, se dan las siguientes opciones:
 		</p>
+		<ul>
+			<li><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-divergence-linear.html">Lineal</a></li>
+			<li><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-divergence-linear.html">Lineal limitado</a></li>
+			<li><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-divergence-linear-upwind.html">Lineal aguas arriba</a></li>
+		</ul>
 	</div>
 	<div class="schemes-data">
 		<div class="subinput-data">
@@ -91,11 +116,18 @@
 	</div>
 	<div id="default-laplacian-info" class="info-div info-div-border" style="display: none;">
 		<p>
-			Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
-			turbulencias en la simulación.
+			Esquemas aplicados en el cálculo de <a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-laplacian.html">laplacianos</a>. El esquema
+			usado es el teorema de Gauss. También se define por defecto el uso de la interpolación lineal.
+			Otra característica, que se deja a elección del usuario es esquema para
+			los <a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-sngrad.html">gradientes normales a la superficie</a>. Las
+			opciones para este último parámetro son:
 		</p>
+		<ul>
+			<li><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-sngrad-corrected.html">Corregido</a></li>
+			<li><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-sngrad-orthogonal.html">Ortogonal</a></li>
+		</ul>
 	</div>
-	<!-- DUDA - QUITAR? -->
+	<!-- DUDA - QUITAR? 
 	<div class="input-data">
 		<label for="default-interpolation-schema">Esquema de interpolación</label>
 		<div>
@@ -110,7 +142,7 @@
 			Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
 			turbulencias en la simulación.
 		</p>
-	</div>
+	</div>-->
 	<div class="input-data">
 		<label for="default-snGrad-schema">Gradientes normales a la superficie</label>
 		<div>
@@ -123,12 +155,17 @@
 	</div>
 	<div id="default-snGrad-schema-info" class="info-div info-div-border" style="display: none;">
 		<p>
-			Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
-			turbulencias en la simulación.
+			Esquemas aplicados en el cálculo
+			de <a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-sngrad.html">gradientes normales a la superficie</a>. El
+			esquema usado se deja a elección del usuario, las opciones para este último parámetro son:
 		</p>
+		<ul>
+			<li><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-sngrad-corrected.html">Corregido</a></li>
+			<li><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-sngrad-orthogonal.html">Ortogonal</a></li>
+		</ul>
 	</div>
 	<div class="input-data">
-		<label for="default-wall-schema">Distribución de pared</label>
+		<label for="default-wall-schema">Cálculo de la distancia de pared</label>
 		<div>
 			<select id="default-wall-schema"> 
 				<option value="cubic">Cubic</option>
@@ -139,9 +176,12 @@
 	</div>
 	<div id="default-wall-schema-info" class="info-div info-div-border" style="display: none;">
 		<p>
-			Viscosidad del flujo simulado. Sera utilizado mayormente para hacer los cálculos de las
-			turbulencias en la simulación.
+			Los métodos para <a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-wall-distance.html">cálculo de la distancia de pared</a>. REVISAR
 		</p>
+		<ul>
+			<li><a target="blank" href="">Cúbica</a></li>
+			<li><a target="blank" href="https://www.openfoam.com/documentation/guides/latest/doc/guide-schemes-wall-distance-meshwave.html">MeshWave</a></li>
+		</ul>
 	</div>
 </section>
 <div id="fvSchemes-variables-inputs"></div>

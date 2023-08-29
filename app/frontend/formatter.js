@@ -490,7 +490,43 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                 <span class="material-symbols-rounded" onclick="showInfo('${boundary.name}-data-${boundary.type}-type')">info</span>
                             </div>
                             <section class="data-container">
-                                <div id="${boundary.name}-data-${boundary.type}-type-info" class="info-div info-div-border" style="display: none;"></div>
+                                <div id="${boundary.name}-data-${boundary.type}-type-info" class="info-div info-div-border" style="display: none;">
+                                    <p>
+                                        Los contornos tipo patch son aquellos por los que el flujo
+                                        atraviesa la región.
+                                    </p>
+                                    <p>
+                                        En los contornos tipo patch se definen las condiciones de las 
+                                        variables fluidas en ese área. Dependiendo de la velocidad,
+                                        se pueden encontrar las siguientes opciones:
+                                    </p>
+                                    <ul>
+                                        <li>
+                                            <strong>Valor libre de presión:</strong> Aplicado a la presión,
+                                            define que en el contorno el valor es libre.
+                                        </li>
+                                        <li>
+                                            <strong>Valor libre de velocidad:</strong> Aplicado a la velocidad,
+                                            define que en el contorno el valor es libre.
+                                        </li>
+                                        <li>
+                                            <strong>Valor libre:</strong> Aplicado a cualquier variable,
+                                            define que en el contorno el valor es libre.
+                                        </li>
+                                        <li>
+                                            <strong>Valor fijo:</strong> Aplicado a cualquier variable,
+                                            define que en el contorno el valor es fijo siempre.
+                                        </li>
+                                        <li>
+                                            <strong>Calculado:</strong> Aplicado a cualquier variable,
+                                            define que en el contorno el valor de la misma es calculado con
+                                            el alrededor.
+                                        </li>
+                                        <li>
+                                            <strong>Vacío:</strong>
+                                        </li>
+                                    </ul>
+                                </div>
                         `;   
 
                         for(let variable of variables){
@@ -536,7 +572,13 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                     </div>
                                 </div>
                                 <div class="input-data">
-                                    <div id="${variable.variable}-${boundary.name}-value-info" class="info-div info-div-border" style="display: none;"></div>
+                                    <div id="${variable.variable}-${boundary.name}-value-info" class="info-div info-div-border" style="display: none;">
+                                        <p>
+                                            Si se selecciona la opción, puede definir el valor inicial
+                                            de la variable en el contorno. De lo contrario, se usará el 
+                                            valor por defecto definido anteriormente.
+                                        </p>
+                                    </div>
                                 </div>`;
                             }
                         }
@@ -555,7 +597,36 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                 <span class="material-symbols-rounded" onclick="showInfo('${boundary.name}-data-${boundary.type}-type')">info</span>
                             </div>
                             <section class="data-container">
-                                <div id="${boundary.name}-data-${boundary.type}-type-info" class="info-div info-div-border" style="display: none;"></div>
+                                <div id="${boundary.name}-data-${boundary.type}-type-info" class="info-div info-div-border" style="display: none;">
+                                    <p>
+                                        Los contornos tipo wall son aquellos por los que el flujo no
+                                        atraviesa la región.
+                                    </p>
+                                    <p>
+                                        En los contornos tipo wall se definen las condiciones de las 
+                                        variables fluidas en ese área. Dependiendo de la velocidad,
+                                        se pueden encontrar las siguientes opciones:
+                                    </p>
+                                    <ul>
+                                        <li>
+                                            <strong>Gradiente nulo:</strong> Se aplica que, para la
+                                            variable, el gradiente sobre el contorno es 0.
+                                        </li>
+                                        <li>
+                                            <strong>Valor fijo:</strong> Aplicado a cualquier variable,
+                                            define que en el contorno el valor es fijo siempre.
+                                        </li>
+                                        <li>
+                                            <strong>No-deslizamiento:</strong> Normalmente aplicado a la
+                                            velocidad, aplica 
+                                            la <a target="blank" href="https://ingenieriamecanicacol.blogspot.com/2022/12/condicion-de-no-deslizamiento.html">condición de No-deslizamiento</a> sobre 
+                                            la superficie.
+                                        </li>
+                                        <li>
+                                            <strong>Vacío:</strong>
+                                        </li>
+                                    </ul>
+                                </div>
                         `;
                             
                             for(let variable of variables){
@@ -653,10 +724,20 @@ function fillFormsForcesFields() {
             `<h3 class="card-title">Datos para el cálculo de fuerzas</h3>
             <div class="data-container">
                 <div class="input-data">
-                    <p>Centro de rotación (m)</p>
+                    <p>Centro de rotación</p>
                     <span class="material-symbols-rounded" onclick="showInfo('CofR')">info</span>
                 </div>
-                <div id="CofR-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="CofR-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        El "centro de rotación" es el punto alrededor del cual un objeto o sistema rota
+                        o gira. Es el punto en el que un objeto se considera fijo mientras experimenta
+                        un movimiento de rotación. En el contexto de la física y la mecánica, el centro
+                        de rotación es esencial para describir y analizar el movimiento circular o de
+                        rotación de objetos. En muchos casos, el centro de rotación puede coincidir con
+                        el centro geométrico del objeto, pero esto no siempre es así, especialmente en
+                        objetos irregulares o sistemas más complejos.
+                    </p>
+                </div>
                 <div class="axis-data">
                     <div>
                         <label for="CofRX-data" class="axis-label">Eje X</label>
@@ -672,7 +753,11 @@ function fillFormsForcesFields() {
                     </div>
                 </div>
                 
-                <div id="rhoInf-data-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="rhoInf-data-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        DDD
+                    </p>
+                </div>
                 <div id="forces-extra-inputs"></div>
             </div>`;
 
@@ -696,7 +781,12 @@ function fillFormsForcesFields() {
                     <span class="material-symbols-rounded" onclick="showInfo('lift-option')">info</span>
                 </div>
             </div>
-            <div id="lift-option-info" class="info-div info-div-border" style="display: none;"></div>
+            <div id="lift-option-info" class="info-div info-div-border" style="display: none;">
+                <p>
+                    Eje sobre el que se calcula la sustentación en el cuerpo. Si se selecciona la opción
+                    de definir el vector, se introducirán las coordenadas manualmente.
+                </p>
+            </div>
             <div id="lift-vector" class="axis-data"></div>
             <div class="input-data">
                 <label for="drag-option" class="long-label">Direccion vector unitario de resistencia aerodinámica</label>
@@ -710,7 +800,12 @@ function fillFormsForcesFields() {
                     <span class="material-symbols-rounded" onclick="showInfo('drag-option')">info</span>
                 </div>
             </div>
-            <div id="drag-option-info" class="info-div info-div-border" style="display: none;"></div>
+            <div id="drag-option-info" class="info-div info-div-border" style="display: none;">
+                <p>
+                    Eje sobre el que se calcula la resistencia aerodinámica en el cuerpo. Si se selecciona
+                    la opción de definir el vector, se introducirán las coordenadas manualmente.
+                </p>
+            </div>
             <div id="drag-vector" class="axis-data"></div>
             <div class="input-data">
                 <label for="pitch-option" class="long-label" for="pitch-option">Direccion vector unitario de eje de cabeceo</label>
@@ -724,7 +819,12 @@ function fillFormsForcesFields() {
                     <span class="material-symbols-rounded" onclick="showInfo('pitch-option')">info</span>
                 </div>
             </div>
-            <div id="pitch-option-info" class="info-div info-div-border" style="display: none;"></div>
+            <div id="pitch-option-info" class="info-div info-div-border" style="display: none;">
+                <p>
+                    Eje sobre el que se calcula el momento aerodinámico en el cuerpo. Si se selecciona
+                    la opción de definir el vector, se introducirán las coordenadas manualmente.
+                </p>
+            </div>
             <div id="pitch-vector" class="axis-data"></div>
             <div class="input-data">
                 <label for="aRef-data" class="long-label">Área de referencia</label>
@@ -733,7 +833,11 @@ function fillFormsForcesFields() {
                     <span class="material-symbols-rounded" onclick="showInfo('aRef-data')">info</span>
                 </div>
             </div>
-            <div id="aRef-data-info" class="info-div info-div-border" style="display: none;"></div>
+            <div id="aRef-data-info" class="info-div info-div-border" style="display: none;">
+                <p>
+                    Área de referencia sobre la que se calculan las fuerzas.
+                </p>
+            </div>
             `;
             
         extraInputs.style.display = 'flex';
@@ -1017,7 +1121,7 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                     </div>
                     
                     <div class="input-data">
-                        <label for="${variable.variable}-sweeps-data">nSweeps</label>
+                        <label for="${variable.variable}-sweeps-data">Número de barridos</label>
                         <input class="long-input" type="number" id="${variable.variable}-sweeps-data"/>
                     </div>
                     
@@ -1100,7 +1204,13 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
                     </div>
                 </div>
-                <div id="nNonOrthogonalCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="nNonOrthogonalCorrectors-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        Especiﬁca las soluciones repetidas de la ecuación de presión, utilizadas para actualizar la
+                        corrección explícita no ortogonal de la ecuación del término laplaciano; normalmente
+                        se establece en 0 para el estado estacionario y en 1 para los casos transitorios.
+                    </p>
+                </div>
                 
                 <div class="input-data">
                     <label for="consistent">Consistencia</label>
@@ -1112,7 +1222,19 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('consistent')">info</span>
                     </div>
                 </div>
-                <div id="consistent-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="consistent-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        OpenFOAM incluye dos variantes del algoritmo SIMPLE, SIMPLE estándar y su formulación consistente,
+                        SIMPLEC. Por defecto se utiliza SIMPLE. Para usar SIMPLEC, debe indicar 'Sí' en el selector. La
+                        formulación SIMPLEC para el método de acoplamiento presión-velocidad sólo necesita una pequeña
+                        cantidad de subrelajación para la velocidad y otras ecuaciones de transporte. No es necesario
+                        utilizar ninguna relajación en la presión. El resultado suele ser una solución más robusta y una
+                        convergencia más rápida.
+                    </p>
+                    <p>
+                        El usuario puede especificar el factor de relajación para un campo concreto.
+                    </p>
+                </div>
             </div>`;
 
     } else if(solver === 'pisoFoam' || solver === 'icoFoam') {
@@ -1128,7 +1250,12 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('nCorrectors')">info</span>
                     </div>
                 </div>
-                <div id="nCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="nCorrectors-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        Establece el número de veces que el algoritmo resuelve la ecuación de presión y el corrector de
+                        momento en cada paso; normalmente se establece en 2 o 3.
+                    </p>
+                </div>
                 
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
@@ -1137,16 +1264,27 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
                     </div>
                 </div>
-                <div id="nNonOrthogonalCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="nNonOrthogonalCorrectors-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        Especiﬁca las soluciones repetidas de la ecuación de presión, utilizadas para actualizar la
+                        corrección explícita no ortogonal de la ecuación del término laplaciano; normalmente
+                        se establece en 0 para el estado estacionario y en 1 para los casos transitorios.
+                    </p>
+                </div>
                 
                 <div class="input-data">
-                    <label for="pRefCell">Presión de referencia en las celdas</label>
+                    <label for="pRefCell">Celda de presión de referencia</label>
                     <div>
                         <input class="long-input-info" id="pRefCell" type="number"/>
                         <span class="material-symbols-rounded" onclick="showInfo('pRefCell')">info</span>
                     </div>
                 </div>
-                <div id="pRefCell-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="pRefCell-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        Celda en la que se designa el valor de referencia de
+                        presión. <a target="blank" href="https://www.cfd-online.com/Forums/openfoam-pre-processing/62259-fvsolution-prefcell-prefvalue.html">Más info</a>
+                    </p>
+                </div>
                 
                 <div class="input-data">
                     <label for="pRefValue">Valor de la presión de referencia</label>
@@ -1155,7 +1293,12 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('pRefValue')">info</span>
                     </div>
                 </div>
-                <div id="pRefValue-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="pRefValue-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        Valor de la presión de referencia en la celda
+                        indicada. <a target="blank" href="https://www.cfd-online.com/Forums/openfoam-pre-processing/62259-fvsolution-prefcell-prefvalue.html">Más info</a>
+                    </p>
+                </div>
                 
                 <div class="input-data">
                     <label for="consistent">Consistencia</label>
@@ -1167,7 +1310,19 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('consistent')">info</span>
                     </div>
                 </div>
-                <div id="consistent-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="consistent-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        OpenFOAM incluye dos variantes del algoritmo SIMPLE, SIMPLE estándar y su formulación consistente,
+                        SIMPLEC. Por defecto se utiliza SIMPLE. Para usar SIMPLEC, debe indicar 'Sí' en el selector. La
+                        formulación SIMPLEC para el método de acoplamiento presión-velocidad sólo necesita una pequeña
+                        cantidad de subrelajación para la velocidad y otras ecuaciones de transporte. No es necesario
+                        utilizar ninguna relajación en la presión. El resultado suele ser una solución más robusta y una
+                        convergencia más rápida.
+                    </p>
+                    <p>
+                        El usuario puede especificar el factor de relajación para un campo concreto.
+                    </p>
+                </div>
             </div>`;
 
     } else if(solver === 'pimpleFoam') {
@@ -1183,7 +1338,13 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('nOuterCorrectors')">info</span>
                     </div>
                 </div>
-                <div id="nOuterCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="nOuterCorrectors-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        Permite realizar un bucle sobre todo el sistema de ecuaciones en un paso de tiempo,
+                        lo que representa el número total de veces que se resuelve el sistema; debe ser mayor o igual
+                        a 1 y normalmente se establece en 1.
+                    </p>
+                </div>
 
                 <div class="input-data">
                     <label for="nCorrectors">nCorrectors</label>
@@ -1192,7 +1353,12 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('nCorrectors')">info</span>
                     </div>
                 </div>
-                <div id="nCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="nCorrectors-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        Establece el número de veces que el algoritmo resuelve la ecuación de presión y el corrector de
+                        momento en cada paso; normalmente se establece en 2 o 3.
+                    </p>
+                </div>
                 
                 <div class="input-data">
                     <label for="nNonOrthogonalCorrectors">nNonOrthogonalCorrectors</label>
@@ -1201,7 +1367,13 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('nNonOrthogonalCorrectors')">info</span>
                     </div>
                 </div>
-                <div id="nNonOrthogonalCorrectors-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="nNonOrthogonalCorrectors-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        Especiﬁca las soluciones repetidas de la ecuación de presión, utilizadas para actualizar la
+                        corrección explícita no ortogonal de la ecuación del término laplaciano; normalmente
+                        se establece en 0 para el estado estacionario y en 1 para los casos transitorios.
+                    </p>
+                </div>
                 
                 <div class="input-data">
                     <label for="correctPhi">Corrección del flujo</label>
@@ -1213,7 +1385,11 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('correctPhi')">info</span>
                     </div>
                 </div>
-                <div id="correctPhi-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="correctPhi-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        Aplica funciones de corrección de flujo para ayudar a la continuidad. 
+                    </p>
+                </div>
                 
                 <div class="input-data">
                     <label for="consistent">Consistencia</label>
@@ -1225,7 +1401,19 @@ function fillFormsSolverSection(solverInputs, solver){
                         <span class="material-symbols-rounded" onclick="showInfo('consistent')">info</span>
                     </div>
                 </div>
-                <div id="consistent-info" class="info-div info-div-border" style="display: none;"></div>
+                <div id="consistent-info" class="info-div info-div-border" style="display: none;">
+                    <p>
+                        OpenFOAM incluye dos variantes del algoritmo SIMPLE, SIMPLE estándar y su formulación consistente,
+                        SIMPLEC. Por defecto se utiliza SIMPLE. Para usar SIMPLEC, debe indicar 'Sí' en el selector. La
+                        formulación SIMPLEC para el método de acoplamiento presión-velocidad sólo necesita una pequeña
+                        cantidad de subrelajación para la velocidad y otras ecuaciones de transporte. No es necesario
+                        utilizar ninguna relajación en la presión. El resultado suele ser una solución más robusta y una
+                        convergencia más rápida.
+                    </p>
+                    <p>
+                        El usuario puede especificar el factor de relajación para un campo concreto.
+                    </p>
+                </div>
             </div>`;
     }
 
@@ -1242,7 +1430,14 @@ function fillFormsResidualControlSection(solverInputs, variables) {
             <span class="material-symbols-rounded" onclick="showInfo('residual-control')">info</span>
         </div>
         <div class="data-container">
-            <div id="residual-control-info" class="info-div info-div-border" style="display: none;"></div>
+            <div id="residual-control-info" class="info-div info-div-border" style="display: none;">
+                <p>
+                    OpenFOAM evalua los residuales en cada iteración para valorar si la simulación ha
+                    llegado a una situación que pueda considerarse "de convergencia". En esta sección,
+                    puede definirse el valor a partir del cual puede considerarse que los valores de las
+                    variables ha llegado a un nivel de convergencia aceptable para el usuario.
+                </p>
+            </div>
         `;
 
     for( let variable of variables ){
@@ -1269,7 +1464,18 @@ function fillFormsRelaxationSection(relaxationInputs, variables) {
         </div> 
         
         <div class="data-container">
-            <div id="relaxation-factors-info" class="info-div info-div-border" style="display: none;"></div>
+            <div id="relaxation-factors-info" class="info-div info-div-border" style="display: none;">
+                <p>
+                    Los factores de relajacion controlan la infra-relajación una técnica usada para mejorar la
+                    estabilidad de computación, particularmente resolviendo problemas de estado estacionario.
+                    La mencionada técnica limita la cantidad que una variable cambia en cada iteración. Un factor
+                    de relajación se define entre 0 y 1, donde un valor igual a 1 indica que no se hace ninguna relajación
+                    y un valor de 0, implica que la simulación no cambiaría con cada iteración.
+                </p>
+                <p>
+                    Para evitar problemas en las simulaciones, si es especifica un valor de 0, el programa obviará esa variable.
+                </p>
+            </div>
             `;
     
     for ( let variable of variables ) {

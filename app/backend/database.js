@@ -51,7 +51,6 @@ function close(db) {
 async function start() {
     let db = open();
 
-    logger.info('BBDD abierta');
     db.run(`CREATE TABLE turbulence_models (model text, variables text)`,
         (err) => {
             logger.info('turbulence_models');
@@ -70,7 +69,6 @@ async function start() {
         }
     ); 
 
-    logger.info('BBDD abierta2');
     db.run(`CREATE TABLE output_models (folder text, filename text, model text)`,
         (err) => {
             if(err) {
@@ -289,7 +287,6 @@ echo "Process finished!"`]);
         }
     );
 
-    logger.info('BBDD abierta3');
     db.run(`CREATE TABLE boundaries_variables (name text, variable text, type text, schemes text, wallFunction boolean, dimensions text, class text)`,
         (err) => {
             if(err) {
@@ -305,7 +302,6 @@ echo "Process finished!"`]);
         }
     );
 
-    logger.info('BBDD abierta4');
     db.run(`CREATE TABLE simulations_info (id text, creationDate date, name text, simRoute text)`,
         (err) => {
             if(err) {
@@ -343,7 +339,6 @@ echo "Process finished!"`]);
         }
     );
 
-    logger.info('BBDD abierta5');
     db.run(`CREATE TABLE zero_data (id text, variable text, value text, 
                 AOAValue text, lRef text, intensity text, boundaries text)`,
         (err) => {
@@ -450,7 +445,6 @@ echo "Process finished!"`]);
         }
     );
 
-    logger.info('BBDD abierta6');
     db.run(`CREATE TABLE simulation_boundaries (id text, name text, type text)`,
         (err) => {
             if(err) {
@@ -466,7 +460,6 @@ echo "Process finished!"`]);
         }
     );
 
-    logger.info('BBDD abierta7');
     db.run(`CREATE TABLE constant_data (id text, viscosityModel text, turbulenceModel text,
                 printCoeffs boolean, rho text, nu text)`,
         (err) => {
@@ -480,7 +473,6 @@ echo "Process finished!"`]);
         }
     );
 
-    logger.info('BBDD abierta8');
     db.run(`CREATE TABLE control_dict_data (id text, application text, startFrom text,
                 startTime text, stopAt text, endTime text, deltaT text,
                 runTimeModifiable boolean, adjustTimeStep boolean, writeData boolean)`,
@@ -496,7 +488,6 @@ echo "Process finished!"`]);
         }
     );
 
-    logger.info('BBDD abierta9');
     db.run(`CREATE TABLE schemes_data (id text, ddtSchemes text, gradSchemes text, divSchemes text,
                 laplacianSchemes text, interpolationSchemes text, snGradSchemes text, wallDist text)`,
         (err) => {
@@ -538,7 +529,6 @@ echo "Process finished!"`]);
         }
     );
 
-    logger.info('BBDD abierta10');
     db.run(`CREATE TABLE solutions_data (id text, solvers text, simple text,
                 pimple text, piso text, residualControl text, relaxationFactors text)`,
         (err) => {
