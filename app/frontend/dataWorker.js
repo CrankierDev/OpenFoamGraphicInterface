@@ -52,8 +52,6 @@ async function generateSimulationInfo() {
 		boundariesData: boundariesData
 	}
 
-	console.log(simInfo, data);
-
 	return await getSimulationFiles(simInfo, data);
 }
 
@@ -216,8 +214,6 @@ function buildConstant() {
 		}
 	}
 
-	console.log(constant.momentumTransport);
-
 	return constant;
 }
 
@@ -255,9 +251,9 @@ async function buildSystem(boundariesData, variables) {
 function buildControlDict(solver, wallsLength) {
 	const controlDict = {
 		application: solver,
-		startFrom: document.getElementById('simulation-begin').value,
-		startTime: document.getElementById('simulation-begin-time').value,
-		stopAt: document.getElementById('simulation-end').value,
+		startFrom: 'startTime',
+		startTime: 0,
+		stopAt: 'endTime',
 		endTime: document.getElementById('simulation-end-time').value,
 		deltaT: document.getElementById('simulation-deltat').value,
 		runTimeModifiable: document.getElementById('deltat-adjust').checked ? 'true' : 'false',
@@ -490,7 +486,7 @@ function buildLaplacianSchemes() {
 function buildInterpolationSchemes() {
 	return `
 {
-	default		${document.getElementById('default-interpolation-schema').value};
+	default		linear;
 }`;
 }
 

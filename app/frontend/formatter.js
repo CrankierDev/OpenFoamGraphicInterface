@@ -141,9 +141,9 @@ async function setControlDictDefaultData(simulation) {
     let controlDictData = await getControlDictData(simulation);
     
     // Fill inputs with default data
-    document.getElementById('simulation-begin').value = controlDictData.startFrom;
-    document.getElementById('simulation-begin-time').value = controlDictData.startTime;
-    document.getElementById('simulation-end').value = controlDictData.stopAt;
+    // document.getElementById('simulation-begin').value = controlDictData.startFrom;
+    // document.getElementById('simulation-begin-time').value = controlDictData.startTime;
+    // document.getElementById('simulation-end').value = controlDictData.stopAt;
     document.getElementById('simulation-end-time').value = controlDictData.endTime;
     document.getElementById('simulation-deltat').value = controlDictData.deltaT;
 
@@ -403,8 +403,8 @@ async function setSchemesDefaultData(simulationID, variables) {
     
     document.getElementById('default-laplacian').value =
             schemesData.laplacianSchemes.default.split(' ')[2];
-    document.getElementById('default-interpolation-schema').value =
-            schemesData.interpolationSchemes.default;
+    // document.getElementById('default-interpolation-schema').value =
+    //         schemesData.interpolationSchemes.default;
     document.getElementById('default-snGrad-schema').value =
             schemesData.snGradSchemes.default;
     document.getElementById('default-wall-schema').value =

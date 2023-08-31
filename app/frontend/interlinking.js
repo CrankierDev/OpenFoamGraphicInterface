@@ -1,4 +1,5 @@
 function changeSection(actualContent, nextContent, method) {
+    console.log(actualContent, nextContent, method);
     document.getElementById(`${actualContent}-inputs-${method}`).style.display = "none";
     document.getElementById(`${nextContent}-nav-${method}`).classList.add('active-nav');
     document.getElementById(`${nextContent}-inputs-${method}`).style.display = "block";
@@ -29,20 +30,18 @@ async function paginationAdvanced(direction) {
                 fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
             } 
             
-            document.getElementById(`back-button`).style.display = "block";
+            document.getElementById('next-button').style.display = "none";   
             showPages();
         }
     } else if( activeId == 'constants-nav-advanced' ) {
         if(direction){
             changeSection('constants', 'zero', 'advanced');
-            document.getElementById('back-button').style.display = "block";
         }
     } else if( activeId == 'zero-nav-advanced' ) {
         if(direction){
             changeSection('zero', 'fvSolution', 'advanced');
         } else {
-            changeSection('zero', 'constants', 'advanced');
-            document.getElementById('back-button').style.display = "none";        
+            changeSection('zero', 'constants', 'advanced');     
         }
     } else if( activeId == 'fvSolution-nav-advanced' ) {
         if(direction){
@@ -61,7 +60,6 @@ async function paginationAdvanced(direction) {
     } else if( activeId == 'controlDict-nav-advanced' ) {
         if(direction){
             changeSection('controlDict', 'generator', 'advanced');
-            document.getElementById('next-button').style.display = "none";
 
         } else {
             changeSection('controlDict', 'fvSchemes', 'advanced');
@@ -69,7 +67,6 @@ async function paginationAdvanced(direction) {
     } else if( activeId == 'generator-nav-advanced' ) {
         if(!direction) {
             changeSection('generator', 'controlDict', 'advanced');
-            document.getElementById('next-button').style.display = "block";
         }
     }
 }
@@ -87,7 +84,7 @@ async function paginationSimple(direction) {
             fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
             fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
             
-            document.getElementById(`back-button`).style.display = "block";
+            document.getElementById('next-button').style.display = "none";  
             showPages();
         }
     } else if( activeId == 'zero-nav-simple' ) {
@@ -95,19 +92,16 @@ async function paginationSimple(direction) {
             changeSection('zero', 'controlDict', 'simple');
         } else {
             changeSection('zero', 'basics', 'simple');
-            document.getElementById(`back-button`).style.display = "none";
         }
     } else if( activeId == 'controlDict-nav-simple' ) {
         if(direction){
             changeSection('controlDict', 'generator', 'simple');
-            document.getElementById('next-button').style.display = "none";
         } else {
             changeSection('controlDict', 'zero', 'simple');
         }
     } else if( activeId == 'generator-nav-simple' ) {
         if(!direction) {
             changeSection('generator', 'controlDict', 'simple');
-            document.getElementById('next-button').style.display = "block";
         }
     }
 }
@@ -174,20 +168,7 @@ function clickPage(nextContent, method) {
     document.getElementById(activeId).classList.remove('active-nav');
 
     activeId = activeId.replaceAll(`-nav-${method}`,'');
-    changeSection(activeId, nextContent, method);   
-
-    if( nextContent == 'generator' ) {
-        document.getElementById('next-button').style.display = "none";
-        document.getElementById('back-button').style.display = "block";
-
-    } else if( nextContent == 'constants' || nextContent == 'basics' )  {
-        document.getElementById('back-button').style.display = "none";
-        document.getElementById('next-button').style.display = "block";
-    
-    } else {
-        document.getElementById('back-button').style.display = "block";
-        document.getElementById('next-button').style.display = "block";
-    }
+    changeSection(activeId, nextContent, method);
 }
 
 async function loadSimulationData(simulationID) {
