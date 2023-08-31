@@ -247,10 +247,14 @@ function saveData(simID, key, object) {
 }
 
 function deleteFiles(linuxRoute) {
-	logger.info('Eliminando ficheros de simulación en ' + linuxRoute);
-	const winRoute = common.parseWindowsRoutes(linuxRoute);
-
-	fs.rmSync(winRoute, { recursive: true });
+	try {
+		logger.info('Eliminando ficheros de simulación en ' + linuxRoute);
+		const winRoute = common.parseWindowsRoutes(linuxRoute);
+		
+		fs.rmSync(winRoute, { recursive: true });
+	} catch (err) {
+		logger.error('Los ficheros no existen');
+	}
 }
 
 async function temporalMeshFolder(meshRoute) {

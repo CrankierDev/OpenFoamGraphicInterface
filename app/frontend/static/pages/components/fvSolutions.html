@@ -17,13 +17,15 @@
 				discretizar las ecuaciones de la variable concretada. Los 
 				posibilidades de configuración en la aplicación son:
 				<ul>
+					<li>smoothSolver: solver que usa un smoother</li>
 					<li>GAMG: multi-grid geométrico-algebráico generalizado</li>
 					<li>PCG/PBiCG: gradiente (bi-)conjugado precondicionado</li>
 					<li>
 						PBiCGStab: gradiente (bi-)conjugado precondicionado estabilizado. Recomendado sobre
 						PCG/PBiCG.
 					</li>
-					<li>smoothSolver: solver que usa un smoother</li>
+					<li>DIC: Diagonal incompleta de Cholesky (simétrico)</li>
+					<li>DILU: Diagonal incompleta-LU de Cholesky (asimétrica)</li>
 				</ul>
 			</li>
 			<li>
@@ -46,10 +48,10 @@
 				<strong>Precondicionador:</strong> trabaja con las matrices previo al cálculo de valores
 				con el solver. Los valores habilitados son:
 				<ul>
-					<li>DILU: Diagonal incompleta-LU de Cholesky (asimétrica)</li>
 					<li>DIC: Diagonal incompleta de Cholesky (simétrico)</li>
+					<li>DILU: Diagonal incompleta-LU de Cholesky (asimétrica)</li>
 					<li>Gauss-Siedel</li>
-					<li>GAMG: multi-grid geométrico-algebráico generalizado</li>
+					<li>Gauss-Siedel Simétrico</li>
 				</ul>
 				También ha de especificarse el <strong>número de barridos</strong>, que indicará las veces que el
 				residual será recalculado.
@@ -58,11 +60,11 @@
 				<strong>Smoother:</strong> los solvers que usan smoother necesitan que este se especifique. La opción 
 				más confiable, generalemente, es Gauss-Siedel, pero DIC puede ofrecer mejor convergencia. Las opciones son:
 				<ul>
-					<li>DILU: Diagonal incompleta-LU de Cholesky (asimétrica)</li>
 					<li>DIC: Diagonal incompleta de Cholesky (simétrico)</li>
+					<li>DILU: Diagonal incompleta-LU de Cholesky (asimétrico)</li>
 					<li>DIC Gauss-Siedel: Diagonal incompleta de Cholesky con Gauss-Siedel (simétrico)</li>
+					<li>DILU Gauss-Siedel: Diagonal incompleta-LU de Cholesky con Gauss-Siedel (asimétrico)</li>
 					<li>Gauss-Siedel</li>
-					<li>GAMG: multi-grid geométrico-algebráico generalizado</li>
 				</ul>
 			</li>
 		</ul>

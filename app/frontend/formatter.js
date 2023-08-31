@@ -10,7 +10,14 @@ async function getVersion() {
  * Looks for past simulations on DB and fills the initial page with this data tabulated 
  */
 async function setLastSimulationsTable() {
-    await startDB();
+    setLastSimulationsTableVariable(true);
+}
+
+/**
+ * Looks for past simulations on DB and fills the initial page with this data tabulated 
+ */
+async function setLastSimulationsTableVariable(dbStarted) {
+    if(dbStarted != null && !dbStarted) await startDB();
     // Looks for past simulations on DB
     let info = await getAllSimulationsInfo();
 
@@ -86,7 +93,6 @@ function enableDisableSpecificValues(variable, boundary) {
 async function setFluxDefaultData(simulation, boundariesData) {
     // Gets flux data from DB
     let zeroData = await getZeroData(simulation);
-    // console.log(zeroData);
 
     for( let data of zeroData ) {
         document.getElementById(`flux-${data.variable}`).value = data.value;
@@ -115,7 +121,6 @@ async function setFluxDefaultData(simulation, boundariesData) {
                     if( data.boundaries[boundary.name].value != null &&
                             data.boundaries[boundary.name].value !== '$internalField') {
 
-                        console.log(boundary, data.boundaries[boundary.name].value);
                         document.getElementById(`${data.variable}-${boundary.name}-value`).value =
                             data.boundaries[boundary.name].value.replaceAll('uniform ', '');
                         document.getElementById(`${data.variable}-${boundary.name}-value-check`).checked = true;
@@ -141,9 +146,6 @@ async function setControlDictDefaultData(simulation) {
     let controlDictData = await getControlDictData(simulation);
     
     // Fill inputs with default data
-    // document.getElementById('simulation-begin').value = controlDictData.startFrom;
-    // document.getElementById('simulation-begin-time').value = controlDictData.startTime;
-    // document.getElementById('simulation-end').value = controlDictData.stopAt;
     document.getElementById('simulation-end-time').value = controlDictData.endTime;
     document.getElementById('simulation-deltat').value = controlDictData.deltaT;
 
@@ -578,6 +580,11 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                             de la variable en el contorno. De lo contrario, se usará el 
                                             valor por defecto definido anteriormente.
                                         </p>
+                                        <p>
+                                            Si el valor que se está especificando es vectorial (por ejemplo, 
+                                            la velocidad), ha de escribirse el mismo en forma vectorial. Ejemplo
+                                            "(10 0 0)".
+                                        </p>
                                     </div>
                                 </div>`;
                             }
@@ -629,34 +636,66 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                 </div>
                         `;
                             
-                            for(let variable of variables){
+                        for(let variable of variables){
+                            newText += `
+                                <div class="input-data">
+                                    <label for="${variable.variable}-data-${boundary.name}-type">Condición para ${variable.name}</label>
+                                    <select id="${variable.variable}-data-${boundary.name}-type">
+                                        <option value='fixedValue'>Valor fijo</option>
+                                        <option value='zeroGradient'>Gradiente nulo</option>
+                                        <option value='noSlip'>No-deslizamiento</option>
+                                        <option value='empty'>Vacío</option>
+                                    </select>
+                                </div>
+                                `;
+
+                            if( variable.variable === 'U' || variable.variable === 'p' ){
+                                newText += `
+                                <div class="input-data">
+                                    <div>
+                                        <input type="checkbox" id="${variable.variable}-${boundary.name}-value-check"
+                                            onclick="enableDisableSpecificValues('${variable.variable}', '${boundary.name}')"/>
+                                        <label for="${variable.variable}-${boundary.name}-value">
+                                            Especificar ${variable.name} en el contorno
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input class="long-input-info" disabled
+                                            id="${variable.variable}-${boundary.name}-value"/>
+                                        <span class="material-symbols-rounded" onclick="showInfo('${variable.variable}-${boundary.name}-value')">info</span>
+                                    </div>
+                                </div>
+                                <div class="input-data">
+                                    <div id="${variable.variable}-${boundary.name}-value-info" class="info-div info-div-border" style="display: none;">
+                                        <p>
+                                            Si se selecciona la opción, puede definir el valor inicial
+                                            de la variable en el contorno. De lo contrario, se usará el 
+                                            valor por defecto definido anteriormente.
+                                        </p>
+                                        <p>
+                                            Si el valor que se está especificando es vectorial (por ejemplo, 
+                                            la velocidad), ha de escribirse el mismo en forma vectorial. Ejemplo
+                                            "(10 0 0)".
+                                        </p>
+                                    </div>
+                                </div>`;
+                                }
+
+                            if(variable.wallFunction == 1){
                                 newText += `
                                     <div class="input-data">
-                                        <label for="${variable.variable}-data-${boundary.name}-type">Condición para ${variable.name}</label>
-                                        <select id="${variable.variable}-data-${boundary.name}-type">
-                                            <option value='fixedValue'>Valor fijo</option>
-                                            <option value='zeroGradient'>Gradiente nulo</option>
-                                            <option value='noSlip'>No-deslizamiento</option>
-                                            <option value='empty'>Vacío</option>
+                                        <label for="${boundary.name}-wall">Funciones de pared para ${variable.name}</label>
+                                        <select id="${boundary.name}-wall">
+                                            <option value='1'>Sí</option>
+                                            <option value='0'>No</option>
                                         </select>
                                     </div>
                                     `;
-
-                                if(variable.wallFunction == 1){
-                                    newText += `
-                                        <div class="input-data">
-                                            <label for="${boundary.name}-wall">Funciones de pared para ${variable.name}</label>
-                                            <select id="${boundary.name}-wall">
-                                                <option value='1'>Sí</option>
-                                                <option value='0'>No</option>
-                                            </select>
-                                        </div>
-                                        `;
-                                }
                             }
-                            
-                            newText += `</section>
-                                    </section>`;
+                        }
+                        
+                        newText += `</section>
+                                </section>`;
 
                     boundaryConditions.innerHTML += newText;
                 }
@@ -673,26 +712,11 @@ function fillFormsBoundariesFields(boundariesData, variables) {
 }
 
 /**
- * Makes appear/desappear 'simulation-begin-time' input for start time
- */
-function startTime(value) {
-    // TODO: finish the method
-    console.log('on change is working!', value);
-}
-
-/**
- * Makes appear/desappear 'simulation-end-time' input for start time
- */
-function endTime(value) {
-    // TODO: finish the method
-    console.log('on change is working!', value);
-}
-
-/**
  * Assures that if the user selects 'icoFoam' solver the turbulence model will ever be default/laminar
  */
 function solverChanges(value) {
-    let selector = document.getElementById('turbulence-model');
+    const selector = document.getElementById('turbulence-model');
+    const intensityfield = document.getElementById('intesity-block');
 
     if(value === 'icoFoam') {
         selector.disabled = true;
@@ -700,7 +724,10 @@ function solverChanges(value) {
 
     } else {
         selector.disabled = false;
+        intensityfield.style.display = 'flex';
     }
+    
+    modelChanges(selector.value);
 
     let button = document.getElementById('next-button');
 
@@ -708,6 +735,20 @@ function solverChanges(value) {
         button.disabled = false;
     } else {
         button.disabled = true;
+    }
+}
+
+/**
+ * Assures that if the user selects 'default/laminar' turbulence model intensity will not be available
+ */
+function modelChanges(value) {
+    const intensityfield = document.getElementById('intesity-block');
+
+    if(value === 'default') {
+        intensityfield.style.display = 'none';
+
+    } else {
+        intensityfield.style.display = 'flex';
     }
 }
 
@@ -1085,19 +1126,17 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                 <div class="card-title">
                     <p class="input-label">Parámetros para el solver de ${variable.name.toLowerCase()}</p>
                 </div>
-                <div class="data-container">`;
-            
-            // We distinguish betwwen symmetric and assymetric variables
-            if ( variable.type === 'symmetric' ) {
-                newHTML += `
+                <div class="data-container">
                     <div class="input-data">
                         <label for="${variable.variable}-solver-schema">Solver</label>
                         <select id="${variable.variable}-solver-schema">
                             <option value="smoothSolver">smoothSolver</option>
-                            <option value="PBiCGStab">PBiCGStab</option>
-                            <option value="PCG">PCG</option>
                             <option value="GAMG">GAMG</option>
+                            <option value="PCG">PCG</option>
+                            <option value="PBiCG">PBiCG</option>
+                            <option value="PBiCGStab">PBiCGStab</option>
                             <option value="DIC">DIC</option>
+                            <option value="DILU">DILU</option>
                         </select>
                     </div>
                     
@@ -1105,18 +1144,22 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                         <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
                         <select id="${variable.variable}-preconditioner-schema">
                             <option value="default">Sin precondicionador</option>
-                            <option value="symGaussSeidel">Gauss-Seidel</option>
+                            <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="symGaussSeidel">Gauss-Seidel Simétrico</option>
                             <option value="DIC">DIC</option>
-                            <option value="GAMG">GAMG</option>
+                            <option value="DILU">DILU</option>
                         </select>
                     </div>
                     
                     <div class="input-data">
                         <label for="${variable.variable}-smoother-data">Smoother</label>
                         <select id="${variable.variable}-smoother-data">
-                            <option value="symGaussSeidel">Gauss-Seidel</option>
+                            <option value="GaussSeidel">Gauss-Seidel</option>
+                            <option value="symGaussSeidel">Gauss-Seidel Simétrico</option>
                             <option value="DIC">DIC</option>
+                            <option value="DILU">DILU</option>
                             <option value="DICGaussSeidel">DICGaussSeidel</option>
+                            <option value="DILUGaussSeidel">DILUGaussSeidel</option>
                         </select>
                     </div>
                     
@@ -1134,52 +1177,8 @@ function fillFormsSolverVariablesSections(variablesInputs, variables) {
                         <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
                         <input class="long-input" type="number" id="${variable.variable}-relTol-data"/>
                     </div>
-                    `;
-            } else if ( variable.type === 'asymmetric' ) {
-                newHTML += `
-                    <div class="input-data">
-                        <label for="${variable.variable}-solver-schema">Solver</label>
-                        <select id="${variable.variable}-solver-schema"> 
-                            <option value="GAMG">GAMG</option>
-                            <option value="PBiCGStab">PBiCGStab</option>
-                            <option value="PBiCG">PBiCG</option>
-                            <option value="DILU">DILU</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-data">
-                        <label for="${variable.variable}-preconditioner-schema">Preconditioner</label>
-                        <select id="${variable.variable}-preconditioner-schema"> 
-                            <option value="default">Sin precondicionador</option>
-                            <option value="GaussSeidel">Gauss-Seidel</option>
-                            <option value="GAMG">GAMG</option>
-                            <option value="DILU">DILU</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-data">
-                        <label for="${variable.variable}-smoother-data">Smoother</label>
-                        <select id="${variable.variable}-smoother-data">
-                            <option value="GaussSeidel">Gauss-Seidel</option>
-                            <option value="GAMG">GAMG</option>
-                            <option value="DILU">DILU</option>
-                            <option value="DICGaussSeidel">DICGaussSeidel</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-data">
-                        <label for="${variable.variable}-tolerance-data">Tolerancia</label>
-                        <input class="long-input" type="number" id="${variable.variable}-tolerance-data"/>
-                    </div>
-                    
-                    <div class="input-data">
-                        <label for="${variable.variable}-relTol-data">Tolerancia relativa</label>
-                        <input class="long-input" type="number" id="${variable.variable}-relTol-data"/>
-                    </div>
-                    `;
-            }
+                '</div>`;
             
-            newHTML += '</div>';
             variablesInputs.innerHTML += newHTML;
         }
     }

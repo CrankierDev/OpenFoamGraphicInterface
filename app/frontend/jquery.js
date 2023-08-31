@@ -14,7 +14,7 @@ function loadContent(id) {
 	$(`#${sectionID}`).load(htmlRoute);
 	
 	if( id ==='start' ) {
-		setTimeout( () => setLastSimulationsTable(), 500);
+		setTimeout( () => setLastSimulationsTableVariable(false), 500);
 	}
 }
 

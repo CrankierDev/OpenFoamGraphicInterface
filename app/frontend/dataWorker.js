@@ -152,9 +152,15 @@ function buildBoundaryField(variable, boundariesData, turbulenceModel) {
 		type	${patchType};`;
 
 				if( patchType === 'fixedValue' ) {
-					boundaryField += `
-		value	uniform 0;`;
+					if( variable.variable ==='U' ) {
+						boundaryField += `
+		value	$internalField;`;
 
+					} else {
+						boundaryField += `
+		value	uniform 0;`;
+					}
+						
 				}
 				boundaryField += `
 	}
@@ -431,8 +437,14 @@ function buildGradSchemes(variables) {
 }
 
 function gradBuilder(grad) {
-	return  document.getElementById(`${grad}-grad-schema`).value + ' ' +
-			 document.getElementById(`${grad}-grad-interpolation`).value;
+	const grad = document.getElementById(`${grad}-grad-schema`).value;
+
+	if( grad ==='leastSquares' ) {
+		return  grad;
+	} else {
+		return  grad + ' ' + document.getElementById(`${grad}-grad-interpolation`).value;
+	}
+
 }
 
 function buildDivSchemes(variables) {
@@ -620,6 +632,7 @@ function buildMainSolver(solver) {
 
 	mainSolver += `
 	consistent			${document.getElementById('consistent').value};
+	maxCo				1;
 
 	residualControl		:residualControl
 }`;

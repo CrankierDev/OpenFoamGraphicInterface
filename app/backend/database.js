@@ -28,7 +28,7 @@ const FORCES_DATA_INSERT = `INSERT INTO forces_data (id, patches, rho, rhoInf, c
                                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
 
 function open() {
-    logger.info('Abriendo BBDD');
+    logger.info('Abriendo BBDD...');
     let db = new sqlite3.Database(DBSOURCE, (err) => {
         if(err) {
             // Cannot open database
@@ -41,6 +41,7 @@ function open() {
 }
 
 function close(db) {
+    logger.info('Cerrando BBDD...');
     db.close((err) => {
         if (err) {
             logger.error(err);
@@ -53,19 +54,15 @@ async function start() {
 
     db.run(`CREATE TABLE turbulence_models (model text, variables text)`,
         (err) => {
-            logger.info('turbulence_models');
             if(err) {
-                logger.info('turbulence_models2');
                 logger.error('La tabla turbulence_models ya existe.');
             } else {
-                logger.info('turbulence_models3');
                 logger.info('La tabla turbulence_models ha sido creada.');
                 db.run(TURBULENCE_MODELS_INSERT, ["kOmegaSST", "nut,k,omega"]);
                 db.run(TURBULENCE_MODELS_INSERT, ["kEpsilon", "nut,k,epsilon"]);
                 db.run(TURBULENCE_MODELS_INSERT, ["SpalartAllmaras", "nut,nuTilda"]);
             }
-                    
-            logger.info('turbulence_models4');
+
         }
     ); 
 
@@ -545,13 +542,14 @@ echo "Process finished!"`]);
         tolerance       1e-06;
         relTol          0.1;
         smoother        GaussSeidel;
+        nSweeps         0;
     }
 
     U
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
-        nSweeps         2;
+        nSweeps         0;
         tolerance       1e-08;
         relTol          0.1;
     }
@@ -560,7 +558,7 @@ echo "Process finished!"`]);
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
-        nSweeps         2;
+        nSweeps         0;
         tolerance       1e-08;
         relTol          0.1;
     }
@@ -569,7 +567,7 @@ echo "Process finished!"`]);
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
-        nSweeps         2;
+        nSweeps         0;
         tolerance       1e-08;
         relTol          0.1;
     }
@@ -578,7 +576,7 @@ echo "Process finished!"`]);
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
-        nSweeps         2;
+        nSweeps         0;
         tolerance       1e-08;
         relTol          0.1;
     }
@@ -587,7 +585,7 @@ echo "Process finished!"`]);
     {
         solver          smoothSolver;
         smoother        symGaussSeidel;
-        nSweeps         2;
+        nSweeps         0;
         tolerance       1e-08;
         relTol          0.1;
     }
@@ -637,7 +635,6 @@ echo "Process finished!"`]);
         }
     );
 
-    logger.info('BBDD abierta11');
     db.run(`CREATE TABLE forces_data (id text, patches text, rho text, rhoInf text, cofR text,
             forceCoeffs boolean, magUInf text, lRef text, aRef text,
             liftDir text, dragDir text, pitchAxis text)`,

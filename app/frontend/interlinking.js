@@ -1,5 +1,4 @@
 function changeSection(actualContent, nextContent, method) {
-    console.log(actualContent, nextContent, method);
     document.getElementById(`${actualContent}-inputs-${method}`).style.display = "none";
     document.getElementById(`${nextContent}-nav-${method}`).classList.add('active-nav');
     document.getElementById(`${nextContent}-inputs-${method}`).style.display = "block";
@@ -190,6 +189,9 @@ async function loadSimulationData(simulationID) {
 
         fillFormsBasicFieldsSim(boundariesData, constantData.turbulenceModel, simulationID);
         fillFormsSolverVariables(controlDictData.application, simulationID);
+
+        solverChanges(controlDictData.application);
+        modelChanges(constantData.turbulenceModel);
     }, 100 );
 }
 
