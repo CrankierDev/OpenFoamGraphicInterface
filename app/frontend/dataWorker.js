@@ -436,13 +436,13 @@ function buildGradSchemes(variables) {
 	return grads;
 }
 
-function gradBuilder(grad) {
-	const grad = document.getElementById(`${grad}-grad-schema`).value;
+function gradBuilder(variable) {
+	const grad = document.getElementById(`${variable}-grad-schema`).value;
 
 	if( grad ==='leastSquares' ) {
 		return  grad;
 	} else {
-		return  grad + ' ' + document.getElementById(`${grad}-grad-interpolation`).value;
+		return  grad + ' ' + document.getElementById(`${variable}-grad-interpolation`).value;
 	}
 
 }
