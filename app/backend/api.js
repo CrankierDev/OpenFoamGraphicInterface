@@ -248,7 +248,7 @@ async function plotAll(simRoute) {
         }
     };
 
-    resultsWorker.plotter(residualData, 'Residuales');
+    resultsWorker.plotter(residualData, 'Valor de los residuales VS iteración');
 
     if( data.coeffs.cl.length === 0 &&
         data.coeffs.cd.length === 0 &&
@@ -266,7 +266,7 @@ async function plotAll(simRoute) {
         }
     };
 
-    resultsWorker.plotter(coeffsData, 'Coeficientes');
+    resultsWorker.plotter(coeffsData, 'Valor de los coeficientes VS iteración');
 }
 
 async function getZeroDataAPI(simulationID) {

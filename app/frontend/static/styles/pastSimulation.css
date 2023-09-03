@@ -13,6 +13,16 @@ h1 {
     color: var(--whitetext-pallete);
 }
 
+.sim-header{
+    position: sticky;
+    top: 0;
+    background-color: var(--background-pallete);
+    height: fit-content;
+    width: 100%;
+    padding-bottom: 20px;
+    z-index: 2000;
+}
+
 .sim-name{
     width: 80%;
     margin-left: auto;
