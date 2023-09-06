@@ -10,8 +10,8 @@ const logger = require('./app/backend/logger.js');
  */
 function createWindow() {
     const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1400,
+        height: 1000,
         webPreferences: {
             preload: path.join(__dirname, 'app/preload.js'),
             nodeIntegration: true,
@@ -87,6 +87,7 @@ function createWindow() {
 
     mainWindow.loadFile('app/index.html');
     // mainWindow.webContents.openDevTools();
+    mainWindow.setMenu(null);
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
         if (url.startsWith('https:')) {
             shell.openExternal(url);
