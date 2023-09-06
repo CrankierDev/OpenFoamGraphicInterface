@@ -10,7 +10,7 @@ async function checkMeshFormat() {
         document.getElementById('checkMesh').innerText = '!Mallado correcto!';
     } else { 
         document.getElementById('checkMesh').style.backgroundColor = '#e31d1d';
-        document.getElementById('checkMesh').innerText = 'Revisa el mallado';
+        document.getElementById('checkMesh').innerText = 'Revise el mallado';
     }
 }
 
