@@ -344,7 +344,6 @@ function parseVectorValue(vector) {
 		if( vector === 'lift' ) return buildLiftVector(direction, aoa);
 		else if( vector === 'drag' ) return buildDragVector(aoa);
 		else if( vector === 'pitch' ) return buildPitchVector(direction);
-		// TODO: limit options to the desired ones in form
 
 	} else {
 		return buildVectorValue(vector);
@@ -360,8 +359,8 @@ function buildLiftVector(direction, aoa) {
 	if( aoa != ''  && aoa != '0' ) {
 		const rads = degToRadians(aoa);
 
-		if( direction == 'Y' ) return `(-${Math.sin(rads)} ${Math.cos(rads)} 0)`;
-		else if( direction == 'Z' ) return `(-${Math.sin(rads)} 0 ${Math.cos(rads)})`;
+		if( direction == 'Y' ) return `(${Math.sin(rads)*(-1)} ${Math.cos(rads)} 0)`;
+		else if( direction == 'Z' ) return `(${Math.sin(rads)*(-1)} 0 ${Math.cos(rads)})`;
 
 	} else {
 		if( direction == 'Y' ) return '(0 1 0)';

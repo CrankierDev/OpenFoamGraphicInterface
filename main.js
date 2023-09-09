@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -78,18 +78,46 @@ function createWindow() {
     ipcMain.handle('executeSimulation', async (event, simulationID) => {
         return await api.executeSimulation(simulationID);
     });
-    ipcMain.handle('checkMesh', async (event, meshRoute) => {
-        return await api.checkMesh(meshRoute);
+    ipcMain.handle('checkMesh', async (event, logInfo) => {
+        return await api.checkMesh(logInfo);
     });
     ipcMain.handle('plotSimulationData', async (event, simulationID) => {
         return await api.plotData(simulationID);
     });
 
     mainWindow.loadFile('app/index.html');
-    // mainWindow.webContents.openDevTools();
-    mainWindow.setMenu(null);
+    mainWindow.webContents.openDevTools();
+
+    const menuTemplate = [
+        {
+          label: 'Acciones',
+          submenu: [
+            { role: 'reload', label: 'Recargar' },
+            { role: 'forceReload', label: 'Recargar (forzado)'  },
+            { role: 'toggleDevTools', label: 'Herramientas de desarrollador'  },
+            { role: 'togglefullscreen', label: 'Pantalla completa'  }
+          ]
+        },
+        // {
+        //   role: 'help',
+        //   label: 'Ayuda',
+        //   submenu: [
+        //     {
+        //       label: 'Buzón de sugerencias',
+        //       click: async () => {
+        //         const { shell } = require('electron')
+        //         await shell.openExternal('https://www.uca.es/')
+        //       }
+        //     }
+        //   ]
+        // }
+    ];
+
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
+
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-        if (url.startsWith('https:')) {
+        if (url.startsWith('https:') || url.startsWith('http:')) {
             shell.openExternal(url);
         }
         return { action: 'deny' };

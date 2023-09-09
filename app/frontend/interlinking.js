@@ -32,41 +32,6 @@ async function paginationAdvanced(direction) {
             document.getElementById('next-button').style.display = "none";   
             showPages();
         }
-    } else if( activeId == 'constants-nav-advanced' ) {
-        if(direction){
-            changeSection('constants', 'zero', 'advanced');
-        }
-    } else if( activeId == 'zero-nav-advanced' ) {
-        if(direction){
-            changeSection('zero', 'fvSolution', 'advanced');
-        } else {
-            changeSection('zero', 'constants', 'advanced');     
-        }
-    } else if( activeId == 'fvSolution-nav-advanced' ) {
-        if(direction){
-            changeSection('fvSolution', 'fvSchemes', 'advanced');
-
-        } else {
-            changeSection('fvSolution', 'zero', 'advanced');
-        }
-    } else if( activeId == 'fvSchemes-nav-advanced' ) {
-        if(direction){
-            changeSection('fvSchemes', 'controlDict', 'advanced');
-
-        } else {
-            changeSection('fvSchemes', 'fvSolution', 'advanced');
-        }
-    } else if( activeId == 'controlDict-nav-advanced' ) {
-        if(direction){
-            changeSection('controlDict', 'generator', 'advanced');
-
-        } else {
-            changeSection('controlDict', 'fvSchemes', 'advanced');
-        }
-    } else if( activeId == 'generator-nav-advanced' ) {
-        if(!direction) {
-            changeSection('generator', 'controlDict', 'advanced');
-        }
     }
 }
 
@@ -85,22 +50,6 @@ async function paginationSimple(direction) {
             
             document.getElementById('next-button').style.display = "none";  
             showPages();
-        }
-    } else if( activeId == 'zero-nav-simple' ) {
-        if(direction){
-            changeSection('zero', 'controlDict', 'simple');
-        } else {
-            changeSection('zero', 'basics', 'simple');
-        }
-    } else if( activeId == 'controlDict-nav-simple' ) {
-        if(direction){
-            changeSection('controlDict', 'generator', 'simple');
-        } else {
-            changeSection('controlDict', 'zero', 'simple');
-        }
-    } else if( activeId == 'generator-nav-simple' ) {
-        if(!direction) {
-            changeSection('generator', 'controlDict', 'simple');
         }
     }
 }
@@ -147,6 +96,7 @@ function isSecondContentAvailable() {
 
     if( nameOK && meshOK && workspaceOK 
             && solver === 'default' && turbulenceModel.innerHTML === '' ) {
+        document.getElementById('checkMesh').style.visibility = 'visible';
         setModels();
         document.getElementById('flux-conditions').style.display = 'block';
     }
@@ -196,7 +146,11 @@ async function loadSimulationData(simulationID) {
 }
 
 async function generateFiles() {
-    window.generatedSimID = await generateSimulationInfo();
+    document.getElementById('spinner-generator').style.display = 'flex';
+    const simID = await generateSimulationInfo();
+    window.generatedSimID = simID;
+    document.getElementById('spinner-generator').style.display = 'none';
+    return simID;
 }
 
 async function generateAndExecute() {
@@ -206,7 +160,7 @@ async function generateAndExecute() {
     if( window.generatedSimID != null ) {
         simID = window.generatedSimID;
     } else {
-        simID = await generateSimulationInfo();
+        simID = await generateFiles();
     }
 
     document.getElementById('spinner').style.display = 'flex';

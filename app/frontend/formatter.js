@@ -105,7 +105,7 @@ async function setFluxDefaultData(simulation, boundariesData) {
         if(simulation !== 'default_sim') {
             for( let boundary in data.boundaries ) {
                 if( data.boundaries[boundary].type === 'empty' ) continue;
-                
+
                 document.getElementById(`${data.variable}-data-${boundary}-type`).value
                     = data.boundaries[boundary].type;
             }
@@ -237,6 +237,7 @@ async function fillFormsBasicFields(boundariesData, turbulenceModel) {
  * user at the form
  */
 async function fillFormsBasicFieldsSim(boundariesData, turbulenceModel, simulationID) {
+    console.log(boundariesData, turbulenceModel, simulationID);
     // Initialize the array with two variables that will ever be in a simulation
     let variables = [
         {
@@ -299,7 +300,7 @@ async function fillFormsSchemesFields(variables, simulationID) {
                 newHTML += `
                     <div class="input-data">
                         <p class="schemes-title">Esquema para los gradientes</p>
-                        <div class="long-input">
+                        <div class="long-title">
                             <label>¿Gradientes por defecto?</label>
                             <input type="checkbox" checked
                                 onclick="showNonDefaultSchemes('grad', '${variable.variable}', checked)"
@@ -331,7 +332,7 @@ async function fillFormsSchemesFields(variables, simulationID) {
                 newHTML += `
                     <div class="input-data">
                         <p class="schemes-title">Esquema para las divergencias</p>
-                        <div class="long-input">
+                        <div class="long-title">
                             <label>¿Divergencias por defecto?</label>
                             <input type="checkbox" checked
                                 onclick="showNonDefaultSchemes('div', '${variable.variable}', checked)"
@@ -481,6 +482,8 @@ function fillFormsBoundariesFields(boundariesData, variables) {
         boundaryConditions.innerHTML = 
             '<h2 class="input-label">Condiciones de contorno</h2>';
 
+        console.log('jay');
+
         for (boundary of boundariesData) {
             if(!document.getElementById(`${boundary.name}-data`)){
                 // Checks the type of the boundary to apply the correct inputs    
@@ -524,9 +527,6 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                             define que en el contorno el valor de la misma es calculado con
                                             el alrededor.
                                         </li>
-                                        <li>
-                                            <strong>Vacío:</strong>
-                                        </li>
                                     </ul>
                                 </div>
                         `;   
@@ -535,7 +535,7 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                             newText += `
                                 <div class="input-data">
                                     <label for="${variable.variable}-data-${boundary.name}-type">Condición para ${variable.name}</label>
-                                    <select id="${variable.variable}-data-${boundary.name}-type" >
+                                    <select id="${variable.variable}-data-${boundary.name}-type" class="select-zero">
                                     `;
 
                             if (variable.variable === 'p') {
@@ -553,7 +553,6 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                         <option value='zeroGradient'>Gradiente nulo</option>
                                         <option value='fixedValue'>Valor fijo</option>
                                         <option value='calculated'>Calculado</option>
-                                        <option value='empty'>Vacío</option>
                                     </select>
                                 </div>`;
                             
@@ -568,24 +567,32 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                         </label>
                                     </div>
                                     <div>
-                                        <input class="long-input-info" disabled
-                                            id="${variable.variable}-${boundary.name}-value"/>
+                                        <input class="long-input-info" disabled type="number"
+                                            id="${variable.variable}-${boundary.name}-value"/>`;
+
+                                if( variable.variable === 'U' ) {
+                                    newText += `
+                                        <span class="units">m/s</span>`;
+                                } else if( variable.variable === 'p' ) {
+                                    newText += `
+                                        <span class="units">Pa</span>`;
+                                }
+
+                                newText += `
                                         <span class="material-symbols-rounded" onclick="showInfo('${variable.variable}-${boundary.name}-value')">info</span>
                                     </div>
                                 </div>
-                                <div class="input-data">
-                                    <div id="${variable.variable}-${boundary.name}-value-info" class="info-div info-div-border" style="display: none;">
-                                        <p>
-                                            Si se selecciona la opción, puede definir el valor inicial
-                                            de la variable en el contorno. De lo contrario, se usará el 
-                                            valor por defecto definido anteriormente.
-                                        </p>
-                                        <p>
-                                            Si el valor que se está especificando es vectorial (por ejemplo, 
-                                            la velocidad), ha de escribirse el mismo en forma vectorial. Ejemplo
-                                            "(10 0 0)".
-                                        </p>
-                                    </div>
+                                <div id="${variable.variable}-${boundary.name}-value-info" class="info-div info-div-border" style="display: none;">
+                                    <p>
+                                        Si se selecciona la opción, puede definir el valor inicial
+                                        de la variable en el contorno. De lo contrario, se usará el 
+                                        valor por defecto definido anteriormente.
+                                    </p>
+                                    <p>
+                                        Si el valor que se está especificando es vectorial (por ejemplo, 
+                                        la velocidad), ha de escribirse el mismo en forma vectorial. Ejemplo
+                                        "(10 0 0)".
+                                    </p>
                                 </div>`;
                             }
                         }
@@ -629,9 +636,6 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                             la <a target="blank" href="https://ingenieriamecanicacol.blogspot.com/2022/12/condicion-de-no-deslizamiento.html">condición de No-deslizamiento</a> sobre 
                                             la superficie.
                                         </li>
-                                        <li>
-                                            <strong>Vacío:</strong>
-                                        </li>
                                     </ul>
                                 </div>
                         `;
@@ -640,11 +644,10 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                             newText += `
                                 <div class="input-data">
                                     <label for="${variable.variable}-data-${boundary.name}-type">Condición para ${variable.name}</label>
-                                    <select id="${variable.variable}-data-${boundary.name}-type">
+                                    <select id="${variable.variable}-data-${boundary.name}-type" class="select-zero">
                                         <option value='fixedValue'>Valor fijo</option>
                                         <option value='zeroGradient'>Gradiente nulo</option>
                                         <option value='noSlip'>No-deslizamiento</option>
-                                        <option value='empty'>Vacío</option>
                                     </select>
                                 </div>
                                 `;
@@ -661,23 +664,31 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                     </div>
                                     <div>
                                         <input class="long-input-info" disabled
-                                            id="${variable.variable}-${boundary.name}-value"/>
+                                            id="${variable.variable}-${boundary.name}-value"/>`;
+
+                                if( variable.variable === 'U' ) {
+                                    newText += `
+                                        <span class="units">m/s</span>`;
+                                } else if( variable.variable === 'p' ) {
+                                    newText += `
+                                        <span class="units">Pa</span>`;
+                                }
+
+                                newText += `                    
                                         <span class="material-symbols-rounded" onclick="showInfo('${variable.variable}-${boundary.name}-value')">info</span>
                                     </div>
                                 </div>
-                                <div class="input-data">
-                                    <div id="${variable.variable}-${boundary.name}-value-info" class="info-div info-div-border" style="display: none;">
-                                        <p>
-                                            Si se selecciona la opción, puede definir el valor inicial
-                                            de la variable en el contorno. De lo contrario, se usará el 
-                                            valor por defecto definido anteriormente.
-                                        </p>
-                                        <p>
-                                            Si el valor que se está especificando es vectorial (por ejemplo, 
-                                            la velocidad), ha de escribirse el mismo en forma vectorial. Ejemplo
-                                            "(10 0 0)".
-                                        </p>
-                                    </div>
+                                <div id="${variable.variable}-${boundary.name}-value-info" class="info-div info-div-border" style="display: none;">
+                                    <p>
+                                        Si se selecciona la opción, puede definir el valor inicial
+                                        de la variable en el contorno. De lo contrario, se usará el 
+                                        valor por defecto definido anteriormente.
+                                    </p>
+                                    <p>
+                                        Si el valor que se está especificando es vectorial (por ejemplo, 
+                                        la velocidad), ha de escribirse el mismo en forma vectorial. Ejemplo
+                                        "(10 0 0)".
+                                    </p>
                                 </div>`;
                                 }
 
@@ -685,7 +696,7 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                 newText += `
                                     <div class="input-data">
                                         <label for="${boundary.name}-wall">Funciones de pared para ${variable.name}</label>
-                                        <select id="${boundary.name}-wall">
+                                        <select id="${boundary.name}-wall" class="select-zero">
                                             <option value='1'>Sí</option>
                                             <option value='0'>No</option>
                                         </select>
@@ -731,17 +742,20 @@ function solverChanges(value) {
 
     let button = document.getElementById('next-button');
 
-    if(value !== 'default') {
-        button.disabled = false;
-    } else {
-        button.disabled = true;
+    if(button != null) {
+        if(value !== 'default') {
+            button.disabled = false;
+        } else {
+            button.disabled = true;
+        }
     }
+
 }
 
 /**
  * Assures that if the user selects 'default/laminar' turbulence model intensity will not be available
  */
-function modelChanges(value) {
+async function modelChanges(value) {
     const intensityfield = document.getElementById('intesity-block');
 
     if(value === 'default') {
@@ -749,6 +763,18 @@ function modelChanges(value) {
 
     } else {
         intensityfield.style.display = 'flex';
+    }
+
+    let boundariesData = await pathsData();
+    
+    if( window.simulationType !== 'pastSimulation' ){
+        fillFormsBasicFields(boundariesData, document.getElementById("turbulence-model").value);
+        fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
+
+    } else {
+        console.log('holi', boundariesData);
+        fillFormsBasicFieldsSim(boundariesData, document.getElementById("turbulence-model").value, window.simulationID);
+        fillFormsSolverVariables(document.getElementById('solver').value, window.simulationID);
     }
 }
 
@@ -782,15 +808,15 @@ function fillFormsForcesFields() {
                 <div class="axis-data">
                     <div>
                         <label for="CofRX-data" class="axis-label">Eje X</label>
-                        <input class="axis-input" type="text" id="CofRX-data" type="number"/>
+                        <input class="axis-input" id="CofRX-data" type="number"/>
                     </div>
                     <div>
                         <label for="CofRY-data" class="axis-label">Eje Y</label>
-                        <input class="axis-input" type="text" id="CofRY-data" type="number"/>
+                        <input class="axis-input" id="CofRY-data" type="number"/>
                     </div>
                     <div>
                         <label for="CofRZ-data" class="axis-label">Eje Z</label>
-                        <input class="axis-input" type="text" id="CofRZ-data" type="number"/>
+                        <input class="axis-input" id="CofRZ-data" type="number"/>
                     </div>
                 </div>
                 
@@ -870,7 +896,7 @@ function fillFormsForcesFields() {
             <div class="input-data">
                 <label for="aRef-data" class="long-label">Área de referencia</label>
                 <div>
-                    <input class="short-input" type="text" id="aRef-data" type="number"/>
+                    <input class="short-input" id="aRef-data" type="number"/>
                     <span class="material-symbols-rounded" onclick="showInfo('aRef-data')">info</span>
                 </div>
             </div>
@@ -909,15 +935,15 @@ function fillFormsvectorDirections(vectorName, value) {
         vector.innerHTML = `
             <div>
                 <label for="${vectorName}X-data">Eje X</label>
-                <input class="axis-input" type="text" id="${vectorName}X-data" type="number"/>
+                <input class="axis-input" id="${vectorName}X-data" type="number"/>
             </div>
             <div>
                 <label for="${vectorName}Y-data">Eje Y</label>
-                <input class="axis-input" type="text" id="${vectorName}Y-data" type="number"/>
+                <input class="axis-input" id="${vectorName}Y-data" type="number"/>
             </div>
             <div>
                 <label for="${vectorName}Z-data">Eje Z</label>
-                <input class="axis-input" type="text" id="${vectorName}Z-data" type="number"/>
+                <input class="axis-input" id="${vectorName}Z-data" type="number"/>
             </div>`;
     }
 
@@ -1061,11 +1087,8 @@ function setSolverVariablesSection(variables, solversData) {
                 formatInput(solversData[`${variable}`].tolerance);
         document.getElementById(`${variable}-relTol-data`).value =
                 formatInput(solversData[`${variable}`].relTol);
-                
-        if ( variableData.type == 'symmetric' ) {
-            document.getElementById(`${variable}-sweeps-data`).value =
-                    formatInput(solversData[`${variable}`].nSweeps);
-        }
+        document.getElementById(`${variable}-sweeps-data`).value =
+                formatInput(solversData[`${variable}`].nSweeps);
     }
 }
 
@@ -1214,7 +1237,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="consistent">Consistencia</label>
                     <div>
-                        <select id="consistent">
+                        <select id="consistent" class="select-info">
                             <option value="yes">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -1302,7 +1325,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="consistent">Consistencia</label>
                     <div>
-                        <select id="consistent">
+                        <select id="consistent" class="select-info">
                             <option value="yes">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -1377,7 +1400,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="correctPhi">Corrección del flujo</label>
                     <div>
-                        <select id="correctPhi">
+                        <select id="correctPhi" class="select-info">
                             <option value="yes">Sí</option>
                             <option value="no">No</option>
                         </select>
@@ -1393,7 +1416,7 @@ function fillFormsSolverSection(solverInputs, solver){
                 <div class="input-data">
                     <label for="consistent">Consistencia</label>
                     <div>
-                        <select id="consistent">
+                        <select id="consistent" class="select-info">
                             <option value="yes">Sí</option>
                             <option value="no">No</option>
                         </select>

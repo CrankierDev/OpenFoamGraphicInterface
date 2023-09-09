@@ -8,30 +8,40 @@
 		<div>
 			<button class="buttons-style folder-button" id="workspace"
 				type="button" onclick="selectFolder(id)">Seleccionar la carpeta</button>
-			<span class="material-symbols-rounded" onclick="showInfo('checkMesh')" style="visibility: hidden;">info</span>
+			<span class="material-symbols-rounded" onclick="showInfo('workspace')">info</span>
 		</div>
 	</div>
 	<div class="input-data" id="info-workspace">
 		<div></div>
 		<span id="route-workspace"></span>
 	</div>
+	<div id="workspace-info" class="info-div info-div-border" style="display: none;">
+		<p>
+			Debe seleccionar una ruta que no contenga espacios en blanco, ni caracteres especiales
+			como tíldes o la letra ñ.
+		</p>
+	</div>
 	<div class="input-data">
 		<label class="long-label" for="mesh">Ruta de la malla</label>
 		<div>
 			<button class="buttons-style folder-button" id="mesh"
 				type="button" onclick="selectFolder(id)">Seleccionar la carpeta</button>
-			<span class="material-symbols-rounded" onclick="showInfo('checkMesh')">info</span>
+			<span class="material-symbols-rounded" onclick="showInfo('mesh')">info</span>
 		</div>
 	</div>
 	<div class="input-data" id="info-mesh">
-		<button class="buttons-style folder-button" id="checkMesh"
+		<button class="buttons-style folder-button" id="checkMesh" style="visibility: hidden;"
 			type="button" onclick="checkMeshFormat()">Comprobar la malla</button>
 		<span id="route-mesh"></span>
 	</div>
-	<div id="checkMesh-info" class="info-div info-div-border" style="display: none;">
+	<div id="mesh-info" class="info-div info-div-border" style="display: none;">
 		<p>
-			Debe seleccionar la carpeta polyMesh que haya generado.
+			Debe seleccionar la carpeta polyMesh que haya generado previamente.
 		</p>
+	</div>
+	<div id="spinner-checkMesh" class="spinner-section" style="display: none;">
+		<p>Comprobando malla...</p>
+		<div class="lds-dual-ring"></div>
 	</div>
 </section>
 <article id="flux-conditions" style="display: none;">

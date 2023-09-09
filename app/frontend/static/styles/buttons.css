@@ -47,10 +47,6 @@
     font-weight: 600;
 }
 
-/* #checkMesh {
-    position: absolute;
-} */
-
 button:disabled,
 button[disabled] {
     background-color: var(--grey-pallete);

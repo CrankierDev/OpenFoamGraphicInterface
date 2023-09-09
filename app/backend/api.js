@@ -41,26 +41,35 @@ async function startDB() {
 
 function foldersData(mesh) {
     logger.info('Leyendo la información de la malla...');
+
+    mesh = common.parseWindowsRoutes(mesh).replaceAll('::',':').replaceAll('\\\\\\','\\\\');
     
     try {
-        let data = fs.readFileSync(mesh + '/boundary', 'utf8');
+        let data = fs.readFileSync(mesh + '\\boundary', 'utf8');
         let partitionIndex = data.indexOf('(');
         let boundObjects = data.slice(partitionIndex).split('\n');
-        
+
         let boundaries = [];
         
         for(let i = 0 ; i < boundObjects.length ; i++) {
             if( boundObjects[i].trim() == '{' ){
-                const typeIndex = boundObjects[i+1].indexOf('type'); 
-                let newBoundary = {
-                    name: boundObjects[i-1].trim(),
-                    type: boundObjects[i+1].slice(typeIndex + 4, boundObjects[i+1].length-1).trim()
+                const boundaryName = boundObjects[i-1].trim();
+                i += 1;
+
+                while(boundObjects[i].indexOf('type') === -1) {
+                    i += 1;
                 }
+
+                let newBoundary = {
+                    name: boundaryName,
+                    type: boundObjects[i].replaceAll('type','').replaceAll(';','').trim()
+                }
+                
                 boundaries.push(newBoundary);
-                i+=2;
+                i+=1;
             }
         }
-        
+
         return boundaries;
     } catch(e) {
         logger.error(e.stack)
@@ -169,8 +178,8 @@ async function executeSimulation(simulationID) {
     return executionResp;
 }
 
-async function checkMesh(meshRoute) {
-    const logName = await fw.temporalMeshFolder(meshRoute);
+async function checkMesh(logInfo) {
+    const logName = await fw.temporalMeshFolder(logInfo);
     const tempFolder = '.\\temp';
 
     return new Promise( (resolve, reject) => {
@@ -239,7 +248,7 @@ async function plotAll(simRoute) {
     let residualData = [];
     
     for( let variableName in data.residuals ) {
-        if( data.residuals[`${variableName}`] !== [] ) {
+        if( data.residuals[`${variableName}`] != [] ) {
             
             residualData.push({
                 name: variableName,
@@ -257,7 +266,7 @@ async function plotAll(simRoute) {
     let coeffsData = [];
     
     for( let variableName in data.coeffs ) {
-        if( data.coeffs[`${variableName}`] !== [] ) {
+        if( data.coeffs[`${variableName}`] != [] ) {
             
             coeffsData.push({
                 name: variableName,

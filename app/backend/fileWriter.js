@@ -13,7 +13,6 @@ const logger = require("./logger.js");
 async function createAllFiles(simInfo, data) {
 	const simID = generateSimID(simInfo.simName);
 
-	// const nu = data.constant.physicalProperties.nu;
 	const velocity = Number(data['0'].U.internalField);
 	const lRef = Number(data['0'].U.lRef);
 	const intensity = Number(data['0'].U.intensity);
@@ -257,10 +256,11 @@ function deleteFiles(linuxRoute) {
 	}
 }
 
-async function temporalMeshFolder(meshRoute) {
+async function temporalMeshFolder(logInfo) {
 	// Setting default data for checkMesh and temporal folder where try on
 	const temporalFolder = '.\\temp';
-	const logName = 'log-' + uuid.v1();
+	const logName = logInfo.name + '-log-' + uuid.v1();
+	const meshRoute = logInfo.mesh;
 	
 	const meshData = {
 		route: './temp',

@@ -278,6 +278,7 @@ source /opt/openfoam10/etc/bashrc
 
 cd :route
 
+renumberMesh -overwrite
 :solver > :log
 echo "Process finished!"`]);
             }

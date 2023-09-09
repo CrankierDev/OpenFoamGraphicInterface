@@ -2,8 +2,21 @@
  * Calls checkMesh api
  */
 async function checkMeshFormat() {
+    document.getElementById('spinner-checkMesh').style.display = 'flex';
+
     const mesh = document.getElementById('mesh').value;
-    const response = await window.functionsAPI.checkMesh(mesh);
+    const workspace = document.getElementById('workspace').value;
+    const name = document.getElementById('simulation-name').value;
+
+    const logInfo = {
+        mesh: mesh,
+        workspace: workspace,
+        name: name
+    }
+
+    const response = await window.functionsAPI.checkMesh(logInfo);
+
+    document.getElementById('spinner-checkMesh').style.display = 'none';
     
     if( response ) {
         document.getElementById('checkMesh').style.backgroundColor = '#008500';
@@ -16,6 +29,7 @@ async function checkMeshFormat() {
 
 async function pathsData() {
     const mesh = document.getElementById('mesh').value.replaceAll('\\','/');
+    console.log(mesh)
     return await window.functionsAPI.foldersData(mesh);
 }
 

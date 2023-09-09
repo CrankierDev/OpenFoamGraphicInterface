@@ -26,7 +26,7 @@
 
 .input-data {
     display: inline-flex;
-    width: 60%;
+    width: 50%;
     margin: 0 auto;
     margin-bottom: 0;
     justify-content: space-between;
@@ -46,7 +46,7 @@
 }
 
 .input-data>label {
-    width: 228px;
+    width: 250px;
 }
 
 .input-data>p {
@@ -65,11 +65,15 @@
 }
 
 .input-data>div>.long-input, .input-data>.long-input {
-    width: 300px;
+    width: 179px;
+}
+
+.input-data>.long-title {
+    width: 280px;
 }
 
 .input-data>div>.long-input-info, .input-data>.long-input-info {
-    width: 271px;
+    width: 150px;
 }
 
 .input-data>div>.short-input, .input-data>.short-input {
@@ -77,7 +81,15 @@
 }
 
 .input-data>div>select, .input-data>select {
-    width: 308px;
+    width: 186px;
+}
+
+.input-data>div>.select-info, .input-data>.select-info {
+    width: 159px;
+}
+
+.input-data>div>.select-zero , .input-data>.select-zero {
+    width: 251px;
 }
 
 .input-data>div>.short-selector, .input-data>.short-selector {
@@ -89,7 +101,7 @@
 }
 
 .input-data>.schemes-title {
-    width: 350px;
+    width: 300px;
 }
 
 .schemes-data {
@@ -120,7 +132,7 @@
 }
 
 .subinput-data>select {
-    width: 250px;
+    width: 150px;
 }
 
 .subinput-data>input {
@@ -147,4 +159,9 @@
     width: fit-content;
     margin-left: 0;
     margin-right: 10px;
+}
+
+.units {
+    width: 60px;
+    margin-left: 5px;
 }
