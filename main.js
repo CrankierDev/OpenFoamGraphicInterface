@@ -86,7 +86,7 @@ function createWindow() {
     });
 
     mainWindow.loadFile('app/index.html');
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     const menuTemplate = [
         {
