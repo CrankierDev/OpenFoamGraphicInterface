@@ -163,6 +163,7 @@ async function generateAndExecute() {
         simID = await generateFiles();
     }
 
+
     document.getElementById('spinner').style.display = 'flex';
     document.getElementById('execution-info').style.display = 'none';
     
@@ -192,4 +193,6 @@ async function generateAndExecute() {
             clearInterval(statusInterval);
         }
     }, 2000);
+    
+    window.generatedSimID = null;
 }

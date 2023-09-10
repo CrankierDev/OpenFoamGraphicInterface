@@ -561,15 +561,17 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                             Especificar ${variable.name} en el contorno
                                         </label>
                                     </div>
-                                    <div>
-                                        <input class="long-input-info" disabled type="number"
-                                            id="${variable.variable}-${boundary.name}-value"/>`;
+                                    <div>`;
 
                                 if( variable.variable === 'U' ) {
                                     newText += `
+                                        <input class="long-input-info" disabled
+                                            id="${variable.variable}-${boundary.name}-value"/>
                                         <span class="units">m/s</span>`;
                                 } else if( variable.variable === 'p' ) {
                                     newText += `
+                                        <input class="long-input-info" disabled type="number"
+                                            id="${variable.variable}-${boundary.name}-value"/>
                                         <span class="units">Pa</span>`;
                                 }
 
@@ -657,15 +659,17 @@ function fillFormsBoundariesFields(boundariesData, variables) {
                                             Especificar ${variable.name} en el contorno
                                         </label>
                                     </div>
-                                    <div>
-                                        <input class="long-input-info" disabled
-                                            id="${variable.variable}-${boundary.name}-value"/>`;
+                                    <div>`;
 
                                 if( variable.variable === 'U' ) {
                                     newText += `
+                                        <input class="long-input-info" disabled
+                                            id="${variable.variable}-${boundary.name}-value"/>
                                         <span class="units">m/s</span>`;
                                 } else if( variable.variable === 'p' ) {
                                     newText += `
+                                        <input class="long-input-info" disabled type="number"
+                                            id="${variable.variable}-${boundary.name}-value"/>
                                         <span class="units">Pa</span>`;
                                 }
 
