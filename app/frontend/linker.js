@@ -29,7 +29,6 @@ async function checkMeshFormat() {
 
 async function pathsData() {
     const mesh = document.getElementById('mesh').value.replaceAll('\\','/');
-    console.log(mesh)
     return await window.functionsAPI.foldersData(mesh);
 }
 

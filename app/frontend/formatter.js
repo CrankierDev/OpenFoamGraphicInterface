@@ -115,9 +115,7 @@ async function setFluxDefaultData(simulation, boundariesData) {
                     return value.type ==='patch';
                 });
 
-                for( boundary of patchBoundaries ) {
-                    // console.log(boundary, data.boundaries[boundary.name]);
-                    
+                for( boundary of patchBoundaries ) {                    
                     if( data.boundaries[boundary.name].value != null &&
                             data.boundaries[boundary.name].value !== '$internalField') {
 
@@ -237,7 +235,6 @@ async function fillFormsBasicFields(boundariesData, turbulenceModel) {
  * user at the form
  */
 async function fillFormsBasicFieldsSim(boundariesData, turbulenceModel, simulationID) {
-    console.log(boundariesData, turbulenceModel, simulationID);
     // Initialize the array with two variables that will ever be in a simulation
     let variables = [
         {
@@ -481,8 +478,6 @@ function fillFormsBoundariesFields(boundariesData, variables) {
         const boundaryConditions = document.getElementById('boundary-conditions');
         boundaryConditions.innerHTML = 
             '<h2 class="input-label">Condiciones de contorno</h2>';
-
-        console.log('jay');
 
         for (boundary of boundariesData) {
             if(!document.getElementById(`${boundary.name}-data`)){
@@ -772,7 +767,6 @@ async function modelChanges(value) {
         fillFormsSolverVariables(document.getElementById('solver').value, 'default_sim');
 
     } else {
-        console.log('holi', boundariesData);
         fillFormsBasicFieldsSim(boundariesData, document.getElementById("turbulence-model").value, window.simulationID);
         fillFormsSolverVariables(document.getElementById('solver').value, window.simulationID);
     }
