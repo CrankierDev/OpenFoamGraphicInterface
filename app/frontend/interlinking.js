@@ -138,10 +138,8 @@ async function loadSimulationData(simulationID) {
         document.getElementById('turbulence-model').value = constantData.turbulenceModel;
 
         fillFormsBasicFieldsSim(boundariesData, constantData.turbulenceModel, simulationID);
-        fillFormsSolverVariables(controlDictData.application, simulationID);
 
         solverChanges(controlDictData.application);
-        modelChanges(constantData.turbulenceModel);
     }, 100 );
 }
 
@@ -162,7 +160,6 @@ async function generateAndExecute() {
     } else {
         simID = await generateFiles();
     }
-
 
     document.getElementById('spinner').style.display = 'flex';
     document.getElementById('execution-info').style.display = 'none';

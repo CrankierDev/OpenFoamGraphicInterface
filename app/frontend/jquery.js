@@ -44,6 +44,7 @@ function showContent(id) {
 }
 
 async function showStart() {
+	window.generatedSimID = null;
 	showContent('start-section');
 	setLastSimulationsTable();
 }

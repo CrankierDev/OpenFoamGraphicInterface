@@ -570,11 +570,18 @@ function buildSolver(variables) {
 
 	solvers += `
 
-    pFinal
+    "(pFinal|pcorr|Phi)"
     {
         $p;
         relTol		0;
     }
+	
+	"(U|k|omega|epsilon|nuTilda)Final"
+	{
+		$U;
+		tolerance       1e-06;
+		relTol          0;
+	}
 }`;
 
 	return solvers;
